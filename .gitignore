@@ -1,0 +1,15 @@
+# Ignore bin directory and its contents
+bin/
+bin/*
+
+obj/
+obj/*
+
+Data/
+Data/*
+
+Docs/
+Docs/*
+
+Scripts/
+Scripts/*
