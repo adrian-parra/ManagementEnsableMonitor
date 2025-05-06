@@ -1,8 +1,211 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Monitor de Ensamble";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-filter me-2"></i>Selección de Filtros</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-4">
+                            <label for="selectPlanta" class="form-label">Planta</label>
+                            <select id="selectPlanta" class="form-select">
+                                <option selected disabled value="">Seleccione una planta...</option>
+                                <!-- Opciones de planta se cargarán dinámicamente -->
+                                <option value="1">Planta 1</option>
+                                <option value="2">Planta 2</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="selectLinea" class="form-label">Línea de Producción</label>
+                            <select id="selectLinea" class="form-select">
+                                <option selected disabled value="">Seleccione una línea...</option>
+                                <!-- Opciones de línea se cargarán dinámicamente -->
+                                <option value="A">Línea A</option>
+                                <option value="B">Línea B</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <button id="btnConsultar" type="button" class="btn btn-primary w-100"><i
+                                    class="bi bi-search me-2"></i>Consultar Información</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-card-list me-2"></i>Información de Línea</h5>
+                </div>
+                <div class="card-body">
+                    <form id="formInformacionLinea">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="inputModeloArnes" class="form-label">Modelo de Arnés Actual</label>
+                                <input type="text" class="form-control" id="inputModeloArnes" placeholder="Ej: XZ-2000"
+                                    readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputProduccionEsperada" class="form-label">Producción Esperada
+                                    (Turno)</label>
+                                <input type="number" class="form-control" id="inputProduccionEsperada"
+                                    placeholder="Ej: 500" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputProduccionActual" class="form-label">Producción Actual (Turno)</label>
+                                <input type="number" class="form-control" id="inputProduccionActual"
+                                    placeholder="Ej: 250" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputEficiencia" class="form-label">Eficiencia (%)</label>
+                                <input type="text" class="form-control" id="inputEficiencia" placeholder="Ej: 50%"
+                                    readonly>
+                            </div>
+                            <div class="col-12 text-end">
+                                <button type="submit" class="btn btn-success" id="btnGuardarInformacion" disabled><i
+                                        class="bi bi-save me-2"></i>Guardar Cambios</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-tools me-2"></i>Acciones Adicionales</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-info w-100" data-bs-toggle="modal"
+                                data-bs-target="#modalEncargados">
+                                <i class="bi bi-person-plus-fill me-2"></i>Agregar Encargados de Línea
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-secondary w-100" data-bs-toggle="modal"
+                                data-bs-target="#modalCargarImagen">
+                                <i class="bi bi-image-fill me-2"></i>Cargar Imagen del Carro de Línea
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Modal Agregar Encargados -->
+<div class="modal fade" id="modalEncargados" tabindex="-1" aria-labelledby="modalEncargadosLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEncargadosLabel"><i class="bi bi-person-plus-fill me-2"></i>Agregar
+                    Encargado de Línea</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formAgregarEncargado">
+                    <div class="mb-3">
+                        <label for="selectLider" class="form-label">Líder</label>
+                        <select id="selectLider" class="form-select">
+                            <option selected disabled value="">Seleccione un líder...</option>
+                            <!-- Opciones de líderes se cargarán dinámicamente -->
+                            <option value="L1">Líder Juan Pérez</option>
+                            <option value="L2">Líder Ana Gómez</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputRelojUsuario" class="form-label">Número de Reloj del Usuario</label>
+                        <input type="text" class="form-control" id="inputRelojUsuario"
+                            placeholder="Ingrese el número de reloj">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btnGuardarEncargado"><i
+                        class="bi bi-save me-2"></i>Guardar Encargado</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Cargar Imagen del Carro -->
+<div class="modal fade" id="modalCargarImagen" tabindex="-1" aria-labelledby="modalCargarImagenLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCargarImagenLabel"><i class="bi bi-image-fill me-2"></i>Cargar Imagen
+                    del Carro de Línea</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formCargarImagen">
+                    <div class="mb-3">
+                        <label for="inputImagenCarro" class="form-label">Seleccionar Imagen</label>
+                        <input class="form-control" type="file" id="inputImagenCarro" accept="image/*">
+                    </div>
+                    <div class="mb-3 text-center" id="previewContainer" style="display: none;">
+                        <img id="imagenPreview" src="#" alt="Vista previa de la imagen" class="img-fluid rounded"
+                            style="max-height: 200px;" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btnSubirImagen"><i class="bi bi-upload me-2"></i>Subir
+                    Imagen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Script para la vista previa de la imagen (opcional, pero mejora UX)
+        document.getElementById('inputImagenCarro').addEventListener('change', function (event) {
+            const previewContainer = document.getElementById('previewContainer');
+            const imagenPreview = document.getElementById('imagenPreview');
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imagenPreview.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            } else {
+                imagenPreview.src = '#';
+                previewContainer.style.display = 'none';
+            }
+        });
+
+        // Lógica para habilitar el botón de guardar del formulario principal
+        // después de una consulta exitosa (ejemplo básico)
+        document.getElementById('btnConsultar').addEventListener('click', function () {
+            // Simular carga de datos
+            document.getElementById('inputModeloArnes').value = 'XZ-2000-CONSULTADO';
+            document.getElementById('inputProduccionEsperada').value = 600;
+            document.getElementById('inputProduccionActual').value = 300;
+            document.getElementById('inputEficiencia').value = '50%';
+
+            // Habilitar el botón de guardar
+            document.getElementById('btnGuardarInformacion').disabled = false;
+        });
+    </script>
+}
