@@ -8,6 +8,7 @@ namespace AppManagementEnsableMonitor.Services.Interfaces
     public interface IAssemby
     {
         Task<List<MDPlant>> GetPlants();
+        Task<List<MDLine>> GetLines(string plantId);
         // Aquí puedes agregar otros métodos que necesites para tu aplicación
     }
 }

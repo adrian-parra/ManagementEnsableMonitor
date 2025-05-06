@@ -40,6 +40,26 @@ namespace AppManagementEnsableMonitor.Controllers
             }
         }
 
+        [HttpGet]
+        // [Route("api/line/GetLines")]
+        public async Task<IActionResult> GetLines(string plant_id)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(plant_id))
+                {
+                    return BadRequest(new { success = false, message = "El parámetro plant_id es requerido" });
+                }
+
+                var lines = await _assembly.GetLines(plant_id);
+                return Ok(lines);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = "Error al recuperar líneas", error = ex.Message });
+            }
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

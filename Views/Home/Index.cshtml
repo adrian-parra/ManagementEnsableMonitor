@@ -234,12 +234,59 @@
                     option.value = planta.id;
                     option.textContent = planta.nombre;
                     // Guardar datos adicionales como atributos de datos si es necesario
-                    @* option.dataset.codigoTress = planta.codigoTress;
+                    option.dataset.codigoTress = planta.codigoTress;
                     option.dataset.checadores = planta.checadoresDePlanta;
-                    selectPlanta.appendChild(option); *@
+                    selectPlanta.appendChild(option);
                 });
                 
                 console.log('Plantas cargadas:', plantas);
+                
+                // Agregar evento de cambio al select de plantas para cargar las líneas correspondientes
+                selectPlanta.addEventListener('change', async function() {
+                    const plantaId = this.value;
+                    if (!plantaId) return;
+                    
+                    try {
+                        // Mostrar indicador de carga
+                        selectLinea.disabled = true;
+                        selectLinea.innerHTML = '<option selected disabled value="">Cargando líneas...</option>';
+                        
+                        // Obtener líneas para la planta seleccionada
+                        const responseLineas = await fetch(`/Home/GetLines?plant_id=${plantaId}`);
+                        
+                        if (!responseLineas.ok) {
+                            throw new Error(`Error al obtener líneas: ${responseLineas.status}`);
+                        }
+                        
+                        const lineas = await responseLineas.json();
+                        
+                        // Limpiar y agregar nuevas opciones
+                        selectLinea.innerHTML = '<option selected disabled value="">Seleccione una línea...</option>';
+                        
+                        lineas.forEach(linea => {
+                            const option = document.createElement('option');
+                            option.value = linea.lineId;
+                            option.textContent = linea.nombreLinea;
+                            // Guardar datos adicionales como atributos de datos si es necesario
+                            option.dataset.workProccess = linea.workProccess;
+                            option.dataset.tressId = linea.tressId;
+                            option.dataset.terminalEmpaque = linea.terminalEmpaque;
+                            option.dataset.formacionPe = linea.formacionPe;
+                            option.dataset.metaIPD = linea.metaIPD;
+                            selectLinea.appendChild(option);
+                        });
+                        
+                        console.log('Líneas cargadas:', lineas);
+                        
+                        // Habilitar el select de líneas
+                        selectLinea.disabled = false;
+                    } catch (error) {
+                        console.error('Error al cargar líneas:', error);
+                        selectLinea.innerHTML = '<option selected disabled value="">Error al cargar líneas</option>';
+                        selectLinea.disabled = false;
+                        alert('No se pudieron cargar las líneas. Por favor, intente nuevamente más tarde.');
+                    }
+                });
             } catch (error) {
                 console.error('Error al cargar plantas:', error);
                 // Mostrar mensaje de error al usuario
