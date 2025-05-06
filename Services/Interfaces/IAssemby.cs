@@ -9,6 +9,7 @@ namespace AppManagementEnsableMonitor.Services.Interfaces
     {
         Task<List<MDPlant>> GetPlants();
         Task<List<MDLine>> GetLines(string plantId);
+        Task<MDUserDomain> GetUserDomain(string softwareName, string ipAdd);
         // Aquí puedes agregar otros métodos que necesites para tu aplicación
     }
 }

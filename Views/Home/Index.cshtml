@@ -215,6 +215,10 @@
             const selectPlanta = document.getElementById('selectPlanta');
             const selectLinea = document.getElementById('selectLinea');
 
+            const userDomain = await obtenerInformacionUsuario();
+
+            console.log('Información del usuario:', userDomain);
+
             try {
                 // Obtener datos de plantas desde el servidor
                 const response = await fetch('/Home/GetPlants');
@@ -293,5 +297,40 @@
                 alert('No se pudieron cargar las plantas. Por favor, intente nuevamente más tarde.');
             }
         });
+
+
+        async function obtenerInformacionUsuario() {
+    try {
+        const response = await fetch(`/Home/GetUserDomain`);
+        
+        if (!response.ok) {
+            throw new Error(`Error al obtener información del usuario: ${response.status}`);
+        }
+        
+        const userDomain = await response.json();
+        console.log('Información del usuario:', userDomain);
+        
+        // Actualizar el nombre de usuario en el footer
+        const userNameDisplay = document.getElementById('userNameDisplay');
+        if (userNameDisplay && userDomain.userName) {
+            userNameDisplay.textContent = userDomain.userName;
+        }
+        
+        return userDomain;
+    } catch (error) {
+        console.error('Error:', error);
+        // Actualizar el footer con mensaje de error
+        const userNameDisplay = document.getElementById('userNameDisplay');
+        if (userNameDisplay) {
+            userNameDisplay.textContent = 'No disponible';
+        }
+        // No mostrar alerta para no interrumpir la experiencia del usuario
+        console.error('No se pudo obtener la información del usuario:', error);
+        return null;
+    }
+}
+
+// Llamar a la función cuando sea necesario
+// obtenerInformacionUsuario();
     </script>
 }

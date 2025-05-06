@@ -36,9 +36,17 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - AppManagementEnsableMonitor - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <!-- Footer con información del usuario -->
+    <footer class="footer mt-4 py-3 bg-light">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <span class="text-muted">© 2023 AppManagementEnsableMonitor</span>
+                </div>
+                <div class="col-md-6 text-end">
+                    <span class="text-muted">Usuario: <span id="userNameDisplay">Cargando...</span></span>
+                </div>
+            </div>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
