@@ -107,5 +107,40 @@ namespace AppManagementEnsableMonitor.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> PostImageCar([FromBody] MDImageCarRequest request)
+        {
+
+            // return Ok("SUCCESS");
+            try
+            {
+                // Validar el modelo
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new { success = false, message = "Datos de solicitud inválidos", errors = ModelState });
+                }
+
+                // Validar que los campos requeridos no estén vacíos
+                if (string.IsNullOrEmpty(request.Plant) || 
+                    string.IsNullOrEmpty(request.LineId) || 
+                    string.IsNullOrEmpty(request.ImageBase64) || 
+                    string.IsNullOrEmpty(request.RegisterUser))
+                {
+                    return BadRequest(new { success = false, message = "Todos los campos son requeridos" });
+                }
+
+                var response = await _assembly.PostImageCar(request);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new MDImageCarResponse 
+                { 
+                    Msj = "Error al subir la imagen del carro", 
+                    Result = ex.Message 
+                });
+            }
+        }
     }
 }

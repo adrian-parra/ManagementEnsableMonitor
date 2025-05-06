@@ -6,6 +6,7 @@ using AppManagementEnsableMonitor.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http;
 using System.Text.Json;
+using System.Text;
 
 namespace AppManagementEnsableMonitor.Services.Implementation
 {
@@ -168,6 +169,57 @@ namespace AppManagementEnsableMonitor.Services.Implementation
             {
                 // Manejar otros errores
                 Console.WriteLine($"Error al obtener información del dominio: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<MDImageCarResponse> PostImageCar(MDImageCarRequest request)
+        {
+            try
+            {
+                // Construir la URL completa para la solicitud
+                string requestUrl = $"{_apiBaseUrl}/assemblymonitor/PostImageCar";
+                
+                // Serializar el objeto de solicitud a JSON
+                string jsonRequest = JsonSerializer.Serialize(request);
+                var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+                
+                // Realizar la solicitud HTTP POST
+                HttpResponseMessage response = await _httpClient.PostAsync(requestUrl, content);
+                
+                // Verificar si la solicitud fue exitosa
+                if (response.IsSuccessStatusCode)
+                {
+                    // Leer y deserializar la respuesta
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    var imageCarResponse = JsonSerializer.Deserialize<MDImageCarResponse>(jsonResponse, 
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    
+                    return imageCarResponse;
+                }
+                else
+                {
+                    // Manejar errores de la API
+                    string errorContent = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Error al subir la imagen del carro. Código: {response.StatusCode}, Mensaje: {errorContent}");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                // Manejar errores de conexión
+                Console.WriteLine($"Error de conexión al subir la imagen: {ex.Message}");
+                throw new Exception($"Error de conexión al subir la imagen: {ex.Message}", ex);
+            }
+            catch (JsonException ex)
+            {
+                // Manejar errores de serialización/deserialización
+                Console.WriteLine($"Error al procesar la respuesta JSON: {ex.Message}");
+                throw new Exception($"Error al procesar la respuesta JSON: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                // Manejar otros errores
+                Console.WriteLine($"Error al subir la imagen del carro: {ex.Message}");
                 throw;
             }
         }
