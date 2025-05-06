@@ -142,5 +142,25 @@ namespace AppManagementEnsableMonitor.Controllers
                 });
             }
         }
+
+        [HttpGet]
+        [Route("api/assemblymonitor/GetManagerType")]
+        public async Task<IActionResult> GetManagerType(string plant)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(plant))
+                {
+                    return BadRequest(new { success = false, message = "El parámetro plant es requerido" });
+                }
+
+                var managerType = await _assembly.GetManagerType(plant);
+                return Ok(managerType);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = "Error al recuperar tipo de gerente", error = ex.Message });
+            }
+        }
     }
 }

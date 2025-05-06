@@ -1,144 +1,144 @@
 
-        // Script para la vista previa de la imagen (opcional, pero mejora UX)
-        document.getElementById('inputImagenCarro').addEventListener('change', function (event) {
-            const previewContainer = document.getElementById('previewContainer');
-            const imagenPreview = document.getElementById('imagenPreview');
-            const file = event.target.files[0];
+// Script para la vista previa de la imagen (opcional, pero mejora UX)
+document.getElementById('inputImagenCarro').addEventListener('change', function (event) {
+    const previewContainer = document.getElementById('previewContainer');
+    const imagenPreview = document.getElementById('imagenPreview');
+    const file = event.target.files[0];
 
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    imagenPreview.src = e.target.result;
-                    previewContainer.style.display = 'block';
-                }
-                reader.readAsDataURL(file);
-            } else {
-                imagenPreview.src = '#';
-                previewContainer.style.display = 'none';
-            }
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            imagenPreview.src = e.target.result;
+            previewContainer.style.display = 'block';
+        }
+        reader.readAsDataURL(file);
+    } else {
+        imagenPreview.src = '#';
+        previewContainer.style.display = 'none';
+    }
+});
+
+// Lógica para habilitar el botón de guardar del formulario principal
+// después de una consulta exitosa (ejemplo básico)
+document.getElementById('btnConsultar').addEventListener('click', function () {
+    // Simular carga de datos
+    document.getElementById('inputModeloArnes').value = 'XZ-2000-CONSULTADO';
+    document.getElementById('inputProduccionEsperada').value = 600;
+    document.getElementById('inputProduccionActual').value = 300;
+    document.getElementById('inputEficiencia').value = '50%';
+
+    // Habilitar el botón de guardar
+    document.getElementById('btnGuardarInformacion').disabled = false;
+
+
+});
+
+document.addEventListener('DOMContentLoaded', async function () {
+    // Lógica para cargar opciones de planta y línea
+    const selectPlanta = document.getElementById('selectPlanta');
+    const selectLinea = document.getElementById('selectLinea');
+
+    const userDomain = await obtenerInformacionUsuario();
+
+    console.log('Información del usuario:', userDomain);
+
+    try {
+        // Obtener datos de plantas desde el servidor
+        const response = await fetch('/Home/GetPlants');
+
+        if (!response.ok) {
+            throw new Error(`Error al obtener plantas: ${response.status}`);
+        }
+
+        const plantas = await response.json();
+
+        // Limpiar opciones existentes (excepto la primera)
+        selectPlanta.innerHTML = '<option selected disabled value="">Seleccione una planta...</option>';
+
+        // Agregar nuevas opciones basadas en los datos recibidos
+        plantas.forEach(planta => {
+            const option = document.createElement('option');
+            option.value = planta.id;
+            option.textContent = planta.nombre;
+            // Guardar datos adicionales como atributos de datos si es necesario
+            option.dataset.codigoTress = planta.codigoTress;
+            option.dataset.checadores = planta.checadoresDePlanta;
+            selectPlanta.appendChild(option);
         });
 
-        // Lógica para habilitar el botón de guardar del formulario principal
-        // después de una consulta exitosa (ejemplo básico)
-        document.getElementById('btnConsultar').addEventListener('click', function () {
-            // Simular carga de datos
-            document.getElementById('inputModeloArnes').value = 'XZ-2000-CONSULTADO';
-            document.getElementById('inputProduccionEsperada').value = 600;
-            document.getElementById('inputProduccionActual').value = 300;
-            document.getElementById('inputEficiencia').value = '50%';
+        console.log('Plantas cargadas:', plantas);
 
-            // Habilitar el botón de guardar
-            document.getElementById('btnGuardarInformacion').disabled = false;
-
-
-        });
-
-        document.addEventListener('DOMContentLoaded', async function () {
-            // Lógica para cargar opciones de planta y línea
-            const selectPlanta = document.getElementById('selectPlanta');
-            const selectLinea = document.getElementById('selectLinea');
-
-            const userDomain = await obtenerInformacionUsuario();
-
-            console.log('Información del usuario:', userDomain);
+        // Agregar evento de cambio al select de plantas para cargar las líneas correspondientes
+        selectPlanta.addEventListener('change', async function () {
+            const plantaId = this.value;
+            if (!plantaId) return;
 
             try {
-                // Obtener datos de plantas desde el servidor
-                const response = await fetch('/Home/GetPlants');
-                
-                if (!response.ok) {
-                    throw new Error(`Error al obtener plantas: ${response.status}`);
+                // Mostrar indicador de carga
+                selectLinea.disabled = true;
+                selectLinea.innerHTML = '<option selected disabled value="">Cargando líneas...</option>';
+
+                // Obtener líneas para la planta seleccionada
+                const responseLineas = await fetch(`/Home/GetLines?plant_id=${plantaId}`);
+
+                if (!responseLineas.ok) {
+                    throw new Error(`Error al obtener líneas: ${responseLineas.status}`);
                 }
-                
-                const plantas = await response.json();
-                
-                // Limpiar opciones existentes (excepto la primera)
-                selectPlanta.innerHTML = '<option selected disabled value="">Seleccione una planta...</option>';
-                
-                // Agregar nuevas opciones basadas en los datos recibidos
-                plantas.forEach(planta => {
+
+                const lineas = await responseLineas.json();
+
+                // Limpiar y agregar nuevas opciones
+                selectLinea.innerHTML = '<option selected disabled value="">Seleccione una línea...</option>';
+
+                lineas.forEach(linea => {
                     const option = document.createElement('option');
-                    option.value = planta.id;
-                    option.textContent = planta.nombre;
+                    option.value = linea.lineId;
+                    option.textContent = linea.nombreLinea;
                     // Guardar datos adicionales como atributos de datos si es necesario
-                    option.dataset.codigoTress = planta.codigoTress;
-                    option.dataset.checadores = planta.checadoresDePlanta;
-                    selectPlanta.appendChild(option);
+                    option.dataset.workProccess = linea.workProccess;
+                    option.dataset.tressId = linea.tressId;
+                    option.dataset.terminalEmpaque = linea.terminalEmpaque;
+                    option.dataset.formacionPe = linea.formacionPe;
+                    option.dataset.metaIPD = linea.metaIPD;
+                    selectLinea.appendChild(option);
                 });
-                
-                console.log('Plantas cargadas:', plantas);
-                
-                // Agregar evento de cambio al select de plantas para cargar las líneas correspondientes
-                selectPlanta.addEventListener('change', async function() {
-                    const plantaId = this.value;
-                    if (!plantaId) return;
-                    
-                    try {
-                        // Mostrar indicador de carga
-                        selectLinea.disabled = true;
-                        selectLinea.innerHTML = '<option selected disabled value="">Cargando líneas...</option>';
-                        
-                        // Obtener líneas para la planta seleccionada
-                        const responseLineas = await fetch(`/Home/GetLines?plant_id=${plantaId}`);
-                        
-                        if (!responseLineas.ok) {
-                            throw new Error(`Error al obtener líneas: ${responseLineas.status}`);
-                        }
-                        
-                        const lineas = await responseLineas.json();
-                        
-                        // Limpiar y agregar nuevas opciones
-                        selectLinea.innerHTML = '<option selected disabled value="">Seleccione una línea...</option>';
-                        
-                        lineas.forEach(linea => {
-                            const option = document.createElement('option');
-                            option.value = linea.lineId;
-                            option.textContent = linea.nombreLinea;
-                            // Guardar datos adicionales como atributos de datos si es necesario
-                            option.dataset.workProccess = linea.workProccess;
-                            option.dataset.tressId = linea.tressId;
-                            option.dataset.terminalEmpaque = linea.terminalEmpaque;
-                            option.dataset.formacionPe = linea.formacionPe;
-                            option.dataset.metaIPD = linea.metaIPD;
-                            selectLinea.appendChild(option);
-                        });
-                        
-                        console.log('Líneas cargadas:', lineas);
-                        
-                        // Habilitar el select de líneas
-                        selectLinea.disabled = false;
-                    } catch (error) {
-                        console.error('Error al cargar líneas:', error);
-                        selectLinea.innerHTML = '<option selected disabled value="">Error al cargar líneas</option>';
-                        selectLinea.disabled = false;
-                        alert('No se pudieron cargar las líneas. Por favor, intente nuevamente más tarde.');
-                    }
-                });
+
+                console.log('Líneas cargadas:', lineas);
+
+                // Habilitar el select de líneas
+                selectLinea.disabled = false;
             } catch (error) {
-                console.error('Error al cargar plantas:', error);
-                // Mostrar mensaje de error al usuario
-                alert('No se pudieron cargar las plantas. Por favor, intente nuevamente más tarde.');
+                console.error('Error al cargar líneas:', error);
+                selectLinea.innerHTML = '<option selected disabled value="">Error al cargar líneas</option>';
+                selectLinea.disabled = false;
+                alert('No se pudieron cargar las líneas. Por favor, intente nuevamente más tarde.');
             }
         });
+    } catch (error) {
+        console.error('Error al cargar plantas:', error);
+        // Mostrar mensaje de error al usuario
+        alert('No se pudieron cargar las plantas. Por favor, intente nuevamente más tarde.');
+    }
+});
 
 
-        async function obtenerInformacionUsuario() {
+async function obtenerInformacionUsuario() {
     try {
         const response = await fetch(`/Home/GetUserDomain`);
-        
+
         if (!response.ok) {
             throw new Error(`Error al obtener información del usuario: ${response.status}`);
         }
-        
+
         const userDomain = await response.json();
         console.log('Información del usuario:', userDomain);
-        
+
         // Actualizar el nombre de usuario en el footer
         const userNameDisplay = document.getElementById('userNameDisplay');
         if (userNameDisplay && userDomain.userName) {
             userNameDisplay.textContent = userDomain.userName;
         }
-        
+
         return userDomain;
     } catch (error) {
         console.error('Error:', error);
@@ -164,55 +164,55 @@ async function subirImagenCarro() {
         const fileInput = document.getElementById('inputImagenCarro');
         const selectPlanta = document.getElementById('selectPlanta');
         const selectLinea = document.getElementById('selectLinea');
-        
+
         // Validar que se haya seleccionado una planta y una línea
         if (!selectPlanta.value) {
             alert('Por favor, seleccione una planta.');
             return;
         }
-        
+
         if (!selectLinea.value) {
             alert('Por favor, seleccione una línea.');
             return;
         }
-        
+
         // Validar que se haya seleccionado un archivo
         if (!fileInput.files || fileInput.files.length === 0) {
             alert('Por favor, seleccione una imagen.');
             return;
         }
-        
+
         // Obtener el archivo seleccionado
         const file = fileInput.files[0];
-        
+
         // Validar que sea una imagen
         if (!file.type.startsWith('image/')) {
             alert('Por favor, seleccione un archivo de imagen válido.');
             return;
         }
-        
+
         // Mostrar indicador de carga
         const btnSubirImagen = document.getElementById('btnSubirImagen');
         const originalText = btnSubirImagen.innerHTML;
         btnSubirImagen.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Subiendo...';
         btnSubirImagen.disabled = true;
-        
+
         // Convertir la imagen a Base64
         const reader = new FileReader();
-        reader.onload = async function(e) {
+        reader.onload = async function (e) {
             try {
                 // Obtener la cadena Base64 (eliminar el prefijo "data:image/jpeg;base64,")
                 const base64String = e.target.result.split(',')[1];
-                
+
                 // Obtener información del usuario para el campo registerUser
                 const userDomainResponse = await fetch('/Home/GetUserDomain');
-                
+
                 if (!userDomainResponse.ok) {
                     throw new Error(`Error al obtener información del usuario: ${userDomainResponse.status}`);
                 }
-                
+
                 const userDomain = await userDomainResponse.json();
-                
+
                 // Crear el objeto de solicitud
                 const request = {
                     plant: selectPlanta.value,
@@ -220,14 +220,14 @@ async function subirImagenCarro() {
                     imageBase64: base64String, // Asegurarse de que este valor no esté vacío
                     registerUser: userDomain.userName || 'usuario_desconocido'
                 };
-                
+
                 console.log('Enviando solicitud:', {
                     plant: request.plant,
                     lineId: request.lineId,
                     imageBase64: request.imageBase64 ? 'Base64 data (no mostrado por tamaño)' : 'VACÍO',
                     registerUser: request.registerUser
                 });
-                
+
                 // Enviar la solicitud al servidor
                 const response = await fetch('/Home/PostImageCar', {
                     method: 'POST',
@@ -236,16 +236,16 @@ async function subirImagenCarro() {
                     },
                     body: JSON.stringify(request)
                 });
-                
+
                 // Restaurar el botón
                 btnSubirImagen.innerHTML = originalText;
                 btnSubirImagen.disabled = false;
-                
+
                 // Verificar si la respuesta es exitosa
                 if (response.ok) {
                     // Verificar si hay contenido en la respuesta
                     const responseText = await response.text();
-                    
+
                     let result;
                     if (responseText && responseText.trim() !== '') {
                         try {
@@ -259,9 +259,9 @@ async function subirImagenCarro() {
                         // Si no hay contenido, crear un objeto de resultado predeterminado
                         result = { msj: 'Imagen subida correctamente' };
                     }
-                    
+
                     alert(result.msj || 'Imagen subida correctamente');
-                    
+
                     // Cerrar el modal
                     const modalElement = document.getElementById('modalCargarImagen');
                     if (modalElement) {
@@ -273,7 +273,7 @@ async function subirImagenCarro() {
                             $(modalElement).modal('hide');
                         }
                     }
-                    
+
                     // Limpiar el formulario
                     document.getElementById('formCargarImagen').reset();
                     document.getElementById('previewContainer').style.display = 'none';
@@ -282,7 +282,7 @@ async function subirImagenCarro() {
                     try {
                         const errorText = await response.text();
                         let errorData;
-                        
+
                         if (errorText && errorText.trim() !== '') {
                             try {
                                 errorData = JSON.parse(errorText);
@@ -294,7 +294,7 @@ async function subirImagenCarro() {
                         } else {
                             errorData = { msj: `Error ${response.status}: ${response.statusText}` };
                         }
-                        
+
                         alert(`Error: ${errorData.msj || 'No se pudo subir la imagen'}`);
                     } catch (textError) {
                         alert(`Error: No se pudo subir la imagen (${response.status})`);
@@ -304,12 +304,12 @@ async function subirImagenCarro() {
                 // Restaurar el botón en caso de error
                 btnSubirImagen.innerHTML = originalText;
                 btnSubirImagen.disabled = false;
-                
+
                 console.error('Error al procesar la imagen:', error);
                 alert(`Error al procesar la imagen: ${error.message}`);
             }
         };
-        
+
         reader.readAsDataURL(file);
     } catch (error) {
         console.error('Error al subir la imagen:', error);
@@ -317,11 +317,76 @@ async function subirImagenCarro() {
     }
 }
 
+async function obtenerTipoGerente(planta) {
+    try {
+        if (!planta) {
+            console.error('Error: Se requiere especificar una planta');
+            return null;
+        }
+        
+        const response = await fetch(`/api/assemblymonitor/GetManagerType?plant=${encodeURIComponent(planta)}`);
+        
+        if (!response.ok) {
+            throw new Error(`Error al obtener tipo de gerente: ${response.status}`);
+        }
+        
+        const managerType = await response.json();
+        console.log('Tipo de gerente:', managerType);
+        
+        return managerType;
+    } catch (error) {
+        console.error('Error:', error);
+        alert('No se pudo obtener el tipo de gerente. Por favor, intente nuevamente más tarde.');
+        return null;
+    }
+}
+
+document.querySelector("#btnEncargadosLinea").addEventListener("click", async function () {
+    const selectPlanta = document.getElementById("selectPlanta");
+    const plantaSeleccionada = selectPlanta.value;
+
+    if (!plantaSeleccionada) {
+        alert("Por favor, seleccione una planta.");
+        return;
+    }
+
+    const tipoGerente = await obtenerTipoGerente(plantaSeleccionada);
+
+    if (!tipoGerente) {
+        alert("No se pudo obtener el tipo de gerente. Por favor, intente nuevamente más tarde.");
+        return;
+    }
+
+     // Obtener el elemento select
+     const selectLider = document.getElementById('selectLider');
+
+     // Limpiar el select y agregar la opción por defecto
+     selectLider.innerHTML = '<option selected disabled value="">Seleccione un líder...</option>';
+        
+     // Agregar las opciones de líderes
+     tipoGerente.forEach(lider => {
+         const option = document.createElement('option');
+         option.value = lider.id; // Ajusta según la estructura de tus datos
+         option.textContent = `${lider.type}`; // Ajusta según la estructura de tus datos
+         selectLider.appendChild(option);
+     });
+
+     // Habilitar el select
+     selectLider.disabled = false;
+
+   
+})
+
+// Ejemplo de uso:
+// const tipoGerente = await obtenerTipoGerente('PlantaEjemplo');
+// if (tipoGerente) {
+//     console.log(`ID: ${tipoGerente.id}, Tipo: ${tipoGerente.type}`);
+// }
+
 // Agregar el evento al botón de subir imagen cuando el DOM esté cargado
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const btnSubirImagen = document.getElementById('btnSubirImagen');
     if (btnSubirImagen) {
         btnSubirImagen.addEventListener('click', subirImagenCarro);
     }
 });
-    

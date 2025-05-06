@@ -90,7 +90,7 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <button type="button" class="btn btn-info w-100" data-bs-toggle="modal"
-                                data-bs-target="#modalEncargados">
+                                data-bs-target="#modalEncargados" id="btnEncargadosLinea">
                                 <i class="bi bi-person-plus-fill me-2"></i>Agregar Encargados de Línea
                             </button>
                         </div>
@@ -120,11 +120,9 @@
                 <form id="formAgregarEncargado">
                     <div class="mb-3">
                         <label for="selectLider" class="form-label">Líder</label>
-                        <select id="selectLider" class="form-select">
+                        <select id="selectLider" class="form-select" disabled>
                             <option selected disabled value="">Seleccione un líder...</option>
-                            <!-- Opciones de líderes se cargarán dinámicamente -->
-                            <option value="L1">Líder Juan Pérez</option>
-                            <option value="L2">Líder Ana Gómez</option>
+                            <!-- Las opciones de líderes se cargarán dinámicamente -->
                         </select>
                     </div>
                     <div class="mb-3">
@@ -175,5 +173,5 @@
 </div>
 
 
-    <script src="/js/assenblyIndex.js"></script>
+<script src="/js/assenblyIndex.js"></script>
 
