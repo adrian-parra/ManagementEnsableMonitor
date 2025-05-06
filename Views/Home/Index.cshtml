@@ -206,6 +206,45 @@
 
             // Habilitar el botón de guardar
             document.getElementById('btnGuardarInformacion').disabled = false;
+
+
+        });
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            // Lógica para cargar opciones de planta y línea
+            const selectPlanta = document.getElementById('selectPlanta');
+            const selectLinea = document.getElementById('selectLinea');
+
+            try {
+                // Obtener datos de plantas desde el servidor
+                const response = await fetch('/Home/GetPlants');
+                
+                if (!response.ok) {
+                    throw new Error(`Error al obtener plantas: ${response.status}`);
+                }
+                
+                const plantas = await response.json();
+                
+                // Limpiar opciones existentes (excepto la primera)
+                selectPlanta.innerHTML = '<option selected disabled value="">Seleccione una planta...</option>';
+                
+                // Agregar nuevas opciones basadas en los datos recibidos
+                plantas.forEach(planta => {
+                    const option = document.createElement('option');
+                    option.value = planta.id;
+                    option.textContent = planta.nombre;
+                    // Guardar datos adicionales como atributos de datos si es necesario
+                    @* option.dataset.codigoTress = planta.codigoTress;
+                    option.dataset.checadores = planta.checadoresDePlanta;
+                    selectPlanta.appendChild(option); *@
+                });
+                
+                console.log('Plantas cargadas:', plantas);
+            } catch (error) {
+                console.error('Error al cargar plantas:', error);
+                // Mostrar mensaje de error al usuario
+                alert('No se pudieron cargar las plantas. Por favor, intente nuevamente más tarde.');
+            }
         });
     </script>
 }
