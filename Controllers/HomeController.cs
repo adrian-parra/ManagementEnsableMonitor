@@ -10,7 +10,7 @@ namespace AppManagementEnsableMonitor.Controllers
 {
     public class HomeController : Controller
     {
-        
+
         private readonly IAssemby _assembly;
 
         public HomeController(ILogger<HomeController> logger, IAssemby assembly)
@@ -35,7 +35,7 @@ namespace AppManagementEnsableMonitor.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 return StatusCode(500, new { success = false, message = "Error al recuperar plantas", error = ex.Message });
             }
         }
@@ -70,7 +70,7 @@ namespace AppManagementEnsableMonitor.Controllers
                 if (string.IsNullOrEmpty(ip_add))
                 {
                     ip_add = HttpContext.Connection.RemoteIpAddress?.ToString();
-                    
+
                     // Si estamos detrás de un proxy, intentar obtener la IP real
                     string headerIp = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
                     if (!string.IsNullOrEmpty(headerIp))
@@ -78,7 +78,7 @@ namespace AppManagementEnsableMonitor.Controllers
                         // X-Forwarded-For puede contener múltiples IPs separadas por comas
                         ip_add = headerIp.Split(',')[0].Trim();
                     }
-                    
+
                     // Si aún no tenemos una IP válida, usar una predeterminada
                     if (string.IsNullOrEmpty(ip_add) || ip_add == "::1")
                     {
@@ -97,7 +97,7 @@ namespace AppManagementEnsableMonitor.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 return StatusCode(500, new { success = false, message = "Error al recuperar información del dominio", error = ex.Message });
             }
         }
@@ -122,9 +122,9 @@ namespace AppManagementEnsableMonitor.Controllers
                 }
 
                 // Validar que los campos requeridos no estén vacíos
-                if (string.IsNullOrEmpty(request.Plant) || 
-                    string.IsNullOrEmpty(request.LineId) || 
-                    string.IsNullOrEmpty(request.ImageBase64) || 
+                if (string.IsNullOrEmpty(request.Plant) ||
+                    string.IsNullOrEmpty(request.LineId) ||
+                    string.IsNullOrEmpty(request.ImageBase64) ||
                     string.IsNullOrEmpty(request.RegisterUser))
                 {
                     return BadRequest(new { success = false, message = "Todos los campos son requeridos" });
@@ -135,10 +135,10 @@ namespace AppManagementEnsableMonitor.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new MDImageCarResponse 
-                { 
-                    Msj = "Error al subir la imagen del carro", 
-                    Result = ex.Message 
+                return StatusCode(500, new MDImageCarResponse
+                {
+                    Msj = "Error al subir la imagen del carro",
+                    Result = ex.Message
                 });
             }
         }
@@ -160,6 +160,34 @@ namespace AppManagementEnsableMonitor.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { success = false, message = "Error al recuperar tipo de gerente", error = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult<MDManagerLineResponse>> PostManagerLine([FromBody] MDManagerLineRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new MDManagerLineResponse
+                    {
+                        Msj = "Datos de solicitud inválidos",
+                        Result = "ERROR"
+                    });
+                }
+
+                var result = await _assembly.PostManagerLine(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new MDManagerLineResponse
+                {
+                    Msj = $"Error interno del servidor: {ex.Message}",
+                    Result = "ERROR"
+                });
             }
         }
     }

@@ -271,5 +271,41 @@ namespace AppManagementEnsableMonitor.Services.Implementation
                 throw;
             }
         }
+
+        public async Task<MDManagerLineResponse> PostManagerLine(MDManagerLineRequest request)
+        {
+            try
+            {
+                var json = JsonSerializer.Serialize(request);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                
+                var response = await _httpClient.PostAsync($"{_apiBaseUrl}/assemblymonitor/PostManagerLine", content);
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    var result = JsonSerializer.Deserialize<MDManagerLineResponse>(responseContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                    
+                    return result;
+                }
+                
+                return new MDManagerLineResponse
+                {
+                    Msj = $"Error: {response.StatusCode}",
+                    Result = "ERROR"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new MDManagerLineResponse
+                {
+                    Msj = $"Error: {ex.Message}",
+                    Result = "ERROR"
+                };
+            }
+        }
     }
 }

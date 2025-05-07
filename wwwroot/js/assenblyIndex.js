@@ -578,7 +578,35 @@ const LineManagerService = {
             if (empleado) {
                 // Aquí se implementaría la lógica para guardar el encargado
                 // Por ejemplo, una llamada a otro endpoint para guardar la relación entre el líder y el empleado
-                
+                 // Crear el objeto de solicitud
+                // const request = {
+                //     plant: selectPlanta.value,
+                //     lineId: selectLinea.value,
+                 //     imageBase64: base64String.split(',')[1], // Eliminar el prefijo "data:image/jpeg;base64,"
+                //     registerUser: userDomain && userDomain.userName ? userDomain.userName : 'usuario_desconocido'
+                // };
+
+                const request = {
+                    employee: reloj,
+                    type: lider,
+                    plant: AppState.selectedPlant,
+                    lineId: AppState.selectedLine,
+                    registerUser: AppState.currentUser.userName
+                };
+
+                console.log('Solicitud de guardado:', request);
+
+                const result = await API.post('/Home/PostManagerLine', request);
+
+                console.log('Respuesta del servidor:', result);
+
+                if (result.result !== "SUCCESS") {
+                    throw new Error(result.error);
+                }
+            
+                // Enviar la solicitud al servidor
+                //const result = await API.post('/Home/PostImageCar', request);
+
                 // Simulación de guardado exitoso
                 UI.showAlert('Encargado guardado correctamente.', 'success');
                 
