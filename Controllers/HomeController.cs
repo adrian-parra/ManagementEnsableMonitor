@@ -164,6 +164,31 @@ namespace AppManagementEnsableMonitor.Controllers
         }
 
 
+        [HttpGet]
+        [Route("api/assemblymonitor/GetAssemblyMonitor")]
+        public async Task<IActionResult> GetAssemblyMonitor(string plant, string lineIdCMS)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(plant))
+                {
+                    return BadRequest(new { success = false, message = "El parámetro plant es requerido" });
+                }
+
+                if (string.IsNullOrEmpty(lineIdCMS))
+                {
+                    return BadRequest(new { success = false, message = "El parámetro lineIdCMS es requerido" });
+                }
+
+                var assemblyMonitor = await _assembly.GetAssemblyMonitor(plant, lineIdCMS);
+                return Ok(assemblyMonitor);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = "Error al recuperar información del monitor de ensamblaje", error = ex.Message });
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult<MDManagerLineResponse>> PostManagerLine([FromBody] MDManagerLineRequest request)
         {

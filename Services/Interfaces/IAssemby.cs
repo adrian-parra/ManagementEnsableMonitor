@@ -13,5 +13,6 @@ namespace AppManagementEnsableMonitor.Services.Interfaces
         Task<MDImageCarResponse> PostImageCar(MDImageCarRequest request);
         Task<List<MDManagerType>> GetManagerType(string plant);
         Task<MDManagerLineResponse> PostManagerLine(MDManagerLineRequest request);
+        Task<MDAssemblyMonitor> GetAssemblyMonitor(string plant, string lineIdCMS);
     }
 }

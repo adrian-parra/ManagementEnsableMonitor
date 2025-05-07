@@ -738,15 +738,53 @@ function initUIEvents() {
     // Evento para el botón de consultar
     const btnConsultar = document.getElementById('btnConsultar');
     if (btnConsultar) {
-        btnConsultar.addEventListener('click', function() {
-            // Simular carga de datos (esto debería reemplazarse por una llamada real a la API)
-            UI.updateElement('inputModeloArnes', { value: 'XZ-2000-CONSULTADO' });
-            UI.updateElement('inputProduccionEsperada', { value: 600 });
-            UI.updateElement('inputProduccionActual', { value: 300 });
-            UI.updateElement('inputEficiencia', { value: '50%' });
-            
-            // Habilitar el botón de guardar
-            UI.updateElement('btnGuardarInformacion', { disabled: false });
+        btnConsultar.addEventListener('click', async function() {
+            try {
+                const selectPlanta = document.getElementById('selectPlanta');
+                const selectLinea = document.getElementById('selectLinea');
+                
+                // Validar que se haya seleccionado una planta y una línea
+                if (!selectPlanta.value) {
+                    UI.showAlert('Por favor, seleccione una planta.', 'warning');
+                    return;
+                }
+                
+                if (!selectLinea.value) {
+                    UI.showAlert('Por favor, seleccione una línea.', 'warning');
+                    return;
+                }
+                
+                // Mostrar indicador de carga
+                UI.updateElement('btnConsultar', {
+                    disabled: true,
+                    html: '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Consultando...'
+                });
+                
+                // Obtener los datos del monitor de ensamblaje
+                const plant = selectPlanta.value;
+                const lineIdCMS = selectLinea.value;
+                
+                const assemblyMonitor = await AssemblyMonitorService.getAssemblyMonitor(plant, lineIdCMS);
+                
+                // Actualizar la interfaz con los datos obtenidos
+                if (assemblyMonitor) {
+                    AssemblyMonitorService.updateMonitorUI(assemblyMonitor);
+                    
+                    // Mostrar mensaje de éxito
+                    UI.showAlert(`Información de la línea ${assemblyMonitor.nombreLinea} cargada correctamente.`, 'success');
+                } else {
+                    UI.showAlert('No se pudo obtener la información de la línea. Por favor, intente nuevamente más tarde.', 'error');
+                }
+            } catch (error) {
+                console.error('Error al consultar información:', error);
+                UI.showAlert(`Error al consultar información: ${error.message}`, 'error');
+            } finally {
+                // Restaurar el botón
+                UI.updateElement('btnConsultar', {
+                    disabled: false,
+                    html: '<i class="bi bi-search me-2"></i>Consultar Información'
+                });
+            }
         });
     }
     
@@ -794,3 +832,318 @@ function initUIEvents() {
         btnGuardarEncargado.addEventListener('click', LineManagerService.saveLineManager);
     }
 }
+
+/**
+ * Módulo para gestionar el monitor de ensamblaje
+ * @namespace AssemblyMonitorService
+ */
+const AssemblyMonitorService = {
+    /**
+     * Obtiene la información del monitor de ensamblaje
+     * @param {string} plant - ID de la planta
+     * @param {string} lineIdCMS - ID de la línea
+     * @returns {Promise<Object|null>} Información del monitor
+     */
+    async getAssemblyMonitor(plant, lineIdCMS) {
+        try {
+            if (!plant) {
+                UI.showAlert('Por favor, seleccione una planta.', 'warning');
+                return null;
+            }
+            
+            if (!lineIdCMS) {
+                UI.showAlert('Por favor, seleccione una línea.', 'warning');
+                return null;
+            }
+            
+            return await API.get('/api/assemblymonitor/GetAssemblyMonitor', {
+                plant: plant,
+                lineIdCMS: lineIdCMS
+            });
+        } catch (error) {
+            console.error('Error al obtener información del monitor:', error);
+            UI.showAlert('No se pudo obtener la información del monitor. Por favor, intente nuevamente más tarde.', 'error');
+            return null;
+        }
+    },
+    
+    /**
+     * Actualiza la interfaz con la información del monitor
+     * @param {Object} data - Datos del monitor
+     */
+    updateMonitorUI(data) {
+        if (!data) return;
+        
+        // Actualizar campos básicos
+        UI.updateElement('inputModeloArnes', { value: data.noParte || 'No disponible' });
+        UI.updateElement('inputProduccionEsperada', { value: data.planPiezas || '0' });
+        UI.updateElement('inputProduccionActual', { value: data.piezasReal || '0' });
+        UI.updateElement('inputEficiencia', { value: data.productividadReal || '0%' });
+        
+        // Crear campos adicionales si no existen
+        this.createAdditionalFields();
+        
+        // Actualizar campos adicionales
+        UI.updateElement('inputNombreLinea', { value: data.nombreLinea || 'No disponible' });
+        UI.updateElement('inputFecha', { value: data.fecha || 'No disponible' });
+        UI.updateElement('inputHC', { value: data.hc || '0' });
+        UI.updateElement('inputAsistencia', { value: data.assittencia || '0' });
+        UI.updateElement('inputLF', { value: data.lf || '0' });
+        UI.updateElement('inputTurno', { value: data.turno || 'No disponible' });
+        UI.updateElement('inputMetaPiezasHr', { value: data.metaPiezasHr || '0' });
+        UI.updateElement('inputDiffPiezas', { value: data.diffPiezas || '0' });
+        UI.updateElement('inputProductividadMeta', { value: data.productividadMeta || '0%' });
+        UI.updateElement('inputDiffProductividad', { value: data.diffProductividad || '0%' });
+        UI.updateElement('inputDefectoDia', { value: data.defectoDia || '0' });
+        UI.updateElement('inputDiasSinDefecto', { value: data.diasSinDefecto || '0' });
+        UI.updateElement('inputTMuerto', { value: data.tMuerto || '0' });
+        UI.updateElement('inputHora', { value: data.hora || 'No disponible' });
+        UI.updateElement('inputTTplan', { value: data.tTplan || '0' });
+        UI.updateElement('inputTTreal', { value: data.tTreal || '0' });
+        
+        // Habilitar el botón de guardar
+        UI.updateElement('btnGuardarInformacion', { disabled: false });
+    },
+    
+    /**
+     * Crea campos adicionales en el formulario si no existen
+     */
+    createAdditionalFields() {
+        const formContainer = document.querySelector('#formInformacionLinea .row');
+        if (!formContainer) return;
+        
+        // Verificar si ya existen los campos adicionales
+        if (document.getElementById('inputNombreLinea')) return;
+        
+        // Crear campos adicionales
+        const additionalFields = [
+            { id: 'inputNombreLinea', label: 'Nombre de Línea', placeholder: 'Ej: Línea A' },
+            { id: 'inputFecha', label: 'Fecha', placeholder: 'Ej: 01/01/2023' },
+            { id: 'inputHC', label: 'HC', placeholder: 'Ej: 10' },
+            { id: 'inputAsistencia', label: 'Asistencia', placeholder: 'Ej: 8' },
+            { id: 'inputLF', label: 'LF', placeholder: 'Ej: 2' },
+            { id: 'inputTurno', label: 'Turno', placeholder: 'Ej: Matutino' },
+            { id: 'inputMetaPiezasHr', label: 'Meta Piezas/Hr', placeholder: 'Ej: 50' },
+            { id: 'inputDiffPiezas', label: 'Diferencia Piezas', placeholder: 'Ej: +10' },
+            { id: 'inputProductividadMeta', label: 'Productividad Meta', placeholder: 'Ej: 80%' },
+            { id: 'inputDiffProductividad', label: 'Diferencia Productividad', placeholder: 'Ej: +5%' },
+            { id: 'inputDefectoDia', label: 'Defectos del Día', placeholder: 'Ej: 2' },
+            { id: 'inputDiasSinDefecto', label: 'Días Sin Defecto', placeholder: 'Ej: 5' },
+            { id: 'inputTMuerto', label: 'Tiempo Muerto', placeholder: 'Ej: 30 min' },
+            { id: 'inputHora', label: 'Hora', placeholder: 'Ej: 14:30' },
+            { id: 'inputTTplan', label: 'TT Plan', placeholder: 'Ej: 120' },
+            { id: 'inputTTreal', label: 'TT Real', placeholder: 'Ej: 115' }
+        ];
+        
+        // Agregar campos al formulario
+        additionalFields.forEach(field => {
+            const fieldHtml = `
+                <div class="col-md-6 mt-3">
+                    <label for="${field.id}" class="form-label">${field.label}</label>
+                    <input type="text" class="form-control" id="${field.id}" placeholder="${field.placeholder}" readonly>
+                </div>
+            `;
+            formContainer.insertAdjacentHTML('beforeend', fieldHtml);
+        });
+
+        formContainer.insertAdjacentHTML('beforeend', `
+            <div class="col-12 text-end">
+                                <button type="submit" class="btn btn-success" id="btnGuardarInformacion" disabled><i
+                                        class="bi bi-save me-2"></i>Guardar Cambios</button>
+                            </div>`);
+    }
+};
+
+// Inicialización de la aplicación
+// document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar eventos
+    // initEvents();
+    
+    // Cargar datos iniciales
+    // loadInitialData();
+// });
+
+/**
+ * Inicializa los eventos de la aplicación
+ */
+// function initEvents() {
+//     // Evento para el botón de consultar
+//     const btnConsultar = document.getElementById('btnConsultar');
+//     if (btnConsultar) {
+//         btnConsultar.addEventListener('click', async function() {
+//             try {
+//                 const selectPlanta = document.getElementById('selectPlanta');
+//                 const selectLinea = document.getElementById('selectLinea');
+                
+//                 // Validar que se haya seleccionado una planta y una línea
+//                 if (!selectPlanta.value) {
+//                     UI.showAlert('Por favor, seleccione una planta.', 'warning');
+//                     return;
+//                 }
+                
+//                 if (!selectLinea.value) {
+//                     UI.showAlert('Por favor, seleccione una línea.', 'warning');
+//                     return;
+//                 }
+                
+//                 // Mostrar indicador de carga
+//                 UI.updateElement('btnConsultar', {
+//                     disabled: true,
+//                     html: '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Consultando...'
+//                 });
+                
+//                 // Obtener los datos del monitor de ensamblaje
+//                 const plant = selectPlanta.value;
+//                 const lineIdCMS = selectLinea.value;
+                
+//                 const assemblyMonitor = await AssemblyMonitorService.getAssemblyMonitor(plant, lineIdCMS);
+                
+//                 // Actualizar la interfaz con los datos obtenidos
+//                 if (assemblyMonitor) {
+//                     AssemblyMonitorService.updateMonitorUI(assemblyMonitor);
+                    
+//                     // Mostrar mensaje de éxito
+//                     UI.showAlert(`Información de la línea ${assemblyMonitor.nombreLinea} cargada correctamente.`, 'success');
+//                 } else {
+//                     UI.showAlert('No se pudo obtener la información de la línea. Por favor, intente nuevamente más tarde.', 'error');
+//                 }
+//             } catch (error) {
+//                 console.error('Error al consultar información:', error);
+//                 UI.showAlert(`Error al consultar información: ${error.message}`, 'error');
+//             } finally {
+//                 // Restaurar el botón
+//                 UI.updateElement('btnConsultar', {
+//                     disabled: false,
+//                     html: '<i class="bi bi-search me-2"></i>Consultar Información'
+//                 });
+//             }
+//         });
+//     }
+    
+//     // Evento para el cambio de planta
+//     const selectPlanta = document.getElementById('selectPlanta');
+//     if (selectPlanta) {
+//         selectPlanta.addEventListener('change', async function() {
+//             const plantId = this.value;
+            
+//             if (plantId) {
+//                 try {
+//                     // Actualizar el estado global
+//                     AppState.selectedPlant = plantId;
+                    
+//                     // Obtener las líneas de la planta seleccionada
+//                     const lines = await PlantService.getLines(plantId);
+                    
+//                     // Actualizar el select de líneas
+//                     const selectLinea = document.getElementById('selectLinea');
+                    
+//                     // Limpiar el select y agregar la opción por defecto
+//                     selectLinea.innerHTML = '<option selected disabled value="">Seleccione una línea...</option>';
+                    
+//                     // Agregar las opciones de líneas
+//                     if (lines && lines.length > 0) {
+//                         lines.forEach(line => {
+//                             const option = document.createElement('option');
+//                             option.value = line.id;
+//                             option.textContent = line.name;
+//                             selectLinea.appendChild(option);
+//                         });
+                        
+//                         // Habilitar el select
+//                         selectLinea.disabled = false;
+//                     } else {
+//                         // Deshabilitar el select si no hay líneas
+//                         selectLinea.disabled = true;
+//                         UI.showAlert('No se encontraron líneas para esta planta.', 'warning');
+//                     }
+//                 } catch (error) {
+//                     console.error('Error al cargar líneas:', error);
+//                     UI.showAlert('Error al cargar las líneas. Por favor, intente nuevamente más tarde.', 'error');
+//                 }
+//             }
+//         });
+//     }
+    
+//     // Evento para el cambio de línea
+//     const selectLinea = document.getElementById('selectLinea');
+//     if (selectLinea) {
+//         selectLinea.addEventListener('change', function() {
+//             // Actualizar el estado global
+//             AppState.selectedLine = this.value;
+//         });
+//     }
+    
+//     // Evento para el botón de agregar encargados
+//     const btnEncargadosLinea = document.getElementById('btnEncargadosLinea');
+//     if (btnEncargadosLinea) {
+//         btnEncargadosLinea.addEventListener('click', async function() {
+//             await LineManagerService.openLineManagerModal();
+//         });
+//     }
+    
+//     // Evento para el botón de guardar encargado
+//     const btnGuardarEncargado = document.getElementById('btnGuardarEncargado');
+//     if (btnGuardarEncargado) {
+//         btnGuardarEncargado.addEventListener('click', async function() {
+//             await LineManagerService.saveLineManager();
+//         });
+//     }
+    
+//     // Evento para la vista previa de la imagen
+//     const inputImagenCarro = document.getElementById('inputImagenCarro');
+//     if (inputImagenCarro) {
+//         inputImagenCarro.addEventListener('change', function(event) {
+//             ImageService.showImagePreview(event);
+//         });
+//     }
+    
+//     // Evento para el botón de subir imagen
+//     const btnSubirImagen = document.getElementById('btnSubirImagen');
+//     if (btnSubirImagen) {
+//         btnSubirImagen.addEventListener('click', async function() {
+//             await ImageService.uploadCarImage();
+//         });
+//     }
+    
+//     // Prevenir envío de formularios
+//     const forms = document.querySelectorAll('form');
+//     forms.forEach(form => {
+//         form.addEventListener('submit', function(event) {
+//             event.preventDefault();
+//         });
+//     });
+// }
+
+/**
+ * Carga los datos iniciales de la aplicación
+ */
+// async function loadInitialData() {
+//     try {
+//         // Obtener información del usuario
+//         await UserService.getCurrentUser();
+        
+//         // Cargar plantas
+//         const plants = await PlantService.getPlants();
+        
+//         // Actualizar el select de plantas
+//         const selectPlanta = document.getElementById('selectPlanta');
+        
+//         // Limpiar el select y agregar la opción por defecto
+//         selectPlanta.innerHTML = '<option selected disabled value="">Seleccione una planta...</option>';
+        
+//         // Agregar las opciones de plantas
+//         if (plants && plants.length > 0) {
+//             plants.forEach(plant => {
+//                 const option = document.createElement('option');
+//                 option.value = plant.id;
+//                 option.textContent = plant.name;
+//                 selectPlanta.appendChild(option);
+//             });
+//         } else {
+//             UI.showAlert('No se encontraron plantas disponibles.', 'warning');
+//         }
+//     } catch (error) {
+//         console.error('Error al cargar datos iniciales:', error);
+//         UI.showAlert('Error al cargar los datos iniciales. Por favor, recargue la página e intente nuevamente.', 'error');
+//     }
+// }
