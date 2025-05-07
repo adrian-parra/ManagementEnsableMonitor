@@ -12,6 +12,5 @@ namespace AppManagementEnsableMonitor.Services.Interfaces
         Task<MDUserDomain> GetUserDomain(string softwareName, string ipAdd);
         Task<MDImageCarResponse> PostImageCar(MDImageCarRequest request);
         Task<List<MDManagerType>> GetManagerType(string plant);
-        // Aquí puedes agregar otros métodos que necesites para tu aplicación
     }
 }

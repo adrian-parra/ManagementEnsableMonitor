@@ -390,3 +390,119 @@ document.addEventListener('DOMContentLoaded', function () {
         btnSubirImagen.addEventListener('click', subirImagenCarro);
     }
 });
+
+// Función para obtener información del empleado por número de reloj
+async function obtenerInformacionEmpleado(reloj) {
+    try {
+        if (!reloj) {
+            alert('Por favor, ingrese un número de reloj válido.');
+            return null;
+        }
+        
+        // Mostrar indicador de carga o deshabilitar el campo
+        const inputRelojUsuario = document.getElementById('inputRelojUsuario');
+        const valorOriginal = inputRelojUsuario.value;
+        inputRelojUsuario.disabled = true;
+        inputRelojUsuario.value = 'Buscando...';
+        
+        // Realizar la petición al servidor
+        const response = await fetch(`/Empleado/GetEmployee?reloj=${encodeURIComponent(reloj)}`);
+        
+        // Restaurar el campo
+        inputRelojUsuario.disabled = false;
+        inputRelojUsuario.value = valorOriginal;
+        
+        if (!response.ok) {
+            throw new Error(`Error al obtener información del empleado: ${response.status}`);
+        }
+        
+        const empleado = await response.json();
+        console.log('Información del empleado:', empleado);
+        
+        // Si la respuesta contiene un mensaje de error, mostrarlo
+        if (empleado.errorMsj) {
+            alert(`Error: ${empleado.errorMsj}`);
+            return null;
+        }
+        
+        // Mostrar la información del empleado (puedes personalizar esto según tus necesidades)
+        // Por ejemplo, podrías mostrar el nombre en un campo adicional
+        alert(`Empleado encontrado: ${empleado.nombre}`);
+        
+        // Aquí puedes agregar código para llenar otros campos con la información del empleado
+        // Por ejemplo:
+        // document.getElementById('inputNombreEmpleado').value = empleado.nombre;
+        
+        return empleado;
+    } catch (error) {
+        console.error('Error:', error);
+        alert('No se pudo obtener la información del empleado. Por favor, intente nuevamente más tarde.');
+        return null;
+    }
+}
+
+// Agregar evento de tecla al campo de número de reloj cuando el DOM esté cargado
+document.addEventListener('DOMContentLoaded', function() {
+    const inputRelojUsuario = document.getElementById('inputRelojUsuario');
+    
+    if (inputRelojUsuario) {
+        inputRelojUsuario.addEventListener('keypress', async function(event) {
+            event.stopPropagation();
+            // Verificar si la tecla presionada es "Enter"
+            if (event.key === 'Enter') {
+                // Prevenir el comportamiento predeterminado (envío del formulario)
+                event.preventDefault();
+                
+                
+                // Obtener el valor del campo
+                const reloj = this.value.trim();
+                
+                // Llamar a la función para obtener información del empleado
+                await obtenerInformacionEmpleado(reloj);
+            }
+        });
+    }
+    
+    // Agregar evento al botón de guardar encargado
+    const btnGuardarEncargado = document.getElementById('btnGuardarEncargado');
+    if (btnGuardarEncargado) {
+        btnGuardarEncargado.addEventListener('click', async function() {
+            const reloj = document.getElementById('inputRelojUsuario').value.trim();
+            const lider = document.getElementById('selectLider').value;
+            
+            if (!reloj) {
+                alert('Por favor, ingrese un número de reloj válido.');
+                return;
+            }
+            
+            if (!lider || lider === '') {
+                alert('Por favor, seleccione un líder.');
+                return;
+            }
+            
+            // Obtener información del empleado antes de guardar
+            const empleado = await obtenerInformacionEmpleado(reloj);
+            
+            if (empleado) {
+                // Aquí puedes agregar la lógica para guardar el encargado
+                // Por ejemplo, una llamada a otro endpoint para guardar la relación entre el líder y el empleado
+                alert('Encargado guardado correctamente.');
+                
+                // Cerrar el modal
+                const modalElement = document.getElementById('modalEncargados');
+                if (modalElement) {
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    if (modal) {
+                        modal.hide();
+                    } else {
+                        // Si no se puede obtener la instancia, intentar cerrar de otra manera
+                        $(modalElement).modal('hide');
+                    }
+                }
+                
+                // Limpiar el formulario
+                document.getElementById('formAgregarEncargado').reset();
+            }
+        });
+    }
+});

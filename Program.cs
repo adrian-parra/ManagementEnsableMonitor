@@ -10,6 +10,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IAssemby, AssemblyImp>();
 
+// Registrar el servicio de empleado
+builder.Services.AddHttpClient<IEmpleado, EmpleadoImp>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
