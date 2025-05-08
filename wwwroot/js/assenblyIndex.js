@@ -1021,22 +1021,45 @@ const AssemblyMonitorService = {
      */
     updateMonitorUI(data) {
         if (!data) return;
+
+        console.log("laol "+AppState.department);
+        
+        // Verificar si el usuario pertenece al departamento de ingeniería
+        const esIngenieria = AppState.department === "Ingenieria";
+        const esRh = AppState.department === "Rh";
+        const esManufactura = AppState.department === "Manufactura";
         
         // Actualizar campos básicos
-        UI.updateElement('inputModeloArnes', { value: data.numeroParte || 'No disponible' });
-        UI.updateElement('inputProduccionEsperada', { value: data.metaProductividad || '0' });
+        UI.updateElement('inputModeloArnes', { 
+            value: data.numeroParte || 'No disponible',
+            disabled: !esIngenieria // Habilitar solo si es de ingeniería
+        });
+        UI.updateElement('inputProduccionEsperada', { 
+            value: data.metaProductividad || '0',
+            disabled: !esIngenieria // Habilitar solo si es de ingeniería
+        });
         UI.updateElement('inputProduccionActual', { value: data.metaIPD || '0' });
-        UI.updateElement('inputEficiencia', { value: data.metaProductividad || '0%' });
         
         // Crear campos adicionales si no existen
         this.createAdditionalFields();
         
         // Actualizar campos adicionales
-        UI.updateElement('inputNombreLinea', { value: data.nombreLinea || 'No disponible' });
+        UI.updateElement('inputNombreLinea', 
+            { 
+                value: data.nombreLinea || 'No disponible' ,
+                disabled:!esManufactura
+            }
+        );
         UI.updateElement('inputWorkProcess', { value: data.workProccess || 'No disponible' });
-        UI.updateElement('inputTressId', { value: data.tressId || 'No disponible' });
+        UI.updateElement('inputTressId', { 
+            value: data.tressId || 'No disponible',
+            disabled:!esRh
+         });
         UI.updateElement('inputTerminalEmpaque', { value: data.terminalEmpaque || 'No disponible' });
-        UI.updateElement('inputFormacionPe', { value: data.formacionPe || 'No disponible' });
+        UI.updateElement('inputFormacionPe', { 
+            value: data.formacionPe || 'No disponible',
+            disabled: !esIngenieria // Habilitar solo si es de ingeniería
+        });
         UI.updateElement('inputLineId', { value: data.lineId || 'No disponible' });
         UI.updateElement('inputLineId2', { value: data.lineId2 || 'No disponible' });
         UI.updateElement('inputDescripcion', { value: data.descripcion || 'No disponible' });
@@ -1046,8 +1069,8 @@ const AssemblyMonitorService = {
         UI.updateElement('inputEstatus', { value: data.estatus ? 'Activo' : 'Inactivo' });
         UI.updateElement('inputTipoConfiguracion', { value: data.idTipoConfiguracion || '0' });
         
-        // Habilitar el botón de guardar
-        UI.updateElement('btnGuardarInformacion', { disabled: false });
+        // Habilitar el botón de guardar solo si el usuario es de ingeniería
+        UI.updateElement('btnGuardarInformacion', { disabled: !esIngenieria });
     },
     
     /**
