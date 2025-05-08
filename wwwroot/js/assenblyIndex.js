@@ -561,7 +561,8 @@ const LineManagerService = {
     async saveLineManager() {
         try {
             const reloj = document.getElementById('inputRelojUsuario').value.trim();
-            const lider = document.getElementById('selectLider').value;
+                       
+            const lider = document.getElementById('selectLider').options[document.getElementById('selectLider').selectedIndex].text.trim();
             
             if (!reloj) {
                 UI.showAlert('Por favor, ingrese un número de reloj válido.', 'warning');
