@@ -879,7 +879,14 @@ function initUIEvents() {
                 
                 console.log(userRol);
                 
-                const assemblyMonitor = await AssemblyMonitorService.getAssemblyMonitor(plant, lineIdCMS);
+                //const assemblyMonitor = await AssemblyMonitorService.getAssemblyMonitor(plant, lineIdCMS);
+                   const assemblyMonitor = await API.get('/Home/GetLineDetail',
+                    {
+                        line_id:AppState.selectedLine,
+                    });
+
+                console.log(assemblyMonitor);
+
                 
                 // Actualizar la interfaz con los datos obtenidos
                 if (assemblyMonitor) {

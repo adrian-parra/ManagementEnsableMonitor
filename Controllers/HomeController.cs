@@ -215,5 +215,24 @@ namespace AppManagementEnsableMonitor.Controllers
                 });
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetLineDetail(string line_id)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(line_id))
+                {
+                    return BadRequest(new { success = false, message = "El parámetro line_id es requerido" });
+                }
+
+                var lineDetail = await _assembly.GetLineDetail(line_id);
+                return Ok(lineDetail);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = "Error al recuperar detalles de la línea", error = ex.Message });
+            }
+        }
     }
 }
