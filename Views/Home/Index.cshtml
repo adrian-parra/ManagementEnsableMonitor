@@ -108,10 +108,10 @@
 <div class="modal fade" id="modalEncargados" tabindex="-1" aria-labelledby="modalEncargadosLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="modalEncargadosLabel"><i class="bi bi-person-plus-fill me-2"></i>Agregar
                     Encargado de Línea</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="formAgregarEncargado">
@@ -122,18 +122,42 @@
                             <!-- Las opciones de líderes se cargarán dinámicamente -->
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label for="inputRelojUsuario" class="form-label">Número de Reloj del Usuario</label>
-                        <input type="text" class="form-control" id="inputRelojUsuario"
-                            placeholder="Ingrese el número de reloj">
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <label for="inputRelojUsuario" class="form-label">Número de Reloj del Usuario</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="inputRelojUsuario"
+                                    placeholder="Ingrese el número de reloj">
+                                <button class="btn btn-outline-primary" type="button" id="btnBuscarEmpleado">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                            <div class="form-text">Ingrese el número y presione el botón de búsqueda</div>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <label class="form-label">Foto</label>
+                            <div id="empleadoImageContainer" class="d-flex justify-content-center align-items-center">
+                                <div id="empleadoImagePlaceholder" class="rounded-circle bg-light d-flex justify-content-center align-items-center" style="width: 100px; height: 100px;">
+                                    <i class="bi bi-person text-secondary" style="font-size: 2rem;"></i>
+                                </div>
+                                <img id="empleadoImage" class="rounded-circle d-none" style="width: 100px; height: 100px; object-fit: cover;" alt="Foto del empleado">
+                            </div>
+                        </div>
+                    </div>
+                    <div id="empleadoInfo" class="alert alert-info d-none">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            <span id="empleadoNombre">Información del empleado</span>
+                        </div>
                     </div>
                     <button type="submit" id="btnSubmitGuardarEncargadoLinea" class="d-none">Guardar</button>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" id="btnGuardarEncargado"><i
-                        class="bi bi-save me-2"></i>Guardar Encargado</button>
+                <button type="button" class="btn btn-primary" id="btnGuardarEncargado">
+                    <i class="bi bi-save me-2"></i>Guardar Encargado
+                </button>
             </div>
         </div>
     </div>

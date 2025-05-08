@@ -828,6 +828,22 @@ function initUIEvents() {
                     const data = await dataResponse.json();
                     console.log(data);
                     
+                    // Mostrar la imagen del empleado si está disponible
+                    if(data && data.image) {
+                        const imgElement = document.getElementById('empleadoImage');
+                        const placeholderElement = document.getElementById('empleadoImagePlaceholder');
+                        
+                        imgElement.src = "data:image/jpeg;base64," + data.image;
+                        imgElement.classList.remove('d-none');
+                        placeholderElement.classList.add('d-none');
+                        
+                        // Mostrar información del empleado
+                        const infoElement = document.getElementById('empleadoInfo');
+                        const nombreElement = document.getElementById('empleadoNombre');
+                        
+                        nombreElement.textContent = data.employee || 'Empleado encontrado';
+                        infoElement.classList.remove('d-none');
+                    }
                 }
                 return false;
             }
@@ -961,4 +977,80 @@ const AssemblyMonitorService = {
                             </div>`);
     }
 };
+
+// Agregar después de la inicialización del modal o en la sección de inicialización de eventos
+
+// Evento para el botón de búsqueda de empleado
+document.getElementById('btnBuscarEmpleado').addEventListener('click', async function() {
+    const reloj = document.getElementById('inputRelojUsuario').value.trim();
+    
+    if(!reloj) {
+        // Mostrar mensaje de error si el campo está vacío
+        alert('Por favor, ingrese un número de reloj válido');
+        return;
+    }
+    
+    try {
+        // Mostrar indicador de carga
+        this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+        this.disabled = true;
+        
+       const empleado = await EmployeeService.getEmployee(reloj);
+     
+        if(empleado) {
+            const dataResponse = await fetch("Empleado/GetEmployeeImage?plant=" + AppState.selectedPlant + "&employee=" + reloj);
+            const data = await dataResponse.json();
+            
+            // Mostrar la imagen del empleado si está disponible
+            if(data && data.image) {
+                const imgElement = document.getElementById('empleadoImage');
+                const placeholderElement = document.getElementById('empleadoImagePlaceholder');
+                
+                imgElement.src = "data:image/jpeg;base64," + data.image;
+                imgElement.classList.remove('d-none');
+                placeholderElement.classList.add('d-none');
+                
+                // Mostrar información del empleado
+                const infoElement = document.getElementById('empleadoInfo');
+                const nombreElement = document.getElementById('empleadoNombre');
+                
+                nombreElement.textContent = empleado.nombre || 'Empleado encontrado';
+                infoElement.classList.remove('d-none');
+                infoElement.classList.remove('alert-danger');
+                infoElement.classList.add('alert-info');
+            }
+        } else {
+            // Mostrar mensaje de error si no se encuentra el empleado
+            const infoElement = document.getElementById('empleadoInfo');
+            const nombreElement = document.getElementById('empleadoNombre');
+            
+            nombreElement.textContent = 'Empleado no encontrado';
+            infoElement.classList.remove('d-none');
+            infoElement.classList.remove('alert-info');
+            infoElement.classList.add('alert-danger');
+            
+            // Restablecer la imagen al placeholder
+            const imgElement = document.getElementById('empleadoImage');
+            const placeholderElement = document.getElementById('empleadoImagePlaceholder');
+            
+            imgElement.classList.add('d-none');
+            placeholderElement.classList.remove('d-none');
+        }
+    } catch (error) {
+        console.error('Error al buscar empleado:', error);
+        
+        // Mostrar mensaje de error
+        const infoElement = document.getElementById('empleadoInfo');
+        const nombreElement = document.getElementById('empleadoNombre');
+        
+        nombreElement.textContent = 'Error al buscar empleado';
+        infoElement.classList.remove('d-none');
+        infoElement.classList.remove('alert-info');
+        infoElement.classList.add('alert-danger');
+    } finally {
+        // Restaurar el botón
+        this.innerHTML = '<i class="bi bi-search"></i>';
+        this.disabled = false;
+    }
+});
 
