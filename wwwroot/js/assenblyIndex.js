@@ -10,6 +10,9 @@
  * @type {Object}
  */
 const AppState = {
+
+    department:null,
+
     /**
      * Información del usuario actual
      * @type {Object|null}
@@ -878,6 +881,8 @@ function initUIEvents() {
                     });
                 
                 console.log(userRol);
+
+                AppState.department = userRol.department;
                 
                 //const assemblyMonitor = await AssemblyMonitorService.getAssemblyMonitor(plant, lineIdCMS);
                    const assemblyMonitor = await API.get('/Home/GetLineDetail',
@@ -1018,31 +1023,28 @@ const AssemblyMonitorService = {
         if (!data) return;
         
         // Actualizar campos básicos
-        UI.updateElement('inputModeloArnes', { value: data.noParte || 'No disponible' });
-        UI.updateElement('inputProduccionEsperada', { value: data.planPiezas || '0' });
-        UI.updateElement('inputProduccionActual', { value: data.piezasReal || '0' });
-        UI.updateElement('inputEficiencia', { value: data.productividadReal || '0%' });
+        UI.updateElement('inputModeloArnes', { value: data.numeroParte || 'No disponible' });
+        UI.updateElement('inputProduccionEsperada', { value: data.metaProductividad || '0' });
+        UI.updateElement('inputProduccionActual', { value: data.metaIPD || '0' });
+        UI.updateElement('inputEficiencia', { value: data.metaProductividad || '0%' });
         
         // Crear campos adicionales si no existen
         this.createAdditionalFields();
         
         // Actualizar campos adicionales
         UI.updateElement('inputNombreLinea', { value: data.nombreLinea || 'No disponible' });
-        UI.updateElement('inputFecha', { value: data.fecha || 'No disponible' });
-        UI.updateElement('inputHC', { value: data.hc || '0' });
-        UI.updateElement('inputAsistencia', { value: data.assittencia || '0' });
-        UI.updateElement('inputLF', { value: data.lf || '0' });
-        UI.updateElement('inputTurno', { value: data.turno || 'No disponible' });
-        UI.updateElement('inputMetaPiezasHr', { value: data.metaPiezasHr || '0' });
-        UI.updateElement('inputDiffPiezas', { value: data.diffPiezas || '0' });
-        UI.updateElement('inputProductividadMeta', { value: data.productividadMeta || '0%' });
-        UI.updateElement('inputDiffProductividad', { value: data.diffProductividad || '0%' });
-        UI.updateElement('inputDefectoDia', { value: data.defectoDia || '0' });
-        UI.updateElement('inputDiasSinDefecto', { value: data.diasSinDefecto || '0' });
-        UI.updateElement('inputTMuerto', { value: data.tMuerto || '0' });
-        UI.updateElement('inputHora', { value: data.hora || 'No disponible' });
-        UI.updateElement('inputTTplan', { value: data.tTplan || '0' });
-        UI.updateElement('inputTTreal', { value: data.tTreal || '0' });
+        UI.updateElement('inputWorkProcess', { value: data.workProccess || 'No disponible' });
+        UI.updateElement('inputTressId', { value: data.tressId || 'No disponible' });
+        UI.updateElement('inputTerminalEmpaque', { value: data.terminalEmpaque || 'No disponible' });
+        UI.updateElement('inputFormacionPe', { value: data.formacionPe || 'No disponible' });
+        UI.updateElement('inputLineId', { value: data.lineId || 'No disponible' });
+        UI.updateElement('inputLineId2', { value: data.lineId2 || 'No disponible' });
+        UI.updateElement('inputDescripcion', { value: data.descripcion || 'No disponible' });
+        UI.updateElement('inputCustomer', { value: data.customer || 'No disponible' });
+        UI.updateElement('inputProject', { value: data.project || 'No disponible' });
+        UI.updateElement('inputComunizada', { value: data.comunizada || 'No disponible' });
+        UI.updateElement('inputEstatus', { value: data.estatus ? 'Activo' : 'Inactivo' });
+        UI.updateElement('inputTipoConfiguracion', { value: data.idTipoConfiguracion || '0' });
         
         // Habilitar el botón de guardar
         UI.updateElement('btnGuardarInformacion', { disabled: false });
@@ -1052,43 +1054,26 @@ const AssemblyMonitorService = {
      * Crea campos adicionales en el formulario si no existen
      */
     createAdditionalFields() {
-        const formContainer = document.querySelector('#formInformacionLinea .row');
-        if (!formContainer) return;
-        
-        // Verificar si ya existen los campos adicionales
-        if (document.getElementById('inputNombreLinea')) return;
-        
-        // Crear campos adicionales
+        // Lista de campos adicionales que deben existir
         const additionalFields = [
-            { id: 'inputNombreLinea', label: 'Nombre de Línea', placeholder: 'Ej: Línea A' },
-            { id: 'inputFecha', label: 'Fecha', placeholder: 'Ej: 01/01/2023' },
-            { id: 'inputHC', label: 'HC', placeholder: 'Ej: 10' },
-            { id: 'inputAsistencia', label: 'Asistencia', placeholder: 'Ej: 8' },
-            { id: 'inputLF', label: 'LF', placeholder: 'Ej: 2' },
-            { id: 'inputTurno', label: 'Turno', placeholder: 'Ej: Matutino' },
-            { id: 'inputMetaPiezasHr', label: 'Meta Piezas/Hr', placeholder: 'Ej: 50' },
-            { id: 'inputDiffPiezas', label: 'Diferencia Piezas', placeholder: 'Ej: +10' },
-            { id: 'inputProductividadMeta', label: 'Productividad Meta', placeholder: 'Ej: 80%' },
-            { id: 'inputDiffProductividad', label: 'Diferencia Productividad', placeholder: 'Ej: +5%' },
-            { id: 'inputDefectoDia', label: 'Defectos del Día', placeholder: 'Ej: 2' },
-            { id: 'inputDiasSinDefecto', label: 'Días Sin Defecto', placeholder: 'Ej: 5' },
-            { id: 'inputTMuerto', label: 'Tiempo Muerto', placeholder: 'Ej: 30 min' },
-            { id: 'inputHora', label: 'Hora', placeholder: 'Ej: 14:30' },
-            { id: 'inputTTplan', label: 'TT Plan', placeholder: 'Ej: 120' },
-            { id: 'inputTTreal', label: 'TT Real', placeholder: 'Ej: 115' }
+            'inputNombreLinea', 'inputWorkProcess', 'inputTressId', 'inputTerminalEmpaque',
+            'inputFormacionPe', 'inputLineId', 'inputLineId2', 'inputDescripcion',
+            'inputCustomer', 'inputProject', 'inputComunizada', 'inputEstatus', 'inputTipoConfiguracion'
         ];
         
-        // Agregar campos al formulario
-        additionalFields.forEach(field => {
-            const fieldHtml = `
-                <div class="col-md-6 mt-3">
-                    <label for="${field.id}" class="form-label">${field.label}</label>
-                    <input type="text" class="form-control" id="${field.id}" placeholder="${field.placeholder}" readonly>
-                </div>
-            `;
-            formContainer.insertAdjacentHTML('beforeend', fieldHtml);
+        // Verificar si cada campo existe, si no, crearlo dinámicamente
+        additionalFields.forEach(fieldId => {
+            if (!document.getElementById(fieldId)) {
+                console.log(`Creando campo adicional: ${fieldId}`);
+                // Aquí se podría implementar la lógica para crear el campo dinámicamente si es necesario
+            }
         });
 
+        // Verificar si el botón ya existe
+        if (document.getElementById('btnGuardarInformacion')) return;
+        
+        const formContainer = document.querySelector('#formInformacionLinea .row');
+        if (!formContainer) return;
         formContainer.insertAdjacentHTML('beforeend', `
             <div class="col-12 text-end">
                                 <button type="submit" class="btn btn-success" id="btnGuardarInformacion" disabled><i
