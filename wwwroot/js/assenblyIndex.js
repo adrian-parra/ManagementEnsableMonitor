@@ -530,6 +530,7 @@ const LineManagerService = {
                 UI.showAlert('No se pudo obtener el tipo de gerente. Por favor, intente nuevamente más tarde.', 'error');
                 return;
             }
+    
             
             // Obtener el elemento select
             const selectLider = document.getElementById('selectLider');
@@ -585,6 +586,8 @@ const LineManagerService = {
                  //     imageBase64: base64String.split(',')[1], // Eliminar el prefijo "data:image/jpeg;base64,"
                 //     registerUser: userDomain && userDomain.userName ? userDomain.userName : 'usuario_desconocido'
                 // };
+
+
 
                 const request = {
                     employee: reloj,
@@ -819,8 +822,13 @@ function initUIEvents() {
                 event.stopPropagation();
                 
                 const reloj = this.value.trim();
-                await EmployeeService.getEmployee(reloj);
-                
+                const empleado = await EmployeeService.getEmployee(reloj);
+                if(empleado){
+                    const dataResponse = await fetch("Empleado/GetEmployeeImage?plant=" + AppState.selectedPlant + "&employee=" + reloj);
+                    const data = await dataResponse.json();
+                    console.log(data);
+                    
+                }
                 return false;
             }
         });

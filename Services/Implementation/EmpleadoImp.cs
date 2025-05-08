@@ -12,11 +12,13 @@ namespace AppManagementEnsableMonitor.Services.Implementation
     {
         private readonly HttpClient _httpClient;
         private readonly string _apiBaseUrl;
+        private readonly string _apiBaseUrlApps;
 
         public EmpleadoImp(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
             _apiBaseUrl = configuration.GetConnectionString("conApiAppMch1");
+            _apiBaseUrlApps = configuration.GetConnectionString("conApiAppMch");
         }
 
         public async Task<MDEmployee> GetEmployee(string reloj)
@@ -62,6 +64,53 @@ namespace AppManagementEnsableMonitor.Services.Implementation
             {
                 // Manejar otros errores
                 Console.WriteLine($"Error al obtener información del empleado: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<MDEmployeeImage> GetEmployeeImage(string plant, string employee)
+        {
+            try
+            {
+                // Construir la URL completa para la solicitud
+                string requestUrl = $"{_apiBaseUrlApps}/assemblymonitor/GetEmployeeImage?plant={plant}&employee={employee}";
+                
+                // Realizar la solicitud HTTP GET
+                HttpResponseMessage response = await _httpClient.GetAsync(requestUrl);
+                
+                // Verificar si la solicitud fue exitosa
+                if (response.IsSuccessStatusCode)
+                {
+                    // Leer y deserializar la respuesta
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    var employeeImage = JsonSerializer.Deserialize<MDEmployeeImage>(jsonResponse, 
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    
+                    return employeeImage;
+                }
+                else
+                {
+                    // Manejar errores de la API
+                    string errorContent = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Error al obtener imagen del empleado. Código: {response.StatusCode}, Mensaje: {errorContent}");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                // Manejar errores de conexión
+                Console.WriteLine($"Error de conexión al obtener imagen del empleado: {ex.Message}");
+                throw new Exception($"Error de conexión al obtener imagen del empleado: {ex.Message}", ex);
+            }
+            catch (JsonException ex)
+            {
+                // Manejar errores de deserialización
+                Console.WriteLine($"Error al deserializar la respuesta de imagen: {ex.Message}");
+                throw new Exception($"Error al deserializar la respuesta de imagen: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                // Manejar otros errores
+                Console.WriteLine($"Error al obtener imagen del empleado: {ex.Message}");
                 throw;
             }
         }

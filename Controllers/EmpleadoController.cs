@@ -35,5 +35,24 @@ namespace AppManagementEnsableMonitor.Controllers
                 return StatusCode(500, new { success = false, message = "Error al recuperar información del empleado", error = ex.Message });
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetEmployeeImage(string plant, string employee)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(plant) || string.IsNullOrEmpty(employee))
+                {
+                    return BadRequest(new { success = false, message = "Los parámetros plant y employee son requeridos" });
+                }
+
+                var employeeImage = await _empleadoService.GetEmployeeImage(plant, employee);
+                return Ok(employeeImage);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = "Error al recuperar imagen del empleado", error = ex.Message });
+            }
+        }
     }
 }

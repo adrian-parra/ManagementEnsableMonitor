@@ -13,35 +13,25 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                <a class="navbar-brand fw-semibold" asp-area="" asp-controller="Home" asp-action="Index">
                     <i class="bi bi-speedometer2 me-1"></i> AppManagementEnsableMonitor
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index"><i class="bi bi-house-door-fill me-1"></i>Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy"><i class="bi bi-shield-lock-fill me-1"></i>Privacy</a>
-                        </li>
-                    </ul>
-                    <div class="navbar-nav">
-                        <div class="nav-item d-flex align-items-center">
-                            <div class="me-2 text-end">
-                                <small class="d-block text-muted" style="font-size: 0.75rem;">Usuario Conectado:</small>
-                                <span class="fw-bold" id="userNameDisplay" style="font-size: 0.9rem;">
-                                    <span class="placeholder-glow">
-                                        <span class="placeholder col-8 bg-secondary"></span>
-                                    </span>
+                <div class="navbar-collapse collapse d-sm-flex">
+                    <div class="d-flex align-items-center ms-auto">
+                        <div class="me-2 text-end">
+                            <small class="d-block text-muted" style="font-size: 0.75rem;">Usuario Conectado:</small>
+                            <span class="fw-bold" id="userNameDisplay" style="font-size: 0.9rem;">
+                                <span class="placeholder-glow">
+                                    <span class="placeholder col-8 bg-secondary"></span>
                                 </span>
-                            </div>
-                            <div class="bg-primary rounded-circle p-1 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
-                                <i class="bi bi-person-circle fs-6 text-white"></i>
-                            </div>
+                            </span>
+                        </div>
+                        <div class="bg-primary rounded-circle p-1 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                            <i class="bi bi-person-circle fs-6 text-white"></i>
                         </div>
                     </div>
                 </div>
