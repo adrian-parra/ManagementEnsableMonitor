@@ -80,6 +80,7 @@ const UI = {
         if (options.value !== undefined) element.value = options.value;
         if (options.html !== undefined) element.innerHTML = options.html;
         if (options.display !== undefined) element.style.display = options.display;
+        if (options.readonly !== undefined) element.readOnly = options.readonly;
     },
     
     /**
@@ -1032,11 +1033,11 @@ const AssemblyMonitorService = {
         // Actualizar campos básicos
         UI.updateElement('inputModeloArnes', { 
             value: data.numeroParte || 'No disponible',
-            disabled: !esIngenieria // Habilitar solo si es de ingeniería
+            readonly: !esIngenieria // Habilitar solo si es de ingeniería
         });
         UI.updateElement('inputProduccionEsperada', { 
             value: data.metaProductividad || '0',
-            disabled: !esIngenieria // Habilitar solo si es de ingeniería
+            readonly: !esIngenieria // Habilitar solo si es de ingeniería
         });
         UI.updateElement('inputProduccionActual', { value: data.metaIPD || '0' });
         
@@ -1047,18 +1048,18 @@ const AssemblyMonitorService = {
         UI.updateElement('inputNombreLinea', 
             { 
                 value: data.nombreLinea || 'No disponible' ,
-                disabled:!esManufactura
+                readonly:!esManufactura
             }
         );
         UI.updateElement('inputWorkProcess', { value: data.workProccess || 'No disponible' });
         UI.updateElement('inputTressId', { 
             value: data.tressId || 'No disponible',
-            disabled:!esRh
+            readonly:!esRh
          });
         UI.updateElement('inputTerminalEmpaque', { value: data.terminalEmpaque || 'No disponible' });
         UI.updateElement('inputFormacionPe', { 
             value: data.formacionPe || 'No disponible',
-            disabled: !esIngenieria // Habilitar solo si es de ingeniería
+            readonly: !esIngenieria // Habilitar solo si es de ingeniería
         });
         UI.updateElement('inputLineId', { value: data.lineId || 'No disponible' });
         UI.updateElement('inputLineId2', { value: data.lineId2 || 'No disponible' });
@@ -1107,6 +1108,26 @@ const AssemblyMonitorService = {
 
 // Agregar después de la inicialización del modal o en la sección de inicialización de eventos
 
+document.querySelector('#formInformacionLinea').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    const data = {};
+    formData.forEach((value, key) => data[key] = value);
+
+    console.log(data);
+
+    // try {
+    //     const response = await API.post('/api/assemblymonitor/UpdateAssemblyMonitor', data);
+    //     if(response.success) {
+    //         UI.showAlert('Información guardada correctamente', 'success');
+    //     } else {
+    //         UI.showAlert('Error al guardar la información','error');
+    //     }
+    // }catch(error) {
+    //     UI.showAlert('Error al guardar la información','error');
+    // }
+});
 // Evento para el botón de búsqueda de empleado
 document.getElementById('btnBuscarEmpleado').addEventListener('click', async function() {
     const reloj = document.getElementById('inputRelojUsuario').value.trim();
