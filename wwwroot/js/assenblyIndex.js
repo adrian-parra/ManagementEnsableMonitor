@@ -643,6 +643,103 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 });
 
+// Código para el drag and drop de imágenes
+document.addEventListener('DOMContentLoaded', function() {
+    const dropArea = document.getElementById('dropArea');
+    const inputFile = document.getElementById('inputImagenCarro');
+    const previewContainer = document.getElementById('previewContainer');
+    const imagenPreview = document.getElementById('imagenPreview');
+    const btnRemoveImage = document.getElementById('btnRemoveImage');
+    const imageInfo = document.getElementById('imageInfo');
+    const btnSubirImagen = document.getElementById('btnSubirImagen');
+    
+    // Prevenir comportamiento por defecto de arrastrar y soltar
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    // Resaltar área cuando se arrastra un archivo sobre ella
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+    });
+    
+    function highlight() {
+        dropArea.classList.add('border-primary');
+        dropArea.style.backgroundColor = 'rgba(13, 110, 253, 0.05)';
+    }
+    
+    function unhighlight() {
+        dropArea.classList.remove('border-primary');
+        dropArea.style.backgroundColor = '';
+    }
+    
+    // Manejar el evento de soltar archivos
+    dropArea.addEventListener('drop', handleDrop, false);
+    
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        
+        if (files.length > 0) {
+            handleFiles(files);
+        }
+    }
+    
+    // Manejar cambios en el input de archivo
+    inputFile.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            handleFiles(this.files);
+        }
+    });
+    
+    // Procesar los archivos
+    function handleFiles(files) {
+        const file = files[0]; // Solo tomamos el primer archivo
+        
+        if (!file.type.startsWith('image/')) {
+            alert('Por favor, seleccione un archivo de imagen válido.');
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            imagenPreview.src = e.target.result;
+            previewContainer.style.display = 'block';
+            
+            // Mostrar información de la imagen
+            const fileSize = formatFileSize(file.size);
+            imageInfo.textContent = `${file.name} (${fileSize})`;
+            
+            // Habilitar botón de subir
+            btnSubirImagen.disabled = false;
+        };
+        reader.readAsDataURL(file);
+    }
+    
+    // Formatear tamaño de archivo
+    function formatFileSize(bytes) {
+        if (bytes < 1024) return bytes + ' bytes';
+        else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+        else return (bytes / 1048576).toFixed(1) + ' MB';
+    }
+    
+    // Eliminar imagen
+    btnRemoveImage.addEventListener('click', function() {
+        previewContainer.style.display = 'none';
+        inputFile.value = '';
+        btnSubirImagen.disabled = true;
+    });
+});
+
 /**
  * Inicializa los selectores de planta y línea
  * @returns {Promise<void>}

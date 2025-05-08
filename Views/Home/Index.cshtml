@@ -168,27 +168,46 @@
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="modalCargarImagenLabel"><i class="bi bi-image-fill me-2"></i>Cargar Imagen
                     del Carro de Línea</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="formCargarImagen">
                     <div class="mb-3">
-                        <label for="inputImagenCarro" class="form-label">Seleccionar Imagen</label>
-                        <input class="form-control" type="file" id="inputImagenCarro" accept="image/*">
+                        <div id="dropArea" class="border border-2 border-dashed rounded p-4 text-center position-relative" 
+                             style="min-height: 150px; transition: all 0.3s ease;">
+                            <input class="position-absolute opacity-0 top-0 start-0 w-100 h-100" type="file" 
+                                   id="inputImagenCarro" accept="image/*" style="cursor: pointer;">
+                            <div class="py-3">
+                                <i class="bi bi-cloud-arrow-up-fill text-primary" style="font-size: 3rem;"></i>
+                                <h5 class="mt-3">Arrastra y suelta tu imagen aquí</h5>
+                                <p class="text-muted mb-0">o haz clic para seleccionar</p>
+                                <small class="d-block mt-2 text-muted">Formatos aceptados: JPG, PNG, GIF</small>
+                            </div>
+                        </div>
                     </div>
                     <div class="mb-3 text-center" id="previewContainer" style="display: none;">
-                        <img id="imagenPreview" src="#" alt="Vista previa de la imagen" class="img-fluid rounded"
-                            style="max-height: 200px;" />
+                        <div class="position-relative d-inline-block">
+                            <img id="imagenPreview" src="#" alt="Vista previa de la imagen" class="img-fluid rounded shadow-sm"
+                                style="max-height: 200px;" />
+                            <button type="button" id="btnRemoveImage" class="btn btn-sm btn-danger position-absolute top-0 end-0 rounded-circle"
+                                style="margin-top: -10px; margin-right: -10px; width: 25px; height: 25px; padding: 0; line-height: 1;">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                        <p class="mt-2 mb-0 text-muted small" id="imageInfo">Información de la imagen</p>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" id="btnSubirImagen"><i class="bi bi-upload me-2"></i>Subir
-                    Imagen</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-2"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" id="btnSubirImagen" disabled>
+                    <i class="bi bi-upload me-2"></i>Subir Imagen
+                </button>
             </div>
         </div>
     </div>
