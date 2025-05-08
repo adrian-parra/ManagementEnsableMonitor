@@ -54,5 +54,24 @@ namespace AppManagementEnsableMonitor.Controllers
                 return StatusCode(500, new { success = false, message = "Error al recuperar imagen del empleado", error = ex.Message });
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUser(string plant, string user_id)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(plant) || string.IsNullOrEmpty(user_id))
+                {
+                    return BadRequest(new { success = false, message = "Los parámetros plant y user_id son requeridos" });
+                }
+
+                var user = await _empleadoService.GetUser(plant, user_id);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = "Error al recuperar información del usuario", error = ex.Message });
+            }
+        }
     }
 }

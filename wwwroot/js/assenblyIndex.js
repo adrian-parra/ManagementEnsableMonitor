@@ -233,7 +233,7 @@ const UserService = {
             }
             
             const userDomain = await API.get('/Home/GetUserDomain');
-            
+
             // Actualizar el estado global
             AppState.currentUser = userDomain;
             
@@ -849,6 +849,8 @@ function initUIEvents() {
                     UI.showAlert('Por favor, seleccione una planta.', 'warning');
                     return;
                 }
+
+                
                 
                 if (!selectLinea.value) {
                     UI.showAlert('Por favor, seleccione una línea.', 'warning');
@@ -864,6 +866,18 @@ function initUIEvents() {
                 // Obtener los datos del monitor de ensamblaje
                 const plant = selectPlanta.value;
                 const lineIdCMS = selectLinea.value;
+
+                // console.log(userDomain.userName)
+                // console.log(userDomain.userName)
+    
+    
+                const userRol = await API.get('/Empleado/GetUser',
+                    {
+                        plant:AppState.selectedPlant,
+                        user_id:AppState.currentUser.userName
+                    });
+                
+                console.log(userRol);
                 
                 const assemblyMonitor = await AssemblyMonitorService.getAssemblyMonitor(plant, lineIdCMS);
                 
@@ -1152,3 +1166,19 @@ document.getElementById('btnBuscarEmpleado').addEventListener('click', async fun
     }
 });
 
+
+async function getUser(plant, userId) {
+    try {
+        const response = await fetch(`Empleado/GetUser?plant=${encodeURIComponent(plant)}&user_id=${encodeURIComponent(userId)}`);
+        
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status} - ${response.statusText}`);
+        }
+        
+        const userData = await response.json();
+        return userData;
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        throw error;
+    }
+}
