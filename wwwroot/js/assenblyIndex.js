@@ -5,221 +5,8 @@
  * @version 1.0.0
  */
 
-/**
- * Estado global de la aplicación
- * @type {Object}
- */
-const AppState = {
+import { API,UI ,AppState } from "./utilidades.js";
 
-    department:null,
-
-    /**
-     * Información del usuario actual
-     * @type {Object|null}
-     */
-    currentUser: null,
-    
-    /**
-     * Planta seleccionada actualmente
-     * @type {string|null}
-     */
-    selectedPlant: null,
-    
-    /**
-     * Línea seleccionada actualmente
-     * @type {string|null}
-     */
-    selectedLine: null,
-    
-    /**
-     * Indica si la aplicación está en un estado de carga
-     * @type {boolean}
-     */
-    isLoading: false,
-    
-    /**
-     * Establece el estado de carga de la aplicación
-     * @param {boolean} loading - Estado de carga
-     */
-    setLoading(loading) {
-        this.isLoading = loading;
-        // Aquí se podría implementar lógica para mostrar/ocultar un indicador de carga global
-    }
-};
-
-/**
- * Módulo para gestionar la interfaz de usuario
- * @namespace UI
- */
-const UI = {
-    /**
-     * Muestra un mensaje de alerta al usuario
-     * @param {string} message - Mensaje a mostrar
-     * @param {string} [type='info'] - Tipo de alerta ('info', 'success', 'warning', 'error')
-     */
-    showAlert(message, type = 'info') {
-        // En una versión más avanzada, se podría implementar un sistema de notificaciones
-        // más sofisticado en lugar de usar alert()
-        alert(message);
-    },
-    
-    /**
-     * Actualiza el estado visual de un elemento
-     * @param {string} elementId - ID del elemento a actualizar
-     * @param {Object} options - Opciones de actualización
-     * @param {boolean} [options.disabled] - Si el elemento debe estar deshabilitado
-     * @param {string} [options.value] - Valor a establecer en el elemento
-     * @param {string} [options.html] - HTML a establecer en el elemento
-     * @param {string} [options.display] - Estilo de visualización del elemento
-     */
-    updateElement(elementId, options = {}) {
-        const element = document.getElementById(elementId);
-        if (!element) return;
-        
-        if (options.disabled !== undefined) element.disabled = options.disabled;
-        if (options.value !== undefined) element.value = options.value;
-        if (options.html !== undefined) element.innerHTML = options.html;
-        if (options.display !== undefined) element.style.display = options.display;
-        if (options.readonly !== undefined) element.readOnly = options.readonly;
-    },
-    
-    /**
-     * Cierra un modal de Bootstrap
-     * @param {string} modalId - ID del modal a cerrar
-     */
-    closeModal(modalId) {
-        const modalElement = document.getElementById(modalId);
-        if (!modalElement) return;
-        
-        try {
-            const modal = bootstrap.Modal.getInstance(modalElement);
-            if (modal) {
-                modal.hide();
-            } else {
-                // Alternativa usando jQuery si bootstrap no está disponible directamente
-                $(modalElement).modal('hide');
-            }
-        } catch (error) {
-            console.error(`Error al cerrar el modal ${modalId}:`, error);
-        }
-    },
-    
-    /**
-     * Limpia un formulario
-     * @param {string} formId - ID del formulario a limpiar
-     */
-    resetForm(formId) {
-        const form = document.getElementById(formId);
-        if (form) form.reset();
-    }
-};
-
-/**
- * Módulo para gestionar las peticiones HTTP
- * @namespace API
- */
-const API = {
-    /**
-     * Realiza una petición GET
-     * @param {string} url - URL de la petición
-     * @param {Object} [params={}] - Parámetros de la petición
-     * @returns {Promise<any>} Respuesta de la petición
-     * @throws {Error} Error en caso de fallo en la petición
-     */
-    async get(url, params = {}) {
-        try {
-            // Construir URL con parámetros
-            const queryParams = new URLSearchParams();
-            Object.entries(params).forEach(([key, value]) => {
-                if (value !== undefined && value !== null) {
-                    queryParams.append(key, value);
-                }
-            });
-            
-            const queryString = queryParams.toString();
-            const fullUrl = queryString ? `${url}?${queryString}` : url;
-            
-            AppState.setLoading(true);
-            const response = await fetch(fullUrl);
-            
-            if (!response.ok) {
-                throw new Error(`Error en la petición: ${response.status} ${response.statusText}`);
-            }
-            
-            // Intentar parsear la respuesta como JSON
-            let data;
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.includes('application/json')) {
-                data = await response.json();
-            } else {
-                data = await response.text();
-                // Intentar parsear el texto como JSON
-                if (data && data.trim() !== '') {
-                    try {
-                        data = JSON.parse(data);
-                    } catch (e) {
-                        // Si no es JSON, mantener como texto
-                    }
-                }
-            }
-            
-            return data;
-        } catch (error) {
-            console.error('Error en petición GET:', error);
-            throw error;
-        } finally {
-            AppState.setLoading(false);
-        }
-    },
-    
-    /**
-     * Realiza una petición POST
-     * @param {string} url - URL de la petición
-     * @param {Object} data - Datos a enviar
-     * @returns {Promise<any>} Respuesta de la petición
-     * @throws {Error} Error en caso de fallo en la petición
-     */
-    async post(url, data) {
-        try {
-            AppState.setLoading(true);
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Error en la petición: ${response.status} ${response.statusText}`);
-            }
-            
-            // Intentar parsear la respuesta como JSON
-            let responseData;
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.includes('application/json')) {
-                responseData = await response.json();
-            } else {
-                responseData = await response.text();
-                // Intentar parsear el texto como JSON
-                if (responseData && responseData.trim() !== '') {
-                    try {
-                        responseData = JSON.parse(responseData);
-                    } catch (e) {
-                        // Si no es JSON, mantener como texto
-                    }
-                }
-            }
-            
-            return responseData;
-        } catch (error) {
-            console.error('Error en petición POST:', error);
-            throw error;
-        } finally {
-            AppState.setLoading(false);
-        }
-    }
-};
 
 /**
  * Módulo para gestionar la información del usuario
@@ -630,6 +417,130 @@ const LineManagerService = {
 };
 
 /**
+ * Módulo para gestionar el monitor de ensamblaje
+ * @namespace AssemblyMonitorService
+ */
+const AssemblyMonitorService = {
+    /**
+     * Obtiene la información del monitor de ensamblaje
+     * @param {string} plant - ID de la planta
+     * @param {string} lineIdCMS - ID de la línea
+     * @returns {Promise<Object|null>} Información del monitor
+     */
+    async getAssemblyMonitor(plant, lineIdCMS) {
+        try {
+            if (!plant) {
+                UI.showAlert('Por favor, seleccione una planta.', 'warning');
+                return null;
+            }
+            
+            if (!lineIdCMS) {
+                UI.showAlert('Por favor, seleccione una línea.', 'warning');
+                return null;
+            }
+            
+            return await API.get('/api/assemblymonitor/GetAssemblyMonitor', {
+                plant: plant,
+                lineIdCMS: lineIdCMS
+            });
+        } catch (error) {
+            console.error('Error al obtener información del monitor:', error);
+            UI.showAlert('No se pudo obtener la información del monitor. Por favor, intente nuevamente más tarde.', 'error');
+            return null;
+        }
+    },
+    
+    /**
+     * Actualiza la interfaz con la información del monitor
+     * @param {Object} data - Datos del monitor
+     */
+    updateMonitorUI(data) {
+        if (!data) return;
+
+        console.log("laol "+AppState.department);
+        
+        // Verificar si el usuario pertenece al departamento de ingeniería
+        const esIngenieria = AppState.department === "Ingenieria";
+        const esRh = AppState.department === "Rh";
+        const esManufactura = AppState.department === "Manufactura";
+        
+        // Actualizar campos básicos
+        UI.updateElement('inputModeloArnes', { 
+            value: data.numeroParte || 'No disponible',
+            readonly: !esIngenieria // Habilitar solo si es de ingeniería
+        });
+        UI.updateElement('inputProduccionEsperada', { 
+            value: data.metaProductividad || '0',
+            readonly: !esIngenieria // Habilitar solo si es de ingeniería
+        });
+        UI.updateElement('inputProduccionActual', { value: data.metaIPD || '0' });
+        
+        // Crear campos adicionales si no existen
+        this.createAdditionalFields();
+        
+        // Actualizar campos adicionales
+        UI.updateElement('inputNombreLinea', 
+            { 
+                value: data.nombreLinea || 'No disponible' ,
+                readonly:!esManufactura
+            }
+        );
+        UI.updateElement('inputWorkProcess', { value: data.workProccess || 'No disponible' });
+        UI.updateElement('inputTressId', { 
+            value: data.tressId || 'No disponible',
+            readonly:!esRh
+         });
+        UI.updateElement('inputTerminalEmpaque', { value: data.terminalEmpaque || 'No disponible' });
+        UI.updateElement('inputFormacionPe', { 
+            value: data.formacionPe || 'No disponible',
+            readonly: !esIngenieria // Habilitar solo si es de ingeniería
+        });
+        UI.updateElement('inputLineId', { value: data.lineId || 'No disponible' });
+        UI.updateElement('inputLineId2', { value: data.lineId2 || 'No disponible' });
+        UI.updateElement('inputDescripcion', { value: data.descripcion || 'No disponible' });
+        UI.updateElement('inputCustomer', { value: data.customer || 'No disponible' });
+        UI.updateElement('inputProject', { value: data.project || 'No disponible' });
+        UI.updateElement('inputComunizada', { value: data.comunizada || 'No disponible' });
+        UI.updateElement('inputEstatus', { value: data.estatus ? 'Activo' : 'Inactivo' });
+        UI.updateElement('inputTipoConfiguracion', { value: data.idTipoConfiguracion || '0' });
+        
+        // Habilitar el botón de guardar solo si el usuario es de ingeniería
+        UI.updateElement('btnGuardarInformacion', { disabled: !esIngenieria });
+    },
+    
+    /**
+     * Crea campos adicionales en el formulario si no existen
+     */
+    createAdditionalFields() {
+        // Lista de campos adicionales que deben existir
+        const additionalFields = [
+            'inputNombreLinea', 'inputWorkProcess', 'inputTressId', 'inputTerminalEmpaque',
+            'inputFormacionPe', 'inputLineId', 'inputLineId2', 'inputDescripcion',
+            'inputCustomer', 'inputProject', 'inputComunizada', 'inputEstatus', 'inputTipoConfiguracion'
+        ];
+        
+        // Verificar si cada campo existe, si no, crearlo dinámicamente
+        additionalFields.forEach(fieldId => {
+            if (!document.getElementById(fieldId)) {
+                console.log(`Creando campo adicional: ${fieldId}`);
+                // Aquí se podría implementar la lógica para crear el campo dinámicamente si es necesario
+            }
+        });
+
+        // Verificar si el botón ya existe
+        if (document.getElementById('btnGuardarInformacion')) return;
+        
+        const formContainer = document.querySelector('#formInformacionLinea .row');
+        if (!formContainer) return;
+        formContainer.insertAdjacentHTML('beforeend', `
+            <div class="col-12 text-end">
+                                <button type="submit" class="btn btn-success" id="btnGuardarInformacion" disabled><i
+                                        class="bi bi-save me-2"></i>Guardar Cambios</button>
+                            </div>`);
+    }
+};
+
+/**
  * Inicializa la aplicación cuando el DOM está cargado
  */
 document.addEventListener('DOMContentLoaded', async function() {
@@ -642,14 +553,139 @@ document.addEventListener('DOMContentLoaded', async function() {
         
         // Inicializar eventos de la interfaz de usuario
         initUIEvents();
+
+        // Inicializar funcionalidad de drag and drop
+        initDragAndDrop();
     } catch (error) {
         console.error('Error al inicializar la aplicación:', error);
         UI.showAlert('Error al inicializar la aplicación. Por favor, recargue la página.', 'error');
     }
 });
 
-// Código para el drag and drop de imágenes
-document.addEventListener('DOMContentLoaded', function() {
+document.querySelector('#formInformacionLinea').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    const data = {};
+    formData.forEach((value, key) => {
+
+        // Convertir Estatus de string a boolean
+        if (key === 'estatus') {
+            data[key] = value === 'Activo' || value === 'true';
+        }
+        // Convertir IdTipoConfiguracion de string a int
+        else if (key === 'idTipoConfiguracion') {
+            data[key] = parseInt(value, 10) || 0; // Si no se puede convertir, usar 0 como valor predeterminado
+        }
+        // Para los demás campos, mantener el valor original
+        else {
+            if(value == "No disponible"){
+                data[key] = "";
+            }else{
+                data[key] = value;
+            }
+            
+        }
+    });
+
+    try{
+        const response = await API.post('/Line/UpdateLine', data);
+        
+        console.log(response);
+
+        if(response.statusCode == 200){
+          UI.showAlert(response.description,'success');
+        }else{
+            UI.showAlert(response.description,'error');
+        }
+
+    }catch(error) {
+        UI.showAlert('Error al guardar la información','error');
+    }
+
+    
+
+    
+});
+
+document.getElementById('btnBuscarEmpleado').addEventListener('click', async function() {
+    const reloj = document.getElementById('inputRelojUsuario').value.trim();
+    
+    if(!reloj) {
+        // Mostrar mensaje de error si el campo está vacío
+        alert('Por favor, ingrese un número de reloj válido');
+        return;
+    }
+    
+    try {
+        // Mostrar indicador de carga
+        this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+        this.disabled = true;
+        
+       const empleado = await EmployeeService.getEmployee(reloj);
+     
+        if(empleado) {
+            const dataResponse = await fetch("Empleado/GetEmployeeImage?plant=" + AppState.selectedPlant + "&employee=" + reloj);
+            const data = await dataResponse.json();
+            
+            // Mostrar la imagen del empleado si está disponible
+            if(data && data.image) {
+                const imgElement = document.getElementById('empleadoImage');
+                const placeholderElement = document.getElementById('empleadoImagePlaceholder');
+                
+                imgElement.src = "data:image/jpeg;base64," + data.image;
+                imgElement.classList.remove('d-none');
+                placeholderElement.classList.add('d-none');
+                
+                // Mostrar información del empleado
+                const infoElement = document.getElementById('empleadoInfo');
+                const nombreElement = document.getElementById('empleadoNombre');
+                
+                nombreElement.textContent = empleado.nombre || 'Empleado encontrado';
+                infoElement.classList.remove('d-none');
+                infoElement.classList.remove('alert-danger');
+                infoElement.classList.add('alert-info');
+            }
+        } else {
+            // Mostrar mensaje de error si no se encuentra el empleado
+            const infoElement = document.getElementById('empleadoInfo');
+            const nombreElement = document.getElementById('empleadoNombre');
+            
+            nombreElement.textContent = 'Empleado no encontrado';
+            infoElement.classList.remove('d-none');
+            infoElement.classList.remove('alert-info');
+            infoElement.classList.add('alert-danger');
+            
+            // Restablecer la imagen al placeholder
+            const imgElement = document.getElementById('empleadoImage');
+            const placeholderElement = document.getElementById('empleadoImagePlaceholder');
+            
+            imgElement.classList.add('d-none');
+            placeholderElement.classList.remove('d-none');
+        }
+    } catch (error) {
+        console.error('Error al buscar empleado:', error);
+        
+        // Mostrar mensaje de error
+        const infoElement = document.getElementById('empleadoInfo');
+        const nombreElement = document.getElementById('empleadoNombre');
+        
+        nombreElement.textContent = 'Error al buscar empleado';
+        infoElement.classList.remove('d-none');
+        infoElement.classList.remove('alert-info');
+        infoElement.classList.add('alert-danger');
+    } finally {
+        // Restaurar el botón
+        this.innerHTML = '<i class="bi bi-search"></i>';
+        this.disabled = false;
+    }
+});
+
+
+/**
+ * Inicializa la funcionalidad de arrastrar y soltar para imágenes
+ */
+function initDragAndDrop() {
     const dropArea = document.getElementById('dropArea');
     const inputFile = document.getElementById('inputImagenCarro');
     const previewContainer = document.getElementById('previewContainer');
@@ -657,6 +693,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnRemoveImage = document.getElementById('btnRemoveImage');
     const imageInfo = document.getElementById('imageInfo');
     const btnSubirImagen = document.getElementById('btnSubirImagen');
+    
+    // Si alguno de los elementos no existe, salir de la función
+    if (!dropArea || !inputFile || !previewContainer || !imagenPreview) {
+        console.log('Algunos elementos para drag and drop no están disponibles en esta página');
+        return;
+    }
     
     // Prevenir comportamiento por defecto de arrastrar y soltar
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -738,13 +780,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Eliminar imagen
-    btnRemoveImage.addEventListener('click', function() {
-        previewContainer.style.display = 'none';
-        inputFile.value = '';
-        btnSubirImagen.disabled = true;
-    });
-});
-
+    if (btnRemoveImage) {
+        btnRemoveImage.addEventListener('click', function() {
+            previewContainer.style.display = 'none';
+            inputFile.value = '';
+            btnSubirImagen.disabled = true;
+        });
+    }
+}
 /**
  * Inicializa los selectores de planta y línea
  * @returns {Promise<void>}
@@ -982,261 +1025,7 @@ function initUIEvents() {
     }
 }
 
-/**
- * Módulo para gestionar el monitor de ensamblaje
- * @namespace AssemblyMonitorService
- */
-const AssemblyMonitorService = {
-    /**
-     * Obtiene la información del monitor de ensamblaje
-     * @param {string} plant - ID de la planta
-     * @param {string} lineIdCMS - ID de la línea
-     * @returns {Promise<Object|null>} Información del monitor
-     */
-    async getAssemblyMonitor(plant, lineIdCMS) {
-        try {
-            if (!plant) {
-                UI.showAlert('Por favor, seleccione una planta.', 'warning');
-                return null;
-            }
-            
-            if (!lineIdCMS) {
-                UI.showAlert('Por favor, seleccione una línea.', 'warning');
-                return null;
-            }
-            
-            return await API.get('/api/assemblymonitor/GetAssemblyMonitor', {
-                plant: plant,
-                lineIdCMS: lineIdCMS
-            });
-        } catch (error) {
-            console.error('Error al obtener información del monitor:', error);
-            UI.showAlert('No se pudo obtener la información del monitor. Por favor, intente nuevamente más tarde.', 'error');
-            return null;
-        }
-    },
-    
-    /**
-     * Actualiza la interfaz con la información del monitor
-     * @param {Object} data - Datos del monitor
-     */
-    updateMonitorUI(data) {
-        if (!data) return;
-
-        console.log("laol "+AppState.department);
-        
-        // Verificar si el usuario pertenece al departamento de ingeniería
-        const esIngenieria = AppState.department === "Ingenieria";
-        const esRh = AppState.department === "Rh";
-        const esManufactura = AppState.department === "Manufactura";
-        
-        // Actualizar campos básicos
-        UI.updateElement('inputModeloArnes', { 
-            value: data.numeroParte || 'No disponible',
-            readonly: !esIngenieria // Habilitar solo si es de ingeniería
-        });
-        UI.updateElement('inputProduccionEsperada', { 
-            value: data.metaProductividad || '0',
-            readonly: !esIngenieria // Habilitar solo si es de ingeniería
-        });
-        UI.updateElement('inputProduccionActual', { value: data.metaIPD || '0' });
-        
-        // Crear campos adicionales si no existen
-        this.createAdditionalFields();
-        
-        // Actualizar campos adicionales
-        UI.updateElement('inputNombreLinea', 
-            { 
-                value: data.nombreLinea || 'No disponible' ,
-                readonly:!esManufactura
-            }
-        );
-        UI.updateElement('inputWorkProcess', { value: data.workProccess || 'No disponible' });
-        UI.updateElement('inputTressId', { 
-            value: data.tressId || 'No disponible',
-            readonly:!esRh
-         });
-        UI.updateElement('inputTerminalEmpaque', { value: data.terminalEmpaque || 'No disponible' });
-        UI.updateElement('inputFormacionPe', { 
-            value: data.formacionPe || 'No disponible',
-            readonly: !esIngenieria // Habilitar solo si es de ingeniería
-        });
-        UI.updateElement('inputLineId', { value: data.lineId || 'No disponible' });
-        UI.updateElement('inputLineId2', { value: data.lineId2 || 'No disponible' });
-        UI.updateElement('inputDescripcion', { value: data.descripcion || 'No disponible' });
-        UI.updateElement('inputCustomer', { value: data.customer || 'No disponible' });
-        UI.updateElement('inputProject', { value: data.project || 'No disponible' });
-        UI.updateElement('inputComunizada', { value: data.comunizada || 'No disponible' });
-        UI.updateElement('inputEstatus', { value: data.estatus ? 'Activo' : 'Inactivo' });
-        UI.updateElement('inputTipoConfiguracion', { value: data.idTipoConfiguracion || '0' });
-        
-        // Habilitar el botón de guardar solo si el usuario es de ingeniería
-        UI.updateElement('btnGuardarInformacion', { disabled: !esIngenieria });
-    },
-    
-    /**
-     * Crea campos adicionales en el formulario si no existen
-     */
-    createAdditionalFields() {
-        // Lista de campos adicionales que deben existir
-        const additionalFields = [
-            'inputNombreLinea', 'inputWorkProcess', 'inputTressId', 'inputTerminalEmpaque',
-            'inputFormacionPe', 'inputLineId', 'inputLineId2', 'inputDescripcion',
-            'inputCustomer', 'inputProject', 'inputComunizada', 'inputEstatus', 'inputTipoConfiguracion'
-        ];
-        
-        // Verificar si cada campo existe, si no, crearlo dinámicamente
-        additionalFields.forEach(fieldId => {
-            if (!document.getElementById(fieldId)) {
-                console.log(`Creando campo adicional: ${fieldId}`);
-                // Aquí se podría implementar la lógica para crear el campo dinámicamente si es necesario
-            }
-        });
-
-        // Verificar si el botón ya existe
-        if (document.getElementById('btnGuardarInformacion')) return;
-        
-        const formContainer = document.querySelector('#formInformacionLinea .row');
-        if (!formContainer) return;
-        formContainer.insertAdjacentHTML('beforeend', `
-            <div class="col-12 text-end">
-                                <button type="submit" class="btn btn-success" id="btnGuardarInformacion" disabled><i
-                                        class="bi bi-save me-2"></i>Guardar Cambios</button>
-                            </div>`);
-    }
-};
-
-// Agregar después de la inicialización del modal o en la sección de inicialización de eventos
-
-document.querySelector('#formInformacionLinea').addEventListener('submit', async function(e) {
-    e.preventDefault();
-
-    const formData = new FormData(this);
-    const data = {};
-    formData.forEach((value, key) => {
-
-        // Convertir Estatus de string a boolean
-        if (key === 'estatus') {
-            data[key] = value === 'Activo' || value === 'true';
-        }
-        // Convertir IdTipoConfiguracion de string a int
-        else if (key === 'idTipoConfiguracion') {
-            data[key] = parseInt(value, 10) || 0; // Si no se puede convertir, usar 0 como valor predeterminado
-        }
-        // Para los demás campos, mantener el valor original
-        else {
-            if(value == "No disponible"){
-                data[key] = "";
-            }else{
-                data[key] = value;
-            }
-            
-        }
-    });
-
-    console.log(data);
-
-    try{
-        const response = await API.post('/Line/UpdateLine', data);
-        
-        console.log(response);
-
-        UI.showAlert('Información guardada correctamente','success');
-    }catch(error) {
-        UI.showAlert('Error al guardar la información','error');
-    }
-
-    
-
-    
-});
-// Evento para el botón de búsqueda de empleado
-document.getElementById('btnBuscarEmpleado').addEventListener('click', async function() {
-    const reloj = document.getElementById('inputRelojUsuario').value.trim();
-    
-    if(!reloj) {
-        // Mostrar mensaje de error si el campo está vacío
-        alert('Por favor, ingrese un número de reloj válido');
-        return;
-    }
-    
-    try {
-        // Mostrar indicador de carga
-        this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
-        this.disabled = true;
-        
-       const empleado = await EmployeeService.getEmployee(reloj);
-     
-        if(empleado) {
-            const dataResponse = await fetch("Empleado/GetEmployeeImage?plant=" + AppState.selectedPlant + "&employee=" + reloj);
-            const data = await dataResponse.json();
-            
-            // Mostrar la imagen del empleado si está disponible
-            if(data && data.image) {
-                const imgElement = document.getElementById('empleadoImage');
-                const placeholderElement = document.getElementById('empleadoImagePlaceholder');
-                
-                imgElement.src = "data:image/jpeg;base64," + data.image;
-                imgElement.classList.remove('d-none');
-                placeholderElement.classList.add('d-none');
-                
-                // Mostrar información del empleado
-                const infoElement = document.getElementById('empleadoInfo');
-                const nombreElement = document.getElementById('empleadoNombre');
-                
-                nombreElement.textContent = empleado.nombre || 'Empleado encontrado';
-                infoElement.classList.remove('d-none');
-                infoElement.classList.remove('alert-danger');
-                infoElement.classList.add('alert-info');
-            }
-        } else {
-            // Mostrar mensaje de error si no se encuentra el empleado
-            const infoElement = document.getElementById('empleadoInfo');
-            const nombreElement = document.getElementById('empleadoNombre');
-            
-            nombreElement.textContent = 'Empleado no encontrado';
-            infoElement.classList.remove('d-none');
-            infoElement.classList.remove('alert-info');
-            infoElement.classList.add('alert-danger');
-            
-            // Restablecer la imagen al placeholder
-            const imgElement = document.getElementById('empleadoImage');
-            const placeholderElement = document.getElementById('empleadoImagePlaceholder');
-            
-            imgElement.classList.add('d-none');
-            placeholderElement.classList.remove('d-none');
-        }
-    } catch (error) {
-        console.error('Error al buscar empleado:', error);
-        
-        // Mostrar mensaje de error
-        const infoElement = document.getElementById('empleadoInfo');
-        const nombreElement = document.getElementById('empleadoNombre');
-        
-        nombreElement.textContent = 'Error al buscar empleado';
-        infoElement.classList.remove('d-none');
-        infoElement.classList.remove('alert-info');
-        infoElement.classList.add('alert-danger');
-    } finally {
-        // Restaurar el botón
-        this.innerHTML = '<i class="bi bi-search"></i>';
-        this.disabled = false;
-    }
-});
 
 
-async function getUser(plant, userId) {
-    try {
-        const response = await fetch(`Empleado/GetUser?plant=${encodeURIComponent(plant)}&user_id=${encodeURIComponent(userId)}`);
-        
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status} - ${response.statusText}`);
-        }
-        
-        const userData = await response.json();
-        return userData;
-    } catch (error) {
-        console.error('Error fetching user data:', error);
-        throw error;
-    }
-}
+
+

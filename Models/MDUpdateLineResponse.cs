@@ -2,7 +2,9 @@ namespace AppManagementEnsableMonitor.Models
 {
     public class MDUpdateLineResponse
     {
-        public string Result { get; set; }
-        public string Msj { get; set; }
+        public int statusCode { get; set; }
+        public string message { get; set; }
+        public string description { get; set; }
+
     }
 }

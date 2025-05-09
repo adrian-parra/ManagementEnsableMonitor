@@ -432,29 +432,28 @@ namespace AppManagementEnsableMonitor.Services.Implementation
                     string errorContent = await response.Content.ReadAsStringAsync();
                     return new MDUpdateLineResponse
                     {
-                        Result = "ERROR",
-                        Msj = $"Error al actualizar la línea. Código: {response.StatusCode}, Mensaje: {errorContent}"
+                        statusCode = 500,
+                        message = "Error al actualizar la línea",
+                        description = $"Error al actualizar la línea. Código: {response.StatusCode}, Mensaje: {errorContent}"
                     };
                 }
             }
             catch (HttpRequestException ex)
             {
-                // Manejar errores de conexión
-                Console.WriteLine($"Error de conexión al actualizar la línea: {ex.Message}");
                 return new MDUpdateLineResponse
                 {
-                    Result = "ERROR",
-                    Msj = $"Error de conexión al actualizar la línea: {ex.Message}"
+                    statusCode = 500,
+                    message = "Error de conexión al actualizar la línea",
+                    description = $"Error de conexión al actualizar la línea: {ex.Message}"
                 };
             }
             catch (JsonException ex)
             {
-                // Manejar errores de serialización/deserialización
-                Console.WriteLine($"Error al procesar la respuesta JSON: {ex.Message}");
                 return new MDUpdateLineResponse
                 {
-                    Result = "ERROR",
-                    Msj = $"Error al procesar la respuesta JSON: {ex.Message}"
+                    statusCode = 500,
+                    message = "ERROR",
+                    description = $"Error al procesar la respuesta JSON: {ex.Message}"
                 };
             }
             catch (Exception ex)
@@ -463,8 +462,9 @@ namespace AppManagementEnsableMonitor.Services.Implementation
                 Console.WriteLine($"Error al actualizar la línea: {ex.Message}");
                 return new MDUpdateLineResponse
                 {
-                    Result = "ERROR",
-                    Msj = $"Error al actualizar la línea: {ex.Message}"
+                    statusCode = 500,
+                    message = "ERROR",
+                    description = $"Error al actualizar la línea: {ex.Message}"
                 };
             }
         }

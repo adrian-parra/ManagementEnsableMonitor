@@ -39,26 +39,22 @@ namespace AppManagementEnsableMonitor.Controllers
               
 
                 
-                if (result.Result == "SUCCESS")
+                if (result.statusCode == 200)
                 {
                     return Ok(result);
-                }else if (result.Result == "")
-                {
-                    return Ok(result); 
                 }
                 else
                 {
-                    return StatusCode(500, new MDUpdateLineResponse { Result = "ERROR", Msj = result.Msj });
+                    return StatusCode(400, result);
                 }
             }
             catch (Exception ex)
             {
-                
-                // return StatusCode(500, new { success = false, message = "Error al actualizar la línea", error = ex.Message });
                  return StatusCode(500, new MDUpdateLineResponse
                 {
-                    Msj = $"Error interno del servidor: {ex.Message}",
-                    Result = "ERROR"
+                    statusCode = 500,
+                    message = "Error al actualizar la línea",
+                    description = ex.Message,
                 });
             }
         }
