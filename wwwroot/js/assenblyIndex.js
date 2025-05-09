@@ -26,6 +26,10 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         // Inicializar funcionalidad de drag and drop
         initDragAndDrop();
+
+       UI.makeModalDraggable('modalEncargados');
+       UI.makeModalDraggable("modalCargarImagen")
+       
     } catch (error) {
         console.error('Error al inicializar la aplicación:', error);
         UI.showAlert('Error al inicializar la aplicación. Por favor, recargue la página.', 'error');

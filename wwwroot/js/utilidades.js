@@ -375,3 +375,4 @@ export const AppState = {
         // Aquí se podría implementar lógica para mostrar/ocultar un indicador de carga global
     }
 };
+

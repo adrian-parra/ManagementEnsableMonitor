@@ -1,3 +1,11 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 html {
   font-size: 14px;
 }
@@ -8,9 +16,28 @@ html {
   }
 }
 
-html {
+body {
+  /* Propiedades existentes */
   position: relative;
   min-height: 100%;
+  
+  /* Control del scroll */
+  overflow-y: auto; /* Permite scroll vertical cuando sea necesario */
+  overflow-x: hidden; /* Evita scroll horizontal */
+  
+  /* Para una experiencia de scroll más suave en navegadores compatibles */
+  scroll-behavior: smooth;
+  
+  /* Para dispositivos táctiles - mejora la experiencia de desplazamiento */
+  -webkit-overflow-scrolling: touch;
 }
 
+.cursor-move {
+  cursor: move;
+}
 
+/* Estilo para el modal mientras se arrastra */
+.modal-dragging {
+  opacity: 0.9;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
