@@ -30,6 +30,7 @@ body {
   
   /* Para dispositivos táctiles - mejora la experiencia de desplazamiento */
   -webkit-overflow-scrolling: touch;
+  background-color: #F1F1F1;
 }
 
 .cursor-move {

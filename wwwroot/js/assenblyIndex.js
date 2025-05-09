@@ -242,6 +242,8 @@ function initDragAndDrop() {
             
             // Habilitar botón de subir
             btnSubirImagen.disabled = false;
+
+            document.querySelector("#containerFile").classList.add("d-none")
         };
         reader.readAsDataURL(file);
     }
@@ -259,6 +261,7 @@ function initDragAndDrop() {
             previewContainer.style.display = 'none';
             inputFile.value = '';
             btnSubirImagen.disabled = true;
+            document.querySelector("#containerFile").classList.remove("d-none")
         });
     }
 }
