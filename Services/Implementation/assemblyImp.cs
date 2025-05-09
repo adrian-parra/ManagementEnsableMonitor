@@ -401,5 +401,72 @@ namespace AppManagementEnsableMonitor.Services.Implementation
                 throw;
             }
         }
+
+        public async Task<MDUpdateLineResponse> UpdateLine(MDUpdateLineRequest request)
+        {
+            try
+            {
+                // Construir la URL completa para la solicitud
+                string requestUrl = $"{_apiBaseUrlMch1}/line/UpdateLine";
+                
+                // Serializar el objeto de solicitud a JSON
+                string jsonRequest = JsonSerializer.Serialize(request);
+                var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+                
+                // Realizar la solicitud HTTP PUT
+                HttpResponseMessage response = await _httpClient.PutAsync(requestUrl, content);
+                
+                // Verificar si la solicitud fue exitosa
+                if (response.IsSuccessStatusCode)
+                {
+                    // Leer y deserializar la respuesta
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    var updateLineResponse = JsonSerializer.Deserialize<MDUpdateLineResponse>(jsonResponse, 
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                     Console.WriteLine($"JSON RESPONSE: {jsonResponse}");
+                    return updateLineResponse;
+                }
+                else
+                {
+                    // Manejar errores de la API
+                    string errorContent = await response.Content.ReadAsStringAsync();
+                    return new MDUpdateLineResponse
+                    {
+                        Result = "ERROR",
+                        Msj = $"Error al actualizar la línea. Código: {response.StatusCode}, Mensaje: {errorContent}"
+                    };
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                // Manejar errores de conexión
+                Console.WriteLine($"Error de conexión al actualizar la línea: {ex.Message}");
+                return new MDUpdateLineResponse
+                {
+                    Result = "ERROR",
+                    Msj = $"Error de conexión al actualizar la línea: {ex.Message}"
+                };
+            }
+            catch (JsonException ex)
+            {
+                // Manejar errores de serialización/deserialización
+                Console.WriteLine($"Error al procesar la respuesta JSON: {ex.Message}");
+                return new MDUpdateLineResponse
+                {
+                    Result = "ERROR",
+                    Msj = $"Error al procesar la respuesta JSON: {ex.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                // Manejar otros errores
+                Console.WriteLine($"Error al actualizar la línea: {ex.Message}");
+                return new MDUpdateLineResponse
+                {
+                    Result = "ERROR",
+                    Msj = $"Error al actualizar la línea: {ex.Message}"
+                };
+            }
+        }
     }
 }

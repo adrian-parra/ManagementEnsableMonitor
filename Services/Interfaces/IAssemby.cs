@@ -15,5 +15,6 @@ namespace AppManagementEnsableMonitor.Services.Interfaces
         Task<MDManagerLineResponse> PostManagerLine(MDManagerLineRequest request);
         Task<MDAssemblyMonitor> GetAssemblyMonitor(string plant, string lineIdCMS);
         Task<MDLineDetail> GetLineDetail(string lineId);
+        Task<MDUpdateLineResponse> UpdateLine(MDUpdateLineRequest request);
     }
 }

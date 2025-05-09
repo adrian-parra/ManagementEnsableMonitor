@@ -1113,20 +1113,42 @@ document.querySelector('#formInformacionLinea').addEventListener('submit', async
 
     const formData = new FormData(this);
     const data = {};
-    formData.forEach((value, key) => data[key] = value);
+    formData.forEach((value, key) => {
+
+        // Convertir Estatus de string a boolean
+        if (key === 'estatus') {
+            data[key] = value === 'Activo' || value === 'true';
+        }
+        // Convertir IdTipoConfiguracion de string a int
+        else if (key === 'idTipoConfiguracion') {
+            data[key] = parseInt(value, 10) || 0; // Si no se puede convertir, usar 0 como valor predeterminado
+        }
+        // Para los demás campos, mantener el valor original
+        else {
+            if(value == "No disponible"){
+                data[key] = "";
+            }else{
+                data[key] = value;
+            }
+            
+        }
+    });
 
     console.log(data);
 
-    // try {
-    //     const response = await API.post('/api/assemblymonitor/UpdateAssemblyMonitor', data);
-    //     if(response.success) {
-    //         UI.showAlert('Información guardada correctamente', 'success');
-    //     } else {
-    //         UI.showAlert('Error al guardar la información','error');
-    //     }
-    // }catch(error) {
-    //     UI.showAlert('Error al guardar la información','error');
-    // }
+    try{
+        const response = await API.post('/Line/UpdateLine', data);
+        
+        console.log(response);
+
+        UI.showAlert('Información guardada correctamente','success');
+    }catch(error) {
+        UI.showAlert('Error al guardar la información','error');
+    }
+
+    
+
+    
 });
 // Evento para el botón de búsqueda de empleado
 document.getElementById('btnBuscarEmpleado').addEventListener('click', async function() {
