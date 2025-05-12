@@ -137,9 +137,9 @@ export const EmployeeService = {
             }
             
             // Mostrar información del empleado
-            if (empleado && empleado.nombre) {
-                UI.showAlert(`Empleado encontrado: ${empleado.nombre}`, 'success');
-            }
+            // if (empleado && empleado.nombre) {
+            //     UI.showAlert(`Empleado encontrado: ${empleado.nombre}`, 'success');
+            // }
             
             return empleado;
         } catch (error) {
@@ -153,6 +153,19 @@ export const EmployeeService = {
             }
             
             UI.showAlert('No se pudo obtener la información del empleado. Por favor, intente nuevamente más tarde.', 'error');
+            return null;
+        }
+    },
+
+    async getEmployeeImage(reloj) {
+
+        try {
+            const data = await API.get("/Empleado/GetEmployeeImage?plant=" + AppState.selectedPlant + "&employee=" + reloj);
+            console.log(data);
+            return data;
+        } catch (error) {
+            console.error('Error al obtener la imagen del empleado:', error);
+            UI.showAlert('No se pudo obtener la imagen del empleado. Por favor, intente nuevamente más tarde.', 'error');
             return null;
         }
     }
@@ -345,13 +358,15 @@ export const LineManagerService = {
             const reloj = document.getElementById('inputRelojUsuario').value.trim();
                        
             const lider = document.getElementById('selectLider').options[document.getElementById('selectLider').selectedIndex].text.trim();
+
+            const liderValue = document.getElementById('selectLider').value;
             
             if (!reloj) {
                 UI.showAlert('Por favor, ingrese un número de reloj válido.', 'warning');
                 return;
             }
             
-            if (!lider || lider === '') {
+            if (!liderValue || liderValue === '') {
                 UI.showAlert('Por favor, seleccione un líder.', 'warning');
                 return;
             }
@@ -359,46 +374,66 @@ export const LineManagerService = {
             // Obtener información del empleado antes de guardar
             const empleado = await EmployeeService.getEmployee(reloj);
             
-            if (empleado) {
-                // Aquí se implementaría la lógica para guardar el encargado
-                // Por ejemplo, una llamada a otro endpoint para guardar la relación entre el líder y el empleado
-                 // Crear el objeto de solicitud
-                // const request = {
-                //     plant: selectPlanta.value,
-                //     lineId: selectLinea.value,
-                 //     imageBase64: base64String.split(',')[1], // Eliminar el prefijo "data:image/jpeg;base64,"
-                //     registerUser: userDomain && userDomain.userName ? userDomain.userName : 'usuario_desconocido'
-                // };
+            if (empleado && empleado.nombre != "N/E") {
 
+                // Obtener la imagen del empleado
+                const imagenEmpleadoR = await EmployeeService.getEmployeeImage(reloj);
 
-
-                const request = {
-                    employee: reloj,
-                    type: lider,
-                    plant: AppState.selectedPlant,
-                    lineId: AppState.selectedLine,
-                    registerUser: AppState.currentUser.userName
-                };
-
-                console.log('Solicitud de guardado:', request);
-
-                const result = await API.post('/Home/PostManagerLine', request);
-
-                console.log('Respuesta del servidor:', result);
-
-                if (result.result !== "SUCCESS") {
-                    throw new Error(result.error);
-                }
-            
-                // Enviar la solicitud al servidor
-                //const result = await API.post('/Home/PostImageCar', request);
-
-                // Simulación de guardado exitoso
-                UI.showAlert('Encargado guardado correctamente.', 'success');
+                console.log(imagenEmpleadoR);
                 
-                // Cerrar el modal y limpiar el formulario
-                UI.closeModal('modalEncargados');
-                UI.resetForm('formAgregarEncargado');
+                
+                // Mostrar confirmación con SweetAlert2 incluyendo la imagen del empleado
+                const imagenEmpleado = empleado.foto || imagenEmpleadoR.image;
+                const nombreEmpleado = empleado.nombre || 'Empleado';
+                
+                const result = await Swal.fire({
+                    title: '¿Confirmar Encargado?',
+                    html: `
+                        <div class="text-center mb-3">
+                            <img src="data:image/jpeg;base64,${imagenEmpleado}" class="rounded-circle img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
+                            <h5 class="mt-3">${nombreEmpleado}</h5>
+                            <p class="text-muted">Número de Reloj: ${reloj}</p>
+                            <p>Será asignado como: <strong>${lider}</strong></p>
+                        </div>
+                    `,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, guardar',
+                    cancelButtonText: 'Cancelar'
+                });
+                
+                // Si el usuario confirma, proceder con el guardado
+                if (result.isConfirmed) {
+                    // Crear el objeto de solicitud
+                    const request = {
+                        employee: reloj,
+                        type: lider,
+                        plant: AppState.selectedPlant,
+                        lineId: AppState.selectedLine,
+                        registerUser: AppState.currentUser.userName
+                    };
+
+                    console.log('Solicitud de guardado:', request);
+
+                    const apiResult = await API.post('/Home/PostManagerLine', request);
+
+                    console.log('Respuesta del servidor:', apiResult);
+
+                    if (apiResult.result !== "SUCCESS") {
+                        throw new Error(apiResult.error);
+                    }
+                
+                    // Mostrar mensaje de éxito
+                    UI.showAlert('Encargado guardado correctamente.', 'success');
+                    
+                    // Cerrar el modal y limpiar el formulario
+                    UI.closeModal('modalEncargados');
+                    UI.resetForm('formAgregarEncargado');
+                }
+            }else {
+                UI.showAlert('No se encontró el empleado. Por favor, verifique el número de reloj.', 'warning');
             }
         } catch (error) {
             console.error('Error al guardar encargado:', error);

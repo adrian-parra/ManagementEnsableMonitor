@@ -1,13 +1,5 @@
-
-/**
- * @fileoverview Módulo principal para la gestión de la aplicación de monitoreo de ensamble
- * @author Adrian Borquez
- * @version 1.0.0
- */
-
 import { API,UI ,AppState } from "./utilidades.js";
 import { PlantService,UserService,EmployeeService,ImageService,LineManagerService,AssemblyMonitorService } from "./services.js";
-
 
 
 /**
@@ -36,319 +28,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 });
 
-document.querySelector('#formInformacionLinea').addEventListener('submit', async function(e) {
-    e.preventDefault();
-
-    const formData = new FormData(this);
-    const data = {};
-    formData.forEach((value, key) => {
-
-        // Convertir Estatus de string a boolean
-        if (key === 'estatus') {
-            data[key] = value === 'Activo' || value === 'true';
-        }
-        // Convertir IdTipoConfiguracion de string a int
-        else if (key === 'idTipoConfiguracion') {
-            data[key] = parseInt(value, 10) || 0; // Si no se puede convertir, usar 0 como valor predeterminado
-        }
-        // Para los demás campos, mantener el valor original
-        else {
-            if(value == "No disponible"){
-                data[key] = "";
-            }else{
-                data[key] = value;
-            }
-            
-        }
-    });
-
-    try{
-        const response = await API.post('/Line/UpdateLine', data);
-        
-        console.log(response);
-
-        if(response.statusCode == 200){
-          UI.showAlert(response.description,'success');
-        }else{
-            UI.showAlert(response.description,'error');
-        }
-
-    }catch(error) {
-        UI.showAlert('Error al guardar la información','error');
-    }
-
-    
-
-    
-});
-
-document.getElementById('btnBuscarEmpleado').addEventListener('click', async function() {
-    const reloj = document.getElementById('inputRelojUsuario').value.trim();
-    
-    if(!reloj) {
-        // Mostrar mensaje de error si el campo está vacío
-        alert('Por favor, ingrese un número de reloj válido');
-        return;
-    }
-    
-    try {
-        // Mostrar indicador de carga
-        this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
-        this.disabled = true;
-        
-       const empleado = await EmployeeService.getEmployee(reloj);
-     
-        if(empleado) {
-            const dataResponse = await fetch("Empleado/GetEmployeeImage?plant=" + AppState.selectedPlant + "&employee=" + reloj);
-            const data = await dataResponse.json();
-            
-            // Mostrar la imagen del empleado si está disponible
-            if(data && data.image) {
-                const imgElement = document.getElementById('empleadoImage');
-                const placeholderElement = document.getElementById('empleadoImagePlaceholder');
-                
-                imgElement.src = "data:image/jpeg;base64," + data.image;
-                imgElement.classList.remove('d-none');
-                placeholderElement.classList.add('d-none');
-                
-                // Mostrar información del empleado
-                const infoElement = document.getElementById('empleadoInfo');
-                const nombreElement = document.getElementById('empleadoNombre');
-                
-                nombreElement.textContent = empleado.nombre || 'Empleado encontrado';
-                infoElement.classList.remove('d-none');
-                infoElement.classList.remove('alert-danger');
-                infoElement.classList.add('alert-info');
-            }
-        } else {
-            // Mostrar mensaje de error si no se encuentra el empleado
-            const infoElement = document.getElementById('empleadoInfo');
-            const nombreElement = document.getElementById('empleadoNombre');
-            
-            nombreElement.textContent = 'Empleado no encontrado';
-            infoElement.classList.remove('d-none');
-            infoElement.classList.remove('alert-info');
-            infoElement.classList.add('alert-danger');
-            
-            // Restablecer la imagen al placeholder
-            const imgElement = document.getElementById('empleadoImage');
-            const placeholderElement = document.getElementById('empleadoImagePlaceholder');
-            
-            imgElement.classList.add('d-none');
-            placeholderElement.classList.remove('d-none');
-        }
-    } catch (error) {
-        console.error('Error al buscar empleado:', error);
-        
-        // Mostrar mensaje de error
-        const infoElement = document.getElementById('empleadoInfo');
-        const nombreElement = document.getElementById('empleadoNombre');
-        
-        nombreElement.textContent = 'Error al buscar empleado';
-        infoElement.classList.remove('d-none');
-        infoElement.classList.remove('alert-info');
-        infoElement.classList.add('alert-danger');
-    } finally {
-        // Restaurar el botón
-        this.innerHTML = '<i class="bi bi-search"></i>';
-        this.disabled = false;
-    }
-});
-
-
-/**
- * Inicializa la funcionalidad de arrastrar y soltar para imágenes
- */
-function initDragAndDrop() {
-    const dropArea = document.getElementById('dropArea');
-    const inputFile = document.getElementById('inputImagenCarro');
-    const previewContainer = document.getElementById('previewContainer');
-    const imagenPreview = document.getElementById('imagenPreview');
-    const btnRemoveImage = document.getElementById('btnRemoveImage');
-    const imageInfo = document.getElementById('imageInfo');
-    const btnSubirImagen = document.getElementById('btnSubirImagen');
-    
-    // Si alguno de los elementos no existe, salir de la función
-    if (!dropArea || !inputFile || !previewContainer || !imagenPreview) {
-        console.log('Algunos elementos para drag and drop no están disponibles en esta página');
-        return;
-    }
-    
-    // Prevenir comportamiento por defecto de arrastrar y soltar
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, preventDefaults, false);
-    });
-    
-    function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-    
-    // Resaltar área cuando se arrastra un archivo sobre ella
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dropArea.addEventListener(eventName, highlight, false);
-    });
-    
-    ['dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, unhighlight, false);
-    });
-    
-    function highlight() {
-        dropArea.classList.add('border-primary');
-        dropArea.style.backgroundColor = 'rgba(13, 110, 253, 0.05)';
-    }
-    
-    function unhighlight() {
-        dropArea.classList.remove('border-primary');
-        dropArea.style.backgroundColor = '';
-    }
-    
-    // Manejar el evento de soltar archivos
-    dropArea.addEventListener('drop', handleDrop, false);
-    
-    function handleDrop(e) {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        
-        if (files.length > 0) {
-            handleFiles(files);
-        }
-    }
-    
-    // Manejar cambios en el input de archivo
-    inputFile.addEventListener('change', function() {
-        if (this.files.length > 0) {
-            handleFiles(this.files);
-        }
-    });
-    
-    // Procesar los archivos
-    function handleFiles(files) {
-        const file = files[0]; // Solo tomamos el primer archivo
-        
-        if (!file.type.startsWith('image/')) {
-            alert('Por favor, seleccione un archivo de imagen válido.');
-            return;
-        }
-        
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            imagenPreview.src = e.target.result;
-            previewContainer.style.display = 'block';
-            
-            // Mostrar información de la imagen
-            const fileSize = formatFileSize(file.size);
-            imageInfo.textContent = `${file.name} (${fileSize})`;
-            
-            // Habilitar botón de subir
-            btnSubirImagen.disabled = false;
-
-            document.querySelector("#containerFile").classList.add("d-none")
-        };
-        reader.readAsDataURL(file);
-    }
-    
-    // Formatear tamaño de archivo
-    function formatFileSize(bytes) {
-        if (bytes < 1024) return bytes + ' bytes';
-        else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-        else return (bytes / 1048576).toFixed(1) + ' MB';
-    }
-    
-    // Eliminar imagen
-    if (btnRemoveImage) {
-        btnRemoveImage.addEventListener('click', function() {
-            previewContainer.style.display = 'none';
-            inputFile.value = '';
-            btnSubirImagen.disabled = true;
-            document.querySelector("#containerFile").classList.remove("d-none")
-        });
-    }
-}
-/**
- * Inicializa los selectores de planta y línea
- * @returns {Promise<void>}
- */
-async function initPlantAndLineSelectors() {
-    try {
-        const selectPlanta = document.getElementById('selectPlanta');
-        const selectLinea = document.getElementById('selectLinea');
-        
-        if (!selectPlanta || !selectLinea) return;
-        
-        // Obtener plantas
-        const plantas = await PlantService.getPlants();
-        
-        // Limpiar opciones existentes
-        selectPlanta.innerHTML = '<option selected disabled value="">Seleccione una planta...</option>';
-        
-        // Agregar nuevas opciones
-        plantas.forEach(planta => {
-            const option = document.createElement('option');
-            option.value = planta.id;
-            option.textContent = planta.nombre;
-            option.dataset.codigoTress = planta.codigoTress;
-            option.dataset.checadores = planta.checadoresDePlanta;
-            selectPlanta.appendChild(option);
-        });
-        
-        console.log('Plantas cargadas:', plantas);
-        
-        // Agregar evento de cambio al select de plantas
-        selectPlanta.addEventListener('change', async function() {
-            const plantaId = this.value;
-            AppState.selectedPlant = plantaId;
-            
-            if (!plantaId) return;
-            
-            try {
-                // Mostrar indicador de carga
-                UI.updateElement('selectLinea', {
-                    disabled: true,
-                    html: '<option selected disabled value="">Cargando líneas...</option>'
-                });
-                
-                // Obtener líneas para la planta seleccionada
-                const lineas = await PlantService.getLines(plantaId);
-                
-                // Limpiar y agregar nuevas opciones
-                selectLinea.innerHTML = '<option selected disabled value="">Seleccione una línea...</option>';
-                
-                lineas.forEach(linea => {
-                    const option = document.createElement('option');
-                    option.value = linea.lineId;
-                    option.textContent = linea.nombreLinea;
-                    option.dataset.workProccess = linea.workProccess;
-                    option.dataset.tressId = linea.tressId;
-                    option.dataset.terminalEmpaque = linea.terminalEmpaque;
-                    option.dataset.formacionPe = linea.formacionPe;
-                    option.dataset.metaIPD = linea.metaIPD;
-                    selectLinea.appendChild(option);
-                });
-                
-                console.log('Líneas cargadas:', lineas);
-                
-                // Habilitar el select de líneas
-                UI.updateElement('selectLinea', { disabled: false });
-            } catch (error) {
-                console.error('Error al cargar líneas:', error);
-                UI.updateElement('selectLinea', {
-                    disabled: false,
-                    html: '<option selected disabled value="">Error al cargar líneas</option>'
-                });
-                UI.showAlert('No se pudieron cargar las líneas. Por favor, intente nuevamente más tarde.', 'error');
-            }
-        });
-        
-        // Agregar evento de cambio al select de líneas
-        selectLinea.addEventListener('change', function() {
-            AppState.selectedLine = this.value;
-        });
-    } catch (error) {
-        console.error('Error al inicializar selectores:', error);
-        UI.showAlert('Error al cargar datos iniciales. Por favor, recargue la página.', 'error');
-    }
-}
 
 /**
  * Inicializa los eventos de la interfaz de usuario
@@ -500,7 +179,330 @@ function initUIEvents() {
     if (btnGuardarEncargado) {
         btnGuardarEncargado.addEventListener('click', LineManagerService.saveLineManager);
     }
+
+    // Evento para el formulario de información de línea
+    const formInformacionLinea = document.getElementById('formInformacionLinea');
+    if (formInformacionLinea) {
+        formInformacionLinea.addEventListener('submit', async function(e) {
+            e.preventDefault();
+        
+            const formData = new FormData(this);
+            const data = {};
+            formData.forEach((value, key) => {
+        
+                // Convertir Estatus de string a boolean
+                if (key === 'estatus') {
+                    data[key] = value === 'Activo' || value === 'true';
+                }
+                // Convertir IdTipoConfiguracion de string a int
+                else if (key === 'idTipoConfiguracion') {
+                    data[key] = parseInt(value, 10) || 0; // Si no se puede convertir, usar 0 como valor predeterminado
+                }
+                // Para los demás campos, mantener el valor original
+                else {
+                    if(value == "No disponible"){
+                        data[key] = "";
+                    }else{
+                        data[key] = value;
+                    }
+                    
+                }
+            });
+        
+            try{
+                const response = await API.post('/Line/UpdateLine', data);
+                
+                console.log(response);
+        
+                if(response.statusCode == 200){
+                  UI.showAlert(response.description,'success');
+                }else{
+                    UI.showAlert(response.description,'error');
+                }
+        
+            }catch(error) {
+                UI.showAlert('Error al guardar la información','error');
+            }
+        
+            
+        
+            
+        });
+    }
+
+    // Evento para el botón de buscar empleado
+    const btnBuscarEmpleado = document.getElementById('btnBuscarEmpleado');
+    if (btnBuscarEmpleado) {
+        btnBuscarEmpleado.addEventListener('click', async function() {
+            const reloj = document.getElementById('inputRelojUsuario').value.trim();
+            
+            if(!reloj) {
+                // Mostrar mensaje de error si el campo está vacío
+                alert('Por favor, ingrese un número de reloj válido');
+                return;
+            }
+            
+            try {
+                // Mostrar indicador de carga
+                this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+                this.disabled = true;
+                
+               const empleado = await EmployeeService.getEmployee(reloj);
+             
+                if(empleado) {
+                    const data = await EmployeeService.getEmployeeImage(reloj);
+                    
+                    // Mostrar la imagen del empleado si está disponible
+                    if(data && data.image) {
+                        const imgElement = document.getElementById('empleadoImage');
+                        const placeholderElement = document.getElementById('empleadoImagePlaceholder');
+                        
+                        imgElement.src = "data:image/jpeg;base64," + data.image;
+                        imgElement.classList.remove('d-none');
+                        placeholderElement.classList.add('d-none');
+                        
+                        // Mostrar información del empleado
+                        const infoElement = document.getElementById('empleadoInfo');
+                        const nombreElement = document.getElementById('empleadoNombre');
+                        
+                        nombreElement.textContent = empleado.nombre || 'Empleado encontrado';
+                        infoElement.classList.remove('d-none');
+                        infoElement.classList.remove('alert-danger');
+                        infoElement.classList.add('alert-info');
+                    }
+                } else {
+                    // Mostrar mensaje de error si no se encuentra el empleado
+                    const infoElement = document.getElementById('empleadoInfo');
+                    const nombreElement = document.getElementById('empleadoNombre');
+                    
+                    nombreElement.textContent = 'Empleado no encontrado';
+                    infoElement.classList.remove('d-none');
+                    infoElement.classList.remove('alert-info');
+                    infoElement.classList.add('alert-danger');
+                    
+                    // Restablecer la imagen al placeholder
+                    const imgElement = document.getElementById('empleadoImage');
+                    const placeholderElement = document.getElementById('empleadoImagePlaceholder');
+                    
+                    imgElement.classList.add('d-none');
+                    placeholderElement.classList.remove('d-none');
+                }
+            } catch (error) {
+                console.error('Error al buscar empleado:', error);
+                
+                // Mostrar mensaje de error
+                const infoElement = document.getElementById('empleadoInfo');
+                const nombreElement = document.getElementById('empleadoNombre');
+                
+                nombreElement.textContent = 'Error al buscar empleado';
+                infoElement.classList.remove('d-none');
+                infoElement.classList.remove('alert-info');
+                infoElement.classList.add('alert-danger');
+            } finally {
+                // Restaurar el botón
+                this.innerHTML = '<i class="bi bi-search"></i>';
+                this.disabled = false;
+            }
+        });
+    }
 }
+/**
+ * Inicializa la funcionalidad de arrastrar y soltar para imágenes
+ */
+function initDragAndDrop() {
+    const dropArea = document.getElementById('dropArea');
+    const inputFile = document.getElementById('inputImagenCarro');
+    const previewContainer = document.getElementById('previewContainer');
+    const imagenPreview = document.getElementById('imagenPreview');
+    const btnRemoveImage = document.getElementById('btnRemoveImage');
+    const imageInfo = document.getElementById('imageInfo');
+    const btnSubirImagen = document.getElementById('btnSubirImagen');
+    
+    // Si alguno de los elementos no existe, salir de la función
+    if (!dropArea || !inputFile || !previewContainer || !imagenPreview) {
+        console.log('Algunos elementos para drag and drop no están disponibles en esta página');
+        return;
+    }
+    
+    // Prevenir comportamiento por defecto de arrastrar y soltar
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    // Resaltar área cuando se arrastra un archivo sobre ella
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+    });
+    
+    function highlight() {
+        dropArea.classList.add('border-primary');
+        dropArea.style.backgroundColor = 'rgba(13, 110, 253, 0.05)';
+    }
+    
+    function unhighlight() {
+        dropArea.classList.remove('border-primary');
+        dropArea.style.backgroundColor = '';
+    }
+    
+    // Manejar el evento de soltar archivos
+    dropArea.addEventListener('drop', handleDrop, false);
+    
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        
+        if (files.length > 0) {
+            handleFiles(files);
+        }
+    }
+    
+    // Manejar cambios en el input de archivo
+    inputFile.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            handleFiles(this.files);
+        }
+    });
+    
+    // Procesar los archivos
+    function handleFiles(files) {
+        const file = files[0]; // Solo tomamos el primer archivo
+        
+        if (!file.type.startsWith('image/')) {
+            alert('Por favor, seleccione un archivo de imagen válido.');
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            imagenPreview.src = e.target.result;
+            previewContainer.style.display = 'block';
+            
+            // Mostrar información de la imagen
+            const fileSize = formatFileSize(file.size);
+            imageInfo.textContent = `${file.name} (${fileSize})`;
+            
+            // Habilitar botón de subir
+            btnSubirImagen.disabled = false;
+
+            document.querySelector("#containerFile").classList.add("d-none")
+        };
+        reader.readAsDataURL(file);
+    }
+    
+    // Formatear tamaño de archivo
+    function formatFileSize(bytes) {
+        if (bytes < 1024) return bytes + ' bytes';
+        else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+        else return (bytes / 1048576).toFixed(1) + ' MB';
+    }
+    
+    // Eliminar imagen
+    if (btnRemoveImage) {
+        btnRemoveImage.addEventListener('click', function() {
+            previewContainer.style.display = 'none';
+            inputFile.value = '';
+            btnSubirImagen.disabled = true;
+            document.querySelector("#containerFile").classList.remove("d-none")
+        });
+    }
+}
+
+
+/**
+ * Inicializa los selectores de planta y línea
+ * @returns {Promise<void>}
+ */
+async function initPlantAndLineSelectors() {
+    try {
+        const selectPlanta = document.getElementById('selectPlanta');
+        const selectLinea = document.getElementById('selectLinea');
+        
+        if (!selectPlanta || !selectLinea) return;
+        
+        // Obtener plantas
+        const plantas = await PlantService.getPlants();
+        
+        // Limpiar opciones existentes
+        selectPlanta.innerHTML = '<option selected disabled value="">Seleccione una planta...</option>';
+        
+        // Agregar nuevas opciones
+        plantas.forEach(planta => {
+            const option = document.createElement('option');
+            option.value = planta.id;
+            option.textContent = planta.nombre;
+            option.dataset.codigoTress = planta.codigoTress;
+            option.dataset.checadores = planta.checadoresDePlanta;
+            selectPlanta.appendChild(option);
+        });
+        
+        console.log('Plantas cargadas:', plantas);
+        
+        // Agregar evento de cambio al select de plantas
+        selectPlanta.addEventListener('change', async function() {
+            const plantaId = this.value;
+            AppState.selectedPlant = plantaId;
+            
+            if (!plantaId) return;
+            
+            try {
+                // Mostrar indicador de carga
+                UI.updateElement('selectLinea', {
+                    disabled: true,
+                    html: '<option selected disabled value="">Cargando líneas...</option>'
+                });
+                
+                // Obtener líneas para la planta seleccionada
+                const lineas = await PlantService.getLines(plantaId);
+                
+                // Limpiar y agregar nuevas opciones
+                selectLinea.innerHTML = '<option selected disabled value="">Seleccione una línea...</option>';
+                
+                lineas.forEach(linea => {
+                    const option = document.createElement('option');
+                    option.value = linea.lineId;
+                    option.textContent = linea.nombreLinea;
+                    option.dataset.workProccess = linea.workProccess;
+                    option.dataset.tressId = linea.tressId;
+                    option.dataset.terminalEmpaque = linea.terminalEmpaque;
+                    option.dataset.formacionPe = linea.formacionPe;
+                    option.dataset.metaIPD = linea.metaIPD;
+                    selectLinea.appendChild(option);
+                });
+                
+                console.log('Líneas cargadas:', lineas);
+                
+                // Habilitar el select de líneas
+                UI.updateElement('selectLinea', { disabled: false });
+            } catch (error) {
+                console.error('Error al cargar líneas:', error);
+                UI.updateElement('selectLinea', {
+                    disabled: false,
+                    html: '<option selected disabled value="">Error al cargar líneas</option>'
+                });
+                UI.showAlert('No se pudieron cargar las líneas. Por favor, intente nuevamente más tarde.', 'error');
+            }
+        });
+        
+        // Agregar evento de cambio al select de líneas
+        selectLinea.addEventListener('change', function() {
+            AppState.selectedLine = this.value;
+        });
+    } catch (error) {
+        console.error('Error al inicializar selectores:', error);
+        UI.showAlert('Error al cargar datos iniciales. Por favor, recargue la página.', 'error');
+    }
+}
+
+
 
 
 
