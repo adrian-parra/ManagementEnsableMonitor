@@ -234,5 +234,29 @@ namespace AppManagementEnsableMonitor.Controllers
                 return StatusCode(500, new { success = false, message = "Error al recuperar detalles de la línea", error = ex.Message });
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetLineManager(string plant, string line_id)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(plant))
+                {
+                    return BadRequest(new { success = false, message = "El parámetro plant es requerido" });
+                }
+
+                if (string.IsNullOrEmpty(line_id))
+                {
+                    return BadRequest(new { success = false, message = "El parámetro line_id es requerido" });
+                }
+
+                var lineManager = await _assembly.GetLineManager(plant, line_id);
+                return Ok(lineManager);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = "Error al recuperar información del gerente de línea", error = ex.Message });
+            }
+        }
     }
 }

@@ -439,7 +439,20 @@ export const LineManagerService = {
             console.error('Error al guardar encargado:', error);
             UI.showAlert(`Error al guardar encargado: ${error.message}`, 'error');
         }
+    },
+
+    async getLineManager() {
+        try {
+            const data = await API.get(`/Home/GetLineManager?plant=${AppState.selectedPlant}&line_id=${AppState.selectedLine}`);
+            return data;
+        } catch (error) {
+            console.error('Error al obtener el encargado:', error);
+            UI.showAlert(`Error al obtener el encargado: ${error.message}`, 'error');
+            return null;
+        }
     }
+
+
 };
 
 /**

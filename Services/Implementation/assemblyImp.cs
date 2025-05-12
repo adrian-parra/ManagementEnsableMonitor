@@ -355,6 +355,53 @@ namespace AppManagementEnsableMonitor.Services.Implementation
             }
         }
         
+        public async Task<List<MDLineManager>> GetLineManager(string plant, string lineId)
+        {
+            try
+            {
+                // Construir la URL completa para la solicitud
+                string requestUrl = $"{_apiBaseUrl}/assemblymonitor/GetLineManager?plant={plant}&line_id={lineId}";
+                
+                // Realizar la solicitud HTTP GET
+                HttpResponseMessage response = await _httpClient.GetAsync(requestUrl);
+                
+                // Verificar si la solicitud fue exitosa
+                if (response.IsSuccessStatusCode)
+                {
+                    // Leer y deserializar la respuesta
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    var lineManagers = JsonSerializer.Deserialize<List<MDLineManager>>(jsonResponse, 
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    
+                    return lineManagers;
+                }
+                else
+                {
+                    // Manejar errores de la API
+                    string errorContent = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Error al obtener información del gerente de línea. Código: {response.StatusCode}, Mensaje: {errorContent}");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                // Manejar errores de conexión
+                Console.WriteLine($"Error de conexión al obtener información del gerente de línea: {ex.Message}");
+                throw new Exception($"Error de conexión al obtener información del gerente de línea: {ex.Message}", ex);
+            }
+            catch (JsonException ex)
+            {
+                // Manejar errores de deserialización
+                Console.WriteLine($"Error al deserializar la respuesta: {ex.Message}");
+                throw new Exception($"Error al deserializar la respuesta: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                // Manejar otros errores
+                Console.WriteLine($"Error al obtener información del gerente de línea: {ex.Message}");
+                throw;
+            }
+        }
+        
         public async Task<MDLineDetail> GetLineDetail(string lineId)
         {
             try

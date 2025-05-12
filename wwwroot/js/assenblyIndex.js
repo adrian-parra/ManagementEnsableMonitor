@@ -238,7 +238,7 @@ function initUIEvents() {
             
             if(!reloj) {
                 // Mostrar mensaje de error si el campo está vacío
-                alert('Por favor, ingrese un número de reloj válido');
+                UI.showAlert('Por favor, ingrese un número de reloj válido','warning')
                 return;
             }
             
@@ -250,6 +250,40 @@ function initUIEvents() {
                const empleado = await EmployeeService.getEmployee(reloj);
              
                 if(empleado) {
+
+                    // const lideresExist
+                    // Verificar si el empleado ya es líder
+                    const lideresExistentes = await LineManagerService.getLineManager()
+                    // Verificar si el empleado ya es líder
+                    const isLider = lideresExistentes.some(lider => lider.id === empleado.id);
+
+                    if(isLider) {
+                        // Mostrar confirmación con SweetAlert2
+                        const liderInfo = lideresExistentes.find(lider => lider.id === empleado.id);
+                        Swal.fire({
+                            title: 'Empleado ya asignado',
+                            html: `
+                                <div class="text-center mb-3">
+                                    <p>Este empleado ya está asignado como líder de línea con el rol: <strong>${liderInfo ? liderInfo.type : 'Líder'}</strong></p>
+                                    <p>¿Desea eliminarlo de la lista de líderes?</p>
+                                </div>
+                            `,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Sí, eliminar',
+                            cancelButtonText: 'Cancelar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Aquí implementar la lógica para eliminar el líder
+                                //eliminarLider(empleado.id);
+                            }
+                        });
+                        return;
+                    }
+
+
                     const data = await EmployeeService.getEmployeeImage(reloj);
                     
                     // Mostrar la imagen del empleado si está disponible
