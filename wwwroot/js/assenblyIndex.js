@@ -248,6 +248,8 @@ function initUIEvents() {
                 this.disabled = true;
                 
                const empleado = await EmployeeService.getEmployee(reloj);
+
+               const data = await EmployeeService.getEmployeeImage(reloj);
              
                 if(empleado) {
 
@@ -264,46 +266,47 @@ function initUIEvents() {
                             title: 'Empleado ya asignado',
                             html: `
                                 <div class="text-center mb-3">
+                                    <img src="${data && data.image ? "data:image/jpeg;base64," + data.image : 'assets/img/user-placeholder.png'}" 
+                                         class="rounded-circle img-thumbnail mb-3" 
+                                         style="width: 120px; height: 120px; object-fit: cover;">
+                                    <h5 class="mb-2">${empleado.nombre || 'Empleado'}</h5>
                                     <p>Este empleado ya está asignado como líder de línea con el rol: <strong>${liderInfo ? liderInfo.type : 'Líder'}</strong></p>
-                                    <p>¿Desea eliminarlo de la lista de líderes?</p>
+                                    <p>¿Qué acción desea realizar?</p>
                                 </div>
                             `,
                             icon: 'warning',
+                            showDenyButton: true,
                             showCancelButton: true,
                             confirmButtonColor: '#d33',
-                            cancelButtonColor: '#3085d6',
-                            confirmButtonText: 'Sí, eliminar',
+                            denyButtonColor: '#3085d6',
+                            cancelButtonColor: '#6c757d',
+                            confirmButtonText: 'Eliminar líder',
+                            denyButtonText: 'Continuar proceso',
                             cancelButtonText: 'Cancelar'
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 // Aquí implementar la lógica para eliminar el líder
                                 //eliminarLider(empleado.id);
+                                return;
+                            } else if (result.isDenied) {
+                                // Continuar con el proceso de asignación
+                                // Aquí puedes implementar la lógica para continuar con el proceso
+                                // Por ejemplo, mostrar el formulario para asignar un nuevo rol
+                                // continuarProcesoAsignacion(empleado);
+                                cargarImagenLider(data);
+                               
+                            } else {
+                                // Cancelar la acción
+                                return;
                             }
                         });
-                        return;
+                        
                     }
 
 
-                    const data = await EmployeeService.getEmployeeImage(reloj);
                     
-                    // Mostrar la imagen del empleado si está disponible
-                    if(data && data.image) {
-                        const imgElement = document.getElementById('empleadoImage');
-                        const placeholderElement = document.getElementById('empleadoImagePlaceholder');
-                        
-                        imgElement.src = "data:image/jpeg;base64," + data.image;
-                        imgElement.classList.remove('d-none');
-                        placeholderElement.classList.add('d-none');
-                        
-                        // Mostrar información del empleado
-                        const infoElement = document.getElementById('empleadoInfo');
-                        const nombreElement = document.getElementById('empleadoNombre');
-                        
-                        nombreElement.textContent = empleado.nombre || 'Empleado encontrado';
-                        infoElement.classList.remove('d-none');
-                        infoElement.classList.remove('alert-danger');
-                        infoElement.classList.add('alert-info');
-                    }
+                    
+                    
                 } else {
                     // Mostrar mensaje de error si no se encuentra el empleado
                     const infoElement = document.getElementById('empleadoInfo');
@@ -340,6 +343,29 @@ function initUIEvents() {
         });
     }
 }
+
+
+function cargarImagenLider(data){
+    // Mostrar la imagen del empleado si está disponible
+    if(data && data.image) {
+        const imgElement = document.getElementById('empleadoImage');
+        const placeholderElement = document.getElementById('empleadoImagePlaceholder');
+        
+        imgElement.src = "data:image/jpeg;base64," + data.image;
+        imgElement.classList.remove('d-none');
+        placeholderElement.classList.add('d-none');
+        
+        // Mostrar información del empleado
+        const infoElement = document.getElementById('empleadoInfo');
+        const nombreElement = document.getElementById('empleadoNombre');
+        
+        nombreElement.textContent = empleado.nombre || 'Empleado encontrado';
+        infoElement.classList.remove('d-none');
+        infoElement.classList.remove('alert-danger');
+        infoElement.classList.add('alert-info');
+    }
+}
+
 /**
  * Inicializa la funcionalidad de arrastrar y soltar para imágenes
  */
