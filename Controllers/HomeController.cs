@@ -305,5 +305,29 @@ namespace AppManagementEnsableMonitor.Controllers
                 return StatusCode(500, new { success = false, message = "Error al recuperar clientes", error = ex.Message });
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetProjectByCustomer(string id_customer, string plant)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(id_customer))
+                {
+                    return BadRequest(new { success = false, message = "El parámetro id_customer es requerido" });
+                }
+
+                if (string.IsNullOrEmpty(plant))
+                {
+                    return BadRequest(new { success = false, message = "El parámetro plant es requerido" });
+                }
+
+                var projects = await _assembly.GetProjectByCustomer(id_customer, plant);
+                return Ok(projects);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = "Error al recuperar proyectos", error = ex.Message });
+            }
+        }
     }
 }

@@ -324,7 +324,7 @@ export const UI = {
                 options.options.forEach(opt => {
                     console.log("id id id" + opt.id);
                     const option = document.createElement('option');
-                    option.value = opt.customer || opt.value || opt;
+                    option.value = opt.id || opt.value || opt;
                     option.textContent = opt.customer || opt.text || opt;
                     if (options.value && (options.value == option.value)) {
                         option.selected = true;

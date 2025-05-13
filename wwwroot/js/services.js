@@ -528,6 +528,24 @@ export const AssemblyMonitorService = {
                 disabled: !esIngenieria
             });
 
+            let customerid = null;
+            customers.forEach(customer => {
+                if(customer.customer === data.customer){
+                    customerid = customer.id;
+                }
+            });
+
+            
+
+            let projects = await AssemblyMonitorService.getProjectByCustomer(customerid)
+            // Convertir el input a select y cargar las opciones
+            UI.updateElement('inputProject', {
+                convertToSelect: true,
+                options: projects,
+                value: data.project || '',
+                disabled:!esIngenieria
+            });
+
         }else{
             UI.updateElement('inputCustomer', { 
                 value: data.customer || 'No disponible',
@@ -570,7 +588,7 @@ export const AssemblyMonitorService = {
         UI.updateElement('inputLineId2', { value: data.lineId2 || 'No disponible' });
         UI.updateElement('inputDescripcion', { value: data.descripcion || 'No disponible' });
         
-        UI.updateElement('inputProject', { value: data.project || 'No disponible' });
+        // UI.updateElement('inputProject', { value: data.project || 'No disponible' });
         UI.updateElement('inputComunizada', { value: data.comunizada || 'No disponible' });
         UI.updateElement('inputEstatus', { value: data.estatus ? 'Activo' : 'Inactivo' });
         UI.updateElement('inputTipoConfiguracion', { value: data.idTipoConfiguracion || '0' });
@@ -617,6 +635,17 @@ export const AssemblyMonitorService = {
         }catch (error) {
             console.error('Error al obtener información del cliente:', error);
             UI.showAlert('No se pudo obtener la información del cliente. Por favor, intente nuevamente más tarde.', 'error');
+            return null;
+        }
+    },
+
+    async getProjectByCustomer(id_customer){
+        try {
+            const data = await API.get('/Home/GetProjectByCustomer',{id_customer:id_customer,plant:AppState.selectedPlant});
+            return data;
+        }catch (error) {
+            console.error('Error al obtener información del proyecto:', error);
+            UI.showAlert('No se pudo obtener la información del proyecto. Por favor, intente nuevamente más tarde.', 'error');
             return null;
         }
     }

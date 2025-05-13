@@ -19,5 +19,6 @@ namespace AppManagementEnsableMonitor.Services.Interfaces
         Task<List<MDLineManager>> GetLineManager(string plant, string lineId);
         Task<MDManagerLineResponse> DeleteManagerLine(string plant, string employee);
         Task<List<MDCustomer>> GetCustomer(string plant);
+        Task<List<MDProject>> GetProjectByCustomer(string idCustomer, string plant);
     }
 }
