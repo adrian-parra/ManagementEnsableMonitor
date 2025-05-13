@@ -515,5 +515,45 @@ namespace AppManagementEnsableMonitor.Services.Implementation
                 };
             }
         }
+
+        public async Task<MDManagerLineResponse> DeleteManagerLine(string plant, string employee)
+        {
+            try
+            {
+                // Construir la URL completa para la solicitud
+                string requestUrl = $"{_apiBaseUrl}/assemblymonitor/DeleteManagerLine?plant={plant}&employee={employee}";
+                
+                // Crear una solicitud HTTP DELETE
+                var request = new HttpRequestMessage(HttpMethod.Delete, requestUrl);
+                
+                // Realizar la solicitud HTTP DELETE
+                HttpResponseMessage response = await _httpClient.SendAsync(request);
+                
+                // Verificar si la solicitud fue exitosa
+                if (response.IsSuccessStatusCode)
+                {
+                    // Leer y deserializar la respuesta
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    var result = JsonSerializer.Deserialize<MDManagerLineResponse>(jsonResponse, 
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    
+                    return result;
+                }
+                
+                return new MDManagerLineResponse
+                {
+                    Msj = $"Error: {response.StatusCode}",
+                    Result = "ERROR"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new MDManagerLineResponse
+                {
+                    Msj = $"Error: {ex.Message}",
+                    Result = "ERROR"
+                };
+            }
+        }
     }
 }

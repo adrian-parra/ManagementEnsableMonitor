@@ -450,7 +450,20 @@ export const LineManagerService = {
             UI.showAlert(`Error al obtener el encargado: ${error.message}`, 'error');
             return null;
         }
+    },
+
+    async deleteLineManager(reloj) {
+        try {
+            const data = await API.get(`/Home/DeleteManagerLine?plant=${AppState.selectedPlant}&employee=${reloj}`);
+            return data;
+        }catch (error) {
+            console.error('Error al eliminar el encargado:', error);
+            UI.showAlert(`Error al eliminar el encargado: ${error.message}`, 'error');
+            return null;
+        }
     }
+
+    
 
 
 };

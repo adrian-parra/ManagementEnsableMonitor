@@ -252,16 +252,17 @@ function initUIEvents() {
                const data = await EmployeeService.getEmployeeImage(reloj);
              
                 if(empleado) {
-
+                    // console.log(empleado);
+                    // alert(empleado.reloj)
                     // const lideresExist
                     // Verificar si el empleado ya es líder
                     const lideresExistentes = await LineManagerService.getLineManager()
                     // Verificar si el empleado ya es líder
-                    const isLider = lideresExistentes.some(lider => lider.id === empleado.id);
+                    const isLider = lideresExistentes.some(lider => lider.employee === empleado.reloj);
 
                     if(isLider) {
                         // Mostrar confirmación con SweetAlert2
-                        const liderInfo = lideresExistentes.find(lider => lider.id === empleado.id);
+                        const liderInfo = lideresExistentes.find(lider => lider.employee === empleado.reloj);
                         Swal.fire({
                             title: 'Empleado ya asignado',
                             html: `
@@ -283,18 +284,24 @@ function initUIEvents() {
                             confirmButtonText: 'Eliminar líder',
                             denyButtonText: 'Continuar proceso',
                             cancelButtonText: 'Cancelar'
-                        }).then((result) => {
+                        }).then(async (result) => {
                             if (result.isConfirmed) {
                                 // Aquí implementar la lógica para eliminar el líder
                                 //eliminarLider(empleado.id);
+                                const result = await LineManagerService.deleteLineManager(empleado.reloj);
+                                if(result.result == "SUCCESS"){
+                                    UI.showAlert('Líder eliminado correctamente','success');
+                                    return;
+                                }
+                                UI.showAlert('Error al eliminar líder','error');
                                 return;
                             } else if (result.isDenied) {
                                 // Continuar con el proceso de asignación
                                 // Aquí puedes implementar la lógica para continuar con el proceso
                                 // Por ejemplo, mostrar el formulario para asignar un nuevo rol
                                 // continuarProcesoAsignacion(empleado);
-                                cargarImagenLider(data);
-                               
+                                cargarImagenLider(data,empleado);
+                               return;
                             } else {
                                 // Cancelar la acción
                                 return;
@@ -302,6 +309,9 @@ function initUIEvents() {
                         });
                         
                     }
+
+
+                    cargarImagenLider(data,empleado);
 
 
                     
@@ -345,7 +355,7 @@ function initUIEvents() {
 }
 
 
-function cargarImagenLider(data){
+function cargarImagenLider(data , empleado){
     // Mostrar la imagen del empleado si está disponible
     if(data && data.image) {
         const imgElement = document.getElementById('empleadoImage');

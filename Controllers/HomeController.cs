@@ -258,5 +258,33 @@ namespace AppManagementEnsableMonitor.Controllers
                 return StatusCode(500, new { success = false, message = "Error al recuperar información del gerente de línea", error = ex.Message });
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> DeleteManagerLine(string plant, string employee)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(plant))
+                {
+                    return BadRequest(new { success = false, message = "El parámetro plant es requerido" });
+                }
+
+                if (string.IsNullOrEmpty(employee))
+                {
+                    return BadRequest(new { success = false, message = "El parámetro employee es requerido" });
+                }
+
+                var result = await _assembly.DeleteManagerLine(plant, employee);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new MDManagerLineResponse
+                {
+                    Msj = $"Error interno del servidor: {ex.Message}",
+                    Result = "ERROR"
+                });
+            }
+        }
     }
 }
