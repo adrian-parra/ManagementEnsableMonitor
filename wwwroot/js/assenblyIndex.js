@@ -93,6 +93,9 @@ function initUIEvents() {
                 console.log(assemblyMonitor);
 
                 
+
+        
+                
                 // Actualizar la interfaz con los datos obtenidos
                 if (assemblyMonitor) {
                     AssemblyMonitorService.updateMonitorUI(assemblyMonitor);

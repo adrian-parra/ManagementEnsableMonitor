@@ -291,13 +291,57 @@ export const UI = {
      * @param {string} [options.value] - Valor a establecer en el elemento
      * @param {string} [options.html] - HTML a establecer en el elemento
      * @param {string} [options.display] - Estilo de visualización del elemento
+     * @param {boolean} [options.readonly] - Si el elemento debe ser de solo lectura
+     * @param {Array} [options.options] - Opciones para convertir a select
+     * @param {boolean} [options.convertToSelect] - Indica si se debe convertir a select
      */
     updateElement(elementId, options = {}) {
-        const element = document.getElementById(elementId);
+        let element = document.getElementById(elementId);
         if (!element) return;
 
+        // console.log("loal 9999" + options.options);
+
+        // Convertir de input a select si se especifica
+        if (options.convertToSelect && element.tagName === 'INPUT') {
+            const parentNode = element.parentNode;
+            let selectElement = document.createElement('select');
+            
+            // Copiar atributos importantes
+            selectElement.id = element.id;
+            selectElement.name = element.name;
+            selectElement.className = element.className;
+            
+            // Agregar opciones si se proporcionan
+            if (Array.isArray(options.options)) {
+                // Opción por defecto
+                // console.log("loal" + options.options);
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = 'Seleccione una opción';
+                selectElement.appendChild(defaultOption);
+                
+                // Agregar opciones del array
+                options.options.forEach(opt => {
+                    console.log("id id id" + opt.id);
+                    const option = document.createElement('option');
+                    option.value = opt.customer || opt.value || opt;
+                    option.textContent = opt.customer || opt.text || opt;
+                    if (options.value && (options.value == option.value)) {
+                        option.selected = true;
+                    }
+                    selectElement.appendChild(option);
+                });
+            }
+            
+            // Reemplazar el input con el select
+            parentNode.replaceChild(selectElement, element);
+            
+            // Actualizar la referencia al elemento
+            element = selectElement;
+        }
+
         if (options.disabled !== undefined) element.disabled = options.disabled;
-        if (options.value !== undefined) element.value = options.value;
+        if (options.value !== undefined && !options.convertToSelect) element.value = options.value;
         if (options.html !== undefined) element.innerHTML = options.html;
         if (options.display !== undefined) element.style.display = options.display;
         if (options.readonly !== undefined) element.readOnly = options.readonly;

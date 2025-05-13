@@ -506,13 +506,34 @@ export const AssemblyMonitorService = {
      * Actualiza la interfaz con la información del monitor
      * @param {Object} data - Datos del monitor
      */
-    updateMonitorUI(data) {
+    async updateMonitorUI(data) {
         if (!data) return;
 
         // Verificar si el usuario pertenece al departamento de ingeniería
         const esIngenieria = AppState.department === "Ingenieria";
         const esRh = AppState.department === "RH";
         const esManufactura = AppState.department === "Manufactura";
+
+
+        if(esIngenieria) {
+            let customers = await AssemblyMonitorService.getCustomer()
+
+            
+
+            // Convertir el input a select y cargar las opciones
+            UI.updateElement('inputCustomer', { 
+                convertToSelect: true,
+                options: customers,
+                value: data.customer || '',
+                disabled: !esIngenieria
+            });
+
+        }else{
+            UI.updateElement('inputCustomer', { 
+                value: data.customer || 'No disponible',
+                readonly:!esIngenieria
+            });
+        }
         
         // Actualizar campos básicos
         UI.updateElement('inputModeloArnes', { 
@@ -548,7 +569,7 @@ export const AssemblyMonitorService = {
         UI.updateElement('inputLineId', { value: data.lineId || 'No disponible' });
         UI.updateElement('inputLineId2', { value: data.lineId2 || 'No disponible' });
         UI.updateElement('inputDescripcion', { value: data.descripcion || 'No disponible' });
-        UI.updateElement('inputCustomer', { value: data.customer || 'No disponible' });
+        
         UI.updateElement('inputProject', { value: data.project || 'No disponible' });
         UI.updateElement('inputComunizada', { value: data.comunizada || 'No disponible' });
         UI.updateElement('inputEstatus', { value: data.estatus ? 'Activo' : 'Inactivo' });
@@ -587,5 +608,16 @@ export const AssemblyMonitorService = {
                                 <button type="submit" class="btn btn-success" id="btnGuardarInformacion" disabled><i
                                         class="bi bi-save me-2"></i>Guardar Cambios</button>
                             </div>`);
+    },
+
+    async getCustomer() {
+        try {
+            const data = await API.get('/Home/GetCustomer',{plant:AppState.selectedPlant});
+            return data;
+        }catch (error) {
+            console.error('Error al obtener información del cliente:', error);
+            UI.showAlert('No se pudo obtener la información del cliente. Por favor, intente nuevamente más tarde.', 'error');
+            return null;
+        }
     }
 };
