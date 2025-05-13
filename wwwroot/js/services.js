@@ -509,11 +509,9 @@ export const AssemblyMonitorService = {
     updateMonitorUI(data) {
         if (!data) return;
 
-        console.log("laol "+AppState.department);
-        
         // Verificar si el usuario pertenece al departamento de ingeniería
         const esIngenieria = AppState.department === "Ingenieria";
-        const esRh = AppState.department === "Rh";
+        const esRh = AppState.department === "RH";
         const esManufactura = AppState.department === "Manufactura";
         
         // Actualizar campos básicos
@@ -557,7 +555,7 @@ export const AssemblyMonitorService = {
         UI.updateElement('inputTipoConfiguracion', { value: data.idTipoConfiguracion || '0' });
         
         // Habilitar el botón de guardar solo si el usuario es de ingeniería
-        UI.updateElement('btnGuardarInformacion', { disabled: !esIngenieria });
+        UI.updateElement('btnGuardarInformacion', { disabled: !(esIngenieria || esRh || esManufactura) });
     },
     
     /**

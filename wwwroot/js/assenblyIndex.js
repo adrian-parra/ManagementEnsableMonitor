@@ -98,7 +98,7 @@ function initUIEvents() {
                     AssemblyMonitorService.updateMonitorUI(assemblyMonitor);
                     
                     // Mostrar mensaje de éxito
-                    UI.showAlert(`Información de la línea ${assemblyMonitor.nombreLinea} cargada correctamente.`, 'success');
+                    // UI.showAlert(`Información de la línea ${assemblyMonitor.nombreLinea} cargada correctamente.`, 'success');
                 } else {
                     UI.showAlert('No se pudo obtener la información de la línea. Por favor, intente nuevamente más tarde.', 'error');
                 }
