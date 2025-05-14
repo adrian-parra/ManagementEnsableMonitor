@@ -49,12 +49,26 @@
                     <form id="formInformacionLinea">
                         <div class="row g-3">
                               <div class="col-md-6">
-                                <label for="inputLineId" class="form-label">ID de Línea</label>
-                                <input type="text" class="form-control" id="inputLineId" name="lineId" readonly>
+                                <label for="inputLineId" class="form-label">
+                                    <i class="bi bi-hash me-1"></i>ID de Línea
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-upc-scan"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="inputLineId" name="lineId" readonly>
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                <label for="inputDescripcion" class="form-label">Descripción</label>
-                                <input type="text" class="form-control" id="inputDescripcion" name="descripcion" readonly>
+                                <label for="inputDescripcion" class="form-label">
+                                    <i class="bi bi-card-text me-1"></i>Descripción
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-file-text"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="inputDescripcion" name="descripcion" readonly>
+                                </div>
                             </div>
                             <!-- Cliente y Proyecto con mejor UI/UX -->
                             <div class="col-md-6">
@@ -87,42 +101,84 @@
                                 </small>
                             </div>
                             <div class="col-md-6">
-                                <label for="inputModeloArnes" class="form-label">Numero de parte</label>
-                                <input type="text" class="form-control" id="inputModeloArnes" name="numeroParte" placeholder="Ej: XZ-2000"
-                                    readonly>
+                                <label for="inputModeloArnes" class="form-label">
+                                    <i class="bi bi-tag-fill me-1"></i>Numero de parte
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-box-seam"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="inputModeloArnes" name="numeroParte" placeholder="Ej: XZ-2000"
+                                        readonly>
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                <label for="inputProduccionEsperada" class="form-label">Productividad meta</label>
-                                <input type="number" class="form-control" id="inputProduccionEsperada" name="metaProductividad"
-                                    placeholder="Ej: 500" readonly>
+                                <label for="inputProduccionEsperada" class="form-label">
+                                    <i class="bi bi-graph-up-arrow me-1"></i>Productividad meta
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-bullseye"></i>
+                                    </span>
+                                    <input type="number" class="form-control" id="inputProduccionEsperada" name="metaProductividad"
+                                        placeholder="Ej: 500" readonly>
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                <label for="inputProduccionActual" class="form-label">Meta IPD</label>
-                                <input type="number" class="form-control" id="inputProduccionActual" name="metaIPD"
-                                    placeholder="Ej: 250" readonly>
+                                <label for="inputProduccionActual" class="form-label">
+                                    <i class="bi bi-speedometer2 me-1"></i>Meta IPD
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-bar-chart-line"></i>
+                                    </span>
+                                    <input type="number" class="form-control" id="inputProduccionActual" name="metaIPD"
+                                        placeholder="Ej: 250" readonly>
+                                </div>
                             </div>
                             
                             
                             <!-- Campos adicionales para la nueva estructura de datos -->
                             <div class="col-md-6">
-                                <label for="inputNombreLinea" class="form-label">Nombre de Línea</label>
-                                <input type="text" class="form-control" id="inputNombreLinea" name="nombreLinea" readonly>
+                                <label for="inputNombreLinea" class="form-label">
+                                    <i class="bi bi-pencil-square me-1"></i>Nombre de Línea
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-type"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="inputNombreLinea" name="nombreLinea" readonly>
+                                </div>
                             </div>
                             @* <div class="col-md-6">
                                 <label for="inputWorkProcess" class="form-label">Proceso de Trabajo</label>
                                 <input type="text" class="form-control" id="inputWorkProcess" name="workProccess" readonly>
                             </div> *@
                             <div class="col-md-6">
-                                <label for="inputTressId" class="form-label">ID Tress</label>
-                                <input type="text" class="form-control" id="inputTressId" name="tressId" readonly>
+                                <label for="inputTressId" class="form-label">
+                                    <i class="bi bi-key-fill me-1"></i>ID Tress
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-fingerprint"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="inputTressId" name="tressId" readonly>
+                                </div>
                             </div>
                             @* <div class="col-md-6">
                                 <label for="inputTerminalEmpaque" class="form-label">Terminal Empaque</label>
                                 <input type="text" class="form-control" id="inputTerminalEmpaque" name="terminalEmpaque" readonly>
                             </div> *@
                             <div class="col-md-6">
-                                <label for="inputFormacionPe" class="form-label">Formación PE</label>
-                                <input type="text" class="form-control" id="inputFormacionPe" name="formacionPe" readonly>
+                                <label for="inputFormacionPe" class="form-label">
+                                    <i class="bi bi-people-fill me-1"></i>Formación PE
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-person-badge"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="inputFormacionPe" name="formacionPe" readonly>
+                                </div>
                             </div>
                           
                             @* <div class="col-md-6">
@@ -133,8 +189,15 @@
                             
                             
                             <div class="col-md-6">
-                                <label for="inputComunizada" class="form-label">Comunizada</label>
-                                <input type="text" class="form-control" id="inputComunizada" name="comunizada" readonly>
+                                <label for="inputComunizada" class="form-label">
+                                    <i class="bi bi-broadcast-pin me-1"></i>Comunizada
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-wifi"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="inputComunizada" name="comunizada" readonly>
+                                </div>
                             </div>
                             @* <div class="col-md-6">
                                 <label for="inputEstatus" class="form-label">Estatus</label>
