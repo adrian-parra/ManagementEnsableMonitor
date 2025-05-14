@@ -360,6 +360,8 @@ export const LineManagerService = {
             const lider = document.getElementById('selectLider').options[document.getElementById('selectLider').selectedIndex].text.trim();
 
             const liderValue = document.getElementById('selectLider').value;
+
+            const turnoValue = document.getElementById('selectTurno').value;
             
             if (!reloj) {
                 UI.showAlert('Por favor, ingrese un número de reloj válido.', 'warning');
@@ -368,6 +370,11 @@ export const LineManagerService = {
             
             if (!liderValue || liderValue === '') {
                 UI.showAlert('Por favor, seleccione un líder.', 'warning');
+                return;
+            }
+
+            if(!turnoValue || turnoValue === '') {
+                UI.showAlert('Por favor, seleccione un turno.', 'warning');
                 return;
             }
             
@@ -412,7 +419,8 @@ export const LineManagerService = {
                         type: lider,
                         plant: AppState.selectedPlant,
                         lineId: AppState.selectedLine,
-                        registerUser: AppState.currentUser.userName
+                        registerUser: AppState.currentUser.userName,
+                        shift: turnoValue
                     };
 
                     console.log('Solicitud de guardado:', request);

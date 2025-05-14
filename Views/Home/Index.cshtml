@@ -167,32 +167,44 @@
             </div>
             <div class="modal-body">
                 <form id="formAgregarEncargado">
-                    <div class="mb-3">
-                        <label for="selectLider" class="form-label">Líder</label>
-                        <select id="selectLider" class="form-select" disabled>
-                            <option selected disabled value="">Seleccione un líder...</option>
-                            <!-- Las opciones de líderes se cargarán dinámicamente -->
-                        </select>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="selectLider" class="form-label"><i class="bi bi-person-badge me-1"></i>Líder</label>
+                            <select id="selectLider" class="form-select" disabled>
+                                @* <option selected disabled value="">Seleccione un líder...</option> *@
+                                <!-- Las opciones de líderes se cargarán dinámicamente -->
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="selectTurno" class="form-label"><i class="bi bi-clock me-1"></i>Turno</label>
+                            <select id="selectTurno" class="form-select">
+                                @* <option selected disabled value="">Seleccione un turno...</option> *@
+                                <option value="a">Turno A (Mañana)</option>
+                                <option value="b">Turno B (Tarde)</option>
+                                <option value="c">Turno C (Noche)</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-8">
-                            <label for="inputRelojUsuario" class="form-label">Número de Reloj del Usuario</label>
+                            <label for="inputRelojUsuario" class="form-label"><i class="bi bi-credit-card-2-front me-1"></i>Número de Reloj</label>
                             <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
                                 <input type="text" class="form-control" id="inputRelojUsuario"
                                     placeholder="Ingrese el número de reloj">
-                                <button class="btn btn-outline-primary" type="button" id="btnBuscarEmpleado">
-                                    <i class="bi bi-search"></i>
+                                <button class="btn btn-primary" type="button" id="btnBuscarEmpleado">
+                                    <i class="bi bi-search"></i> Buscar
                                 </button>
                             </div>
-                            <div class="form-text">Ingrese el número y presione el botón de búsqueda</div>
+                            <div class="form-text text-muted"><i class="bi bi-info-circle me-1"></i>Ingrese el número y presione buscar</div>
                         </div>
                         <div class="col-md-4 text-center">
-                            <label class="form-label">Foto</label>
+                            <label class="form-label"><i class="bi bi-camera me-1"></i>Foto</label>
                             <div id="empleadoImageContainer" class="d-flex justify-content-center align-items-center">
-                                <div id="empleadoImagePlaceholder" class="rounded-circle bg-light d-flex justify-content-center align-items-center" style="width: 100px; height: 100px;">
+                                <div id="empleadoImagePlaceholder" class="rounded-circle bg-light d-flex justify-content-center align-items-center" style="width: 100px; height: 100px; border: 2px dashed #ccc;">
                                     <i class="bi bi-person text-secondary" style="font-size: 2rem;"></i>
                                 </div>
-                                <img id="empleadoImage" class="rounded-circle d-none" style="width: 100px; height: 100px; object-fit: cover;" alt="Foto del empleado">
+                                <img id="empleadoImage" class="rounded-circle d-none" style="width: 100px; height: 100px; object-fit: cover; border: 3px solid #0d6efd;" alt="Foto del empleado">
                             </div>
                         </div>
                     </div>
@@ -206,7 +218,9 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-2"></i>Cancelar
+                </button>
                 <button type="button" class="btn btn-primary" id="btnGuardarEncargado">
                     <i class="bi bi-save me-2"></i>Guardar Encargado
                 </button>
