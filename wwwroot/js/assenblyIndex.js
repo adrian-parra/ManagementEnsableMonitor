@@ -214,14 +214,19 @@ function initUIEvents() {
 
             // console.log(data.customer)
 
-            let customerText = null;
-            AppState.customers.forEach(customer => {
-                if(customer.id == data.customer){
-                    customerText = customer.customer;
-                }
-            });
+            
 
-            data.customer = customerText;
+            if(AppState.customers){
+                let customerText = null;
+                AppState.customers.forEach(customer => {
+                    if(customer.id == data.customer){
+                        customerText = customer.customer;
+                    }
+                });
+    
+                data.customer = customerText;
+            }
+            
         
             try{
 
@@ -243,9 +248,7 @@ function initUIEvents() {
             }catch(error) {
                 UI.showAlert('Error al guardar la información','error');
             } finally {
-                // Restaurar el botón
-                this.querySelector('button[type="submit"]').innerHTML = '<i class="bi bi-save"></i> Guardar cambios';
-                this.querySelector('button[type="submit"]').disabled = false;
+
 
                 UI.updateElement('btnGuardarInformacion',{
                     disabled: false,
@@ -476,6 +479,8 @@ function initDragAndDrop() {
     // Procesar los archivos
     function handleFiles(files) {
         const file = files[0]; // Solo tomamos el primer archivo
+
+        inputFile.files = files; // Asignar los archivos al input de archivo
         
         if (!file.type.startsWith('image/')) {
             alert('Por favor, seleccione un archivo de imagen válido.');

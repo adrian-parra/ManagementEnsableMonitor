@@ -248,6 +248,12 @@ export const ImageService = {
             UI.closeModal('modalCargarImagen');
             UI.resetForm('formCargarImagen');
             UI.updateElement('previewContainer', { display: 'none' });
+            // UI.updateElement('dropArea', { display: 'block'})
+            document.querySelector("#containerFile").classList.remove("d-none")
+
+            UI.updateElement('btnSubirImagen',{
+                disabled: true,
+            })
             
         } catch (error) {
             console.error('Error al subir la imagen:', error);
@@ -564,7 +570,7 @@ export const AssemblyMonitorService = {
 
 
             if(document.querySelector("#inputCustomer").tagName != "SELECT") return;
-            
+
             document.querySelector("#inputCustomer").addEventListener("change", async () => {
                 let customerid = document.querySelector("#inputCustomer").value;
                 let projects = await AssemblyMonitorService.getProjectByCustomer(customerid)
@@ -584,6 +590,11 @@ export const AssemblyMonitorService = {
         }else{
             UI.updateElement('inputCustomer', { 
                 value: data.customer || 'No disponible',
+                readonly:!esIngenieria
+            });
+
+            UI.updateElement('inputProject', {
+                value: data.project || '',
                 readonly:!esIngenieria
             });
         }
