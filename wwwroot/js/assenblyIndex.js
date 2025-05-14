@@ -211,6 +211,17 @@ function initUIEvents() {
                     
                 }
             });
+
+            // console.log(data.customer)
+
+            let customerText = null;
+            AppState.customers.forEach(customer => {
+                if(customer.id == data.customer){
+                    customerText = customer.customer;
+                }
+            });
+
+            data.customer = customerText;
         
             try{
                 const response = await API.post('/Line/UpdateLine', data);

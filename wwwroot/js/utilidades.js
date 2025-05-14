@@ -299,10 +299,8 @@ export const UI = {
         let element = document.getElementById(elementId);
         if (!element) return;
 
-        // console.log("loal 9999" + options.options);
-
         // Convertir de input a select si se especifica
-        if (options.convertToSelect && element.tagName === 'INPUT') {
+        if (options.convertToSelect) {
             const parentNode = element.parentNode;
             let selectElement = document.createElement('select');
             
@@ -314,18 +312,29 @@ export const UI = {
             // Agregar opciones si se proporcionan
             if (Array.isArray(options.options)) {
                 // Opción por defecto
-                // console.log("loal" + options.options);
                 const defaultOption = document.createElement('option');
                 defaultOption.value = '';
                 defaultOption.textContent = 'Seleccione una opción';
                 selectElement.appendChild(defaultOption);
                 
+                // Obtener los nombres de propiedades para valor y texto
+                const valueProperty = options.valueProperty || 'id';
+                const textProperty = options.textProperty || 'customer';
+                
                 // Agregar opciones del array
                 options.options.forEach(opt => {
-                    console.log("id id id" + opt.id);
                     const option = document.createElement('option');
-                    option.value = opt.id || opt.value || opt;
-                    option.textContent = opt.customer || opt.text || opt;
+                    
+                    // Usar las propiedades dinámicas o caer en valores por defecto
+                    if (typeof opt === 'object' && opt !== null) {
+                        option.value = opt[valueProperty] !== undefined ? opt[valueProperty] : (opt.value || opt.id || '');
+                        option.textContent = opt[textProperty] !== undefined ? opt[textProperty] : (opt.text || opt.name || opt.customer || JSON.stringify(opt));
+                    } else {
+                        // Si es un valor primitivo (string, number, etc.)
+                        option.value = opt;
+                        option.textContent = opt;
+                    }
+                    
                     if (options.value && (options.value == option.value)) {
                         option.selected = true;
                     }
@@ -383,6 +392,8 @@ export const UI = {
  * @type {Object}
  */
 export const AppState = {
+
+    customers: null,
 
     department: null,
 

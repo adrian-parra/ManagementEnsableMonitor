@@ -516,24 +516,24 @@ export const AssemblyMonitorService = {
 
 
         if(esIngenieria) {
-            let customers = await AssemblyMonitorService.getCustomer()
-
-            
-
-            // Convertir el input a select y cargar las opciones
-            UI.updateElement('inputCustomer', { 
-                convertToSelect: true,
-                options: customers,
-                value: data.customer || '',
-                disabled: !esIngenieria
-            });
+            AppState.customers = await AssemblyMonitorService.getCustomer()
 
             let customerid = null;
-            customers.forEach(customer => {
+            AppState.customers.forEach(customer => {
                 if(customer.customer === data.customer){
                     customerid = customer.id;
                 }
             });
+
+            // Convertir el input a select y cargar las opciones
+            UI.updateElement('inputCustomer', { 
+                convertToSelect: true,
+                options: AppState.customers,
+                value: customerid || '',
+                disabled: !esIngenieria
+            });
+
+           
 
             
 
@@ -543,8 +543,26 @@ export const AssemblyMonitorService = {
                 convertToSelect: true,
                 options: projects,
                 value: data.project || '',
-                disabled:!esIngenieria
+                disabled:!esIngenieria,
+                valueProperty: 'nombre',  
+                textProperty: 'nombre',      
             });
+
+            document.querySelector("#inputCustomer").addEventListener("change", async () => {
+                let customerid = document.querySelector("#inputCustomer").value;
+                let projects = await AssemblyMonitorService.getProjectByCustomer(customerid)
+
+                console.log(projects);
+
+
+                // Convertir el input a select y cargar las opciones
+                UI.updateElement('inputProject', {
+                    convertToSelect: true,
+                    options: projects,
+                    valueProperty: 'nombre',
+                    textProperty: 'nombre',
+                })
+            })
 
         }else{
             UI.updateElement('inputCustomer', { 
