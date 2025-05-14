@@ -523,6 +523,11 @@ export const AssemblyMonitorService = {
         const esManufactura = AppState.department === "Manufactura";
 
 
+
+         // Mostrar u ocultar textos de ayuda según el rol
+         document.getElementById('customerHelp').classList.toggle('d-none', !esIngenieria);
+         document.getElementById('projectHelp').classList.toggle('d-none', !esIngenieria);
+
         if(esIngenieria) {
             AppState.customers = await AssemblyMonitorService.getCustomer()
 
@@ -556,6 +561,10 @@ export const AssemblyMonitorService = {
                 textProperty: 'nombre',      
             });
 
+
+
+            if(document.querySelector("#inputCustomer").tagName != "SELECT") return;
+            
             document.querySelector("#inputCustomer").addEventListener("change", async () => {
                 let customerid = document.querySelector("#inputCustomer").value;
                 let projects = await AssemblyMonitorService.getProjectByCustomer(customerid)

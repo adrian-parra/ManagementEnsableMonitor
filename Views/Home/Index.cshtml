@@ -56,14 +56,35 @@
                                 <label for="inputDescripcion" class="form-label">Descripción</label>
                                 <input type="text" class="form-control" id="inputDescripcion" name="descripcion" readonly>
                             </div>
+                            <!-- Cliente y Proyecto con mejor UI/UX -->
                             <div class="col-md-6">
-                                <label for="inputCustomer" class="form-label">Cliente</label>
-                                <input type="text" class="form-control" id="inputCustomer" name="customer" readonly>
+                                <label for="inputCustomer" class="form-label">
+                                    <i class="bi bi-building me-1"></i>Cliente
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-briefcase"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="inputCustomer" name="customer" readonly>
+                                </div>
+                                <small id="customerHelp" class="form-text text-muted d-none">
+                                    <i class="bi bi-info-circle me-1"></i>Seleccione un cliente para ver sus proyectos
+                                </small>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="inputProject" class="form-label">Proyecto</label>
-                                <input type="text" class="form-control" id="inputProject" name="project" readonly>
+                                <label for="inputProject" class="form-label">
+                                    <i class="bi bi-folder-fill me-1"></i>Proyecto
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-diagram-project"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="inputProject" name="project" readonly>
+                                </div>
+                                <small id="projectHelp" class="form-text text-muted d-none">
+                                    <i class="bi bi-info-circle me-1"></i>Proyectos disponibles para el cliente seleccionado
+                                </small>
                             </div>
                             <div class="col-md-6">
                                 <label for="inputModeloArnes" class="form-label">Numero de parte</label>

@@ -294,6 +294,9 @@ export const UI = {
      * @param {boolean} [options.readonly] - Si el elemento debe ser de solo lectura
      * @param {Array} [options.options] - Opciones para convertir a select
      * @param {boolean} [options.convertToSelect] - Indica si se debe convertir a select
+     * @param {string} [options.valueProperty] - Propiedad para el valor del select
+     * @param {string} [options.textProperty] - Propiedad para el texto del select
+     * @param {boolean} [options.selectedDefault] - Indica si se debe agregar una opción por defecto
      */
     updateElement(elementId, options = {}) {
         let element = document.getElementById(elementId);
@@ -311,11 +314,16 @@ export const UI = {
             
             // Agregar opciones si se proporcionan
             if (Array.isArray(options.options)) {
-                // Opción por defecto
-                const defaultOption = document.createElement('option');
-                defaultOption.value = '';
-                defaultOption.textContent = 'Seleccione una opción';
-                selectElement.appendChild(defaultOption);
+
+                // if(PushSubscriptionOptions)
+                if(options.selectedDefault && options.selectedDefault == true) {
+                    // Opción por defecto
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = 'Seleccione una opción';
+                    selectElement.appendChild(defaultOption);
+                }
+                
                 
                 // Obtener los nombres de propiedades para valor y texto
                 const valueProperty = options.valueProperty || 'id';
