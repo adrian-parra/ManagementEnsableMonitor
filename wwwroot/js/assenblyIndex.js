@@ -224,6 +224,12 @@ function initUIEvents() {
             data.customer = customerText;
         
             try{
+
+                UI.updateElement('btnGuardarInformacion',{
+                    disabled: true,
+                    html: '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Guardando...'
+                })
+
                 const response = await API.post('/Line/UpdateLine', data);
                 
                 console.log(response);
@@ -236,7 +242,18 @@ function initUIEvents() {
         
             }catch(error) {
                 UI.showAlert('Error al guardar la información','error');
+            } finally {
+                // Restaurar el botón
+                this.querySelector('button[type="submit"]').innerHTML = '<i class="bi bi-save"></i> Guardar cambios';
+                this.querySelector('button[type="submit"]').disabled = false;
+
+                UI.updateElement('btnGuardarInformacion',{
+                    disabled: false,
+                    html: '<i class="bi bi-save"></i> Guardar cambios'
+                })
             }
+
+
         
             
         
