@@ -361,6 +361,10 @@ export const LineManagerService = {
      */
     async saveLineManager() {
         try {
+            UI.updateElement('btnGuardarEncargado', {
+                disabled: true,
+                html: '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Guardando...'
+            })
             const reloj = document.getElementById('inputRelojUsuario').value.trim();
                        
             const lider = document.getElementById('selectLider').options[document.getElementById('selectLider').selectedIndex].text.trim();
@@ -452,6 +456,20 @@ export const LineManagerService = {
         } catch (error) {
             console.error('Error al guardar encargado:', error);
             UI.showAlert(`Error al guardar encargado: ${error.message}`, 'error');
+        }finally {
+            // Restaurar el estado inicial del botón
+            // const btnGuardarEncargado = document.getElementById('btnGuardarEncargado');
+            // if (btnGuardarEncargado) {
+            //     btnGuardarEncargado.disabled = false;
+            //     btnGuardarEncargado.innerHTML = '<i class="bi bi-save me-2"></i>Guardar encargado';
+
+
+            // }
+
+            UI.updateElement('btnGuardarEncargado',{
+                disabled: false,
+                html: '<i class="bi bi-save me-2"></i>Guardar encargado'
+            })
         }
     },
 
