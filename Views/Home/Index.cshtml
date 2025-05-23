@@ -1,37 +1,113 @@
 ﻿@{
-    ViewData["Title"] = "Monitor de Ensamble";
+    ViewData["Title"] = "Monitor de Ensamble - Dashboard Profesional";
 }
 
-<div class="container-fluid mt-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="bi bi-filter me-2"></i>Selección de Filtros</h5>
+
+
+<!-- Header del Dashboard -->
+<div class="dashboard-header">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="dashboard-title">
+                    <i class="bi bi-speedometer2 me-3"></i>
+                    Monitor de Ensamble
+                </h1>
+                <p class="dashboard-subtitle mb-0">
+                    Sistema de monitoreo y gestión de líneas de producción en tiempo real
+                </p>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="d-flex align-items-center justify-content-end">
+                    <span class="status-indicator status-active"></span>
+                    <span class="text-white-50 me-3">Sistema Activo</span>
+                    <span class="info-badge">
+                        <i class="bi bi-clock me-1"></i>
+                        <span id="currentTime"></span>
+                    </span>
                 </div>
-                <div class="card-body">
-                    <div class="row g-3 align-items-end">
-                        <div class="col-md-4">
-                            <label for="selectPlanta" class="form-label">Planta</label>
-                            <select id="selectPlanta" class="form-select">
-                                <option selected disabled value="">Seleccione una planta...</option>
-                                <!-- Opciones de planta se cargarán dinámicamente -->
-                                <option value="1">Planta 1</option>
-                                <option value="2">Planta 2</option>
-                            </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid px-4">
+    <!-- Sección de Filtros Mejorada -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="modern-card">
+                <div class="card-header-gradient">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h5 class="mb-1">
+                                <i class="bi bi-funnel-fill me-2"></i>
+                                Panel de Filtros
+                            </h5>
+                            <small class="opacity-75">Seleccione los parámetros para consultar la información</small>
                         </div>
-                        <div class="col-md-4">
-                            <label for="selectLinea" class="form-label">Línea de Producción</label>
-                            <select id="selectLinea" class="form-select">
-                                <option selected disabled value="">Seleccione una línea...</option>
-                                <!-- Opciones de línea se cargarán dinámicamente -->
-                                <option value="A">Línea A</option>
-                                <option value="B">Línea B</option>
-                            </select>
+                        <div class="badge bg-light text-dark px-3 py-2">
+                            <i class="bi bi-gear-fill me-1"></i>
+                            Configuración
                         </div>
-                        <div class="col-md-4">
-                            <button id="btnConsultar" type="button" class="btn btn-primary w-100"><i
-                                    class="bi bi-search me-2"></i>Consultar Información</button>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <div class="col-lg-4 col-md-6">
+                            <label for="selectPlanta" class="modern-label">
+                                <i class="bi bi-building"></i>
+                                Planta de Producción
+                            </label>
+                            <div class="modern-input-group input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-geo-alt-fill"></i>
+                                </span>
+                                <select id="selectPlanta" class="form-select">
+                                    <option selected disabled value="">🏭 Seleccione una planta...</option>
+                                    <option value="1">🏭 Planta Norte - Tijuana</option>
+                                    <option value="2">🏭 Planta Sur - Mexicali</option>
+                                    <option value="3">🏭 Planta Central - Ensenada</option>
+                                </select>
+                            </div>
+                            <small class="text-muted mt-1 d-block">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Seleccione la ubicación de la planta
+                            </small>
+                        </div>
+                        <div class="col-lg-4 col-md-6">
+                            <label for="selectLinea" class="modern-label">
+                                <i class="bi bi-diagram-3"></i>
+                                Línea de Producción
+                            </label>
+                            <div class="modern-input-group input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-arrow-right-circle-fill"></i>
+                                </span>
+                                <select id="selectLinea" class="form-select">
+                                    <option selected disabled value="">⚙️ Seleccione una línea...</option>
+                                    <option value="A">⚙️ Línea A - Ensamble Principal</option>
+                                    <option value="B">⚙️ Línea B - Ensamble Secundario</option>
+                                    <option value="C">⚙️ Línea C - Control de Calidad</option>
+                                </select>
+                            </div>
+                            <small class="text-muted mt-1 d-block">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Línea específica de producción
+                            </small>
+                        </div>
+                        <div class="col-lg-4 col-md-12">
+                            <label class="modern-label">
+                                <i class="bi bi-search"></i>
+                                Acción
+                            </label>
+                            <button id="btnConsultar" type="button" class="modern-btn btn-gradient-primary w-100">
+                                <i class="bi bi-search me-2"></i>
+                                Consultar Información
+                            </button>
+                            <small class="text-muted mt-1 d-block">
+                                <i class="bi bi-lightning-fill me-1"></i>
+                                Obtener datos en tiempo real
+                            </small>
                         </div>
                     </div>
                 </div>
@@ -39,174 +115,222 @@
         </div>
     </div>
 
-    <div class="row">
+    <hr class="section-divider">
+
+    <!-- Sección de Información de Línea Mejorada -->
+    <div class="row mb-4">
         <div class="col-12">
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0"><i class="bi bi-card-list me-2"></i>Información de Línea</h5>
+            <div class="modern-card">
+                <div class="card-header-success">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h5 class="mb-1">
+                                <i class="bi bi-clipboard-data-fill me-2"></i>
+                                Información Detallada de Línea
+                            </h5>
+                            <small class="opacity-75">Datos técnicos y operacionales de la línea seleccionada</small>
+                        </div>
+                        <div class="badge bg-light text-dark px-3 py-2">
+                            <i class="bi bi-shield-check me-1"></i>
+                            Verificado
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-4">
                     <form id="formInformacionLinea">
-                        <div class="row g-3">
-                              <div class="col-md-6">
-                                <label for="inputLineId" class="form-label">
-                                    <i class="bi bi-hash me-1"></i>ID de Línea
+                        <div class="row g-4">
+                            <!-- Información Básica -->
+                            <div class="col-12">
+                                <h6 class="text-primary fw-bold mb-3">
+                                    <i class="bi bi-info-circle-fill me-2"></i>
+                                    Información Básica
+                                </h6>
+                            </div>
+                            
+                            <div class="col-lg-6 col-md-6">
+                                <label for="inputLineId" class="modern-label">
+                                    <i class="bi bi-hash"></i>
+                                    ID de Línea
                                 </label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light">
+                                <div class="modern-input-group input-group">
+                                    <span class="input-group-text">
                                         <i class="bi bi-upc-scan"></i>
                                     </span>
-                                    <input type="text" class="form-control" id="inputLineId" name="lineId" readonly>
+                                    <input type="text" class="form-control" id="inputLineId" name="lineId" readonly placeholder="Identificador único">
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <label for="inputDescripcion" class="form-label">
-                                    <i class="bi bi-card-text me-1"></i>Descripción
+
+                            <div class="col-lg-6 col-md-6">
+                                <label for="inputDescripcion" class="modern-label">
+                                    <i class="bi bi-card-text"></i>
+                                    Descripción
                                 </label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light">
+                                <div class="modern-input-group input-group">
+                                    <span class="input-group-text">
                                         <i class="bi bi-file-text"></i>
                                     </span>
-                                    <input type="text" class="form-control" id="inputDescripcion" name="descripcion" readonly>
+                                    <input type="text" class="form-control" id="inputDescripcion" name="descripcion" readonly placeholder="Descripción de la línea">
                                 </div>
                             </div>
-                            <!-- Cliente y Proyecto con mejor UI/UX -->
-                            <div class="col-md-6">
-                                <label for="inputCustomer" class="form-label">
-                                    <i class="bi bi-building me-1"></i>Cliente
+
+                            <div class="col-lg-6 col-md-6">
+                                <label for="inputNombreLinea" class="modern-label">
+                                    <i class="bi bi-pencil-square"></i>
+                                    Nombre de Línea
                                 </label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light">
+                                <div class="modern-input-group input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-type"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="inputNombreLinea" name="nombreLinea" readonly placeholder="Nombre comercial">
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6">
+                                <label for="inputTressId" class="modern-label">
+                                    <i class="bi bi-key-fill"></i>
+                                    ID Tress
+                                </label>
+                                <div class="modern-input-group input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-fingerprint"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="inputTressId" name="tressId" readonly placeholder="Identificador Tress">
+                                </div>
+                            </div>
+
+                            <!-- Información del Cliente -->
+                            <div class="col-12 mt-4">
+                                <h6 class="text-success fw-bold mb-3">
+                                    <i class="bi bi-building-fill me-2"></i>
+                                    Información del Cliente
+                                </h6>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6">
+                                <label for="inputCustomer" class="modern-label">
+                                    <i class="bi bi-building"></i>
+                                    Cliente
+                                </label>
+                                <div class="modern-input-group input-group">
+                                    <span class="input-group-text">
                                         <i class="bi bi-briefcase"></i>
                                     </span>
-                                    <input type="text" class="form-control" id="inputCustomer" name="customer" readonly>
+                                    <input type="text" class="form-control" id="inputCustomer" name="customer" readonly placeholder="Nombre del cliente">
                                 </div>
-                                <small id="customerHelp" class="form-text text-muted d-none">
-                                    <i class="bi bi-info-circle me-1"></i>Seleccione un cliente para ver sus proyectos
+                                <small class="text-muted mt-1 d-block">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Cliente principal del proyecto
                                 </small>
                             </div>
 
-                            <div class="col-md-6">
-                                <label for="inputProject" class="form-label">
-                                    <i class="bi bi-folder-fill me-1"></i>Proyecto
+                            <div class="col-lg-6 col-md-6">
+                                <label for="inputProject" class="modern-label">
+                                    <i class="bi bi-folder-fill"></i>
+                                    Proyecto
                                 </label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light">
+                                <div class="modern-input-group input-group">
+                                    <span class="input-group-text">
                                         <i class="bi bi-diagram-3-fill"></i>
                                     </span>
-                                    <input type="text" class="form-control" id="inputProject" name="project" readonly>
+                                    <input type="text" class="form-control" id="inputProject" name="project" readonly placeholder="Nombre del proyecto">
                                 </div>
-                                <small id="projectHelp" class="form-text text-muted d-none">
-                                    <i class="bi bi-info-circle me-1"></i>Proyectos disponibles para el cliente seleccionado
+                                <small class="text-muted mt-1 d-block">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Proyecto específico en desarrollo
                                 </small>
                             </div>
-                            <div class="col-md-6">
-                                <label for="inputModeloArnes" class="form-label">
-                                    <i class="bi bi-tag-fill me-1"></i>Numero de parte
+
+                            <!-- Información Técnica -->
+                            <div class="col-12 mt-4">
+                                <h6 class="text-info fw-bold mb-3">
+                                    <i class="bi bi-gear-fill me-2"></i>
+                                    Especificaciones Técnicas
+                                </h6>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6">
+                                <label for="inputModeloArnes" class="modern-label">
+                                    <i class="bi bi-tag-fill"></i>
+                                    Número de Parte
                                 </label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light">
+                                <div class="modern-input-group input-group">
+                                    <span class="input-group-text">
                                         <i class="bi bi-box-seam"></i>
                                     </span>
-                                    <input type="text" class="form-control" id="inputModeloArnes" name="numeroParte" placeholder=""
-                                        readonly>
+                                    <input type="text" class="form-control" id="inputModeloArnes" name="numeroParte" readonly placeholder="Código de parte">
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <label for="inputProduccionEsperada" class="form-label">
-                                    <i class="bi bi-graph-up-arrow me-1"></i>Productividad meta
+
+                            <div class="col-lg-6 col-md-6">
+                                <label for="inputFormacionPe" class="modern-label">
+                                    <i class="bi bi-people-fill"></i>
+                                    Formación PE
                                 </label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light">
-                                        <i class="bi bi-bullseye"></i>
-                                    </span>
-                                    <input type="number" class="form-control" id="inputProduccionEsperada" name="metaProductividad"
-                                        placeholder="" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="inputProduccionActual" class="form-label">
-                                    <i class="bi bi-speedometer2 me-1"></i>Meta IPD
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light">
-                                        <i class="bi bi-bar-chart-line"></i>
-                                    </span>
-                                    <input type="number" class="form-control" id="inputProduccionActual" name="metaIPD"
-                                        placeholder="" readonly>
-                                </div>
-                            </div>
-                            
-                            
-                            <!-- Campos adicionales para la nueva estructura de datos -->
-                            <div class="col-md-6">
-                                <label for="inputNombreLinea" class="form-label">
-                                    <i class="bi bi-pencil-square me-1"></i>Nombre de Línea
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light">
-                                        <i class="bi bi-type"></i>
-                                    </span>
-                                    <input type="text" class="form-control" id="inputNombreLinea" name="nombreLinea" readonly>
-                                </div>
-                            </div>
-                            @* <div class="col-md-6">
-                                <label for="inputWorkProcess" class="form-label">Proceso de Trabajo</label>
-                                <input type="text" class="form-control" id="inputWorkProcess" name="workProccess" readonly>
-                            </div> *@
-                            <div class="col-md-6">
-                                <label for="inputTressId" class="form-label">
-                                    <i class="bi bi-key-fill me-1"></i>ID Tress
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light">
-                                        <i class="bi bi-fingerprint"></i>
-                                    </span>
-                                    <input type="text" class="form-control" id="inputTressId" name="tressId" readonly>
-                                </div>
-                            </div>
-                            @* <div class="col-md-6">
-                                <label for="inputTerminalEmpaque" class="form-label">Terminal Empaque</label>
-                                <input type="text" class="form-control" id="inputTerminalEmpaque" name="terminalEmpaque" readonly>
-                            </div> *@
-                            <div class="col-md-6">
-                                <label for="inputFormacionPe" class="form-label">
-                                    <i class="bi bi-people-fill me-1"></i>Formación PE
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light">
+                                <div class="modern-input-group input-group">
+                                    <span class="input-group-text">
                                         <i class="bi bi-person-badge"></i>
                                     </span>
-                                    <input type="text" class="form-control" id="inputFormacionPe" name="formacionPe" readonly>
+                                    <input type="text" class="form-control" id="inputFormacionPe" name="formacionPe" readonly placeholder="Personal especializado">
                                 </div>
                             </div>
-                          
-                            @* <div class="col-md-6">
-                                <label for="inputLineId2" class="form-label">ID de Línea 2</label>
-                                <input type="text" class="form-control" id="inputLineId2" name="lineId2" readonly>
-                            </div> *@
-                            
-                            
-                            
-                            <div class="col-md-6">
-                                <label for="inputComunizada" class="form-label">
-                                    <i class="bi bi-broadcast-pin me-1"></i>Comunizada
+
+                            <!-- Métricas de Rendimiento -->
+                            <div class="col-12 mt-4">
+                                <h6 class="text-warning fw-bold mb-3">
+                                    <i class="bi bi-graph-up-arrow me-2"></i>
+                                    Métricas de Rendimiento
+                                </h6>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6">
+                                <label for="inputProduccionEsperada" class="modern-label">
+                                    <i class="bi bi-graph-up-arrow"></i>
+                                    Productividad Meta
                                 </label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light">
+                                <div class="modern-input-group input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-bullseye"></i>
+                                    </span>
+                                    <input type="number" class="form-control" id="inputProduccionEsperada" name="metaProductividad" readonly placeholder="Unidades por hora">
+                                    <span class="input-group-text">uph</span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6">
+                                <label for="inputProduccionActual" class="modern-label">
+                                    <i class="bi bi-speedometer2"></i>
+                                    Meta IPD
+                                </label>
+                                <div class="modern-input-group input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-bar-chart-line"></i>
+                                    </span>
+                                    <input type="number" class="form-control" id="inputProduccionActual" name="metaIPD" readonly placeholder="Índice de productividad">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+
+                            <!-- Estado de Comunicación -->
+                            <div class="col-12 mt-4">
+                                <h6 class="text-secondary fw-bold mb-3">
+                                    <i class="bi bi-wifi me-2"></i>
+                                    Estado de Comunicación
+                                </h6>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6">
+                                <label for="inputComunizada" class="modern-label">
+                                    <i class="bi bi-broadcast-pin"></i>
+                                    Estado de Comunicación
+                                </label>
+                                <div class="modern-input-group input-group">
+                                    <span class="input-group-text">
                                         <i class="bi bi-wifi"></i>
                                     </span>
-                                    <input type="text" class="form-control" id="inputComunizada" name="comunizada" readonly>
+                                    <input type="text" class="form-control" id="inputComunizada" name="comunizada" readonly placeholder="Estado de conexión">
                                 </div>
                             </div>
-                            @* <div class="col-md-6">
-                                <label for="inputEstatus" class="form-label">Estatus</label>
-                                <input type="text" class="form-control" id="inputEstatus" name="estatus" readonly>
-                            </div> *@
-                            @* <div class="col-md-6">
-                                <label for="inputTipoConfiguracion" class="form-label">Tipo de Configuración</label>
-                                <input type="text" class="form-control" id="inputTipoConfiguracion" name="idTipoConfiguracion" readonly>
-                            </div> *@
                         </div>
                     </form>
                 </div>
@@ -214,25 +338,54 @@
         </div>
     </div>
 
-    <div class="row">
+    <hr class="section-divider">
+
+    <!-- Sección de Acciones Mejorada -->
+    <div class="row mb-5">
         <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="bi bi-tools me-2"></i>Acciones Adicionales</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <button type="button" class="btn btn-info w-100" data-bs-toggle="modal"
-                                data-bs-target="#modalEncargados" id="btnEncargadosLinea">
-                                <i class="bi bi-person-plus-fill me-2"></i>Agregar Encargados de Línea
-                            </button>
+            <div class="modern-card">
+                <div class="card-header-info">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h5 class="mb-1">
+                                <i class="bi bi-tools me-2"></i>
+                                Centro de Acciones
+                            </h5>
+                            <small class="opacity-75">Herramientas de gestión y configuración avanzada</small>
                         </div>
-                        <div class="col-md-6">
-                            <button type="button" class="btn btn-secondary w-100" data-bs-toggle="modal"
-                                data-bs-target="#modalCargarImagen">
-                                <i class="bi bi-image-fill me-2"></i>Cargar Imagen del Carro de Línea
-                            </button>
+                        <div class="badge bg-light text-dark px-3 py-2">
+                            <i class="bi bi-lightning-fill me-1"></i>
+                            Acceso Rápido
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <div class="col-lg-6 col-md-6">
+                            <div class="d-grid">
+                                <button type="button" class="modern-btn btn-gradient-info" data-bs-toggle="modal"
+                                    data-bs-target="#modalEncargados" id="btnEncargadosLinea">
+                                    <i class="bi bi-person-plus-fill me-2"></i>
+                                    Gestionar Encargados de Línea
+                                </button>
+                                <small class="text-muted mt-2 text-center">
+                                    <i class="bi bi-people me-1"></i>
+                                    Administrar personal responsable
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6">
+                            <div class="d-grid">
+                                <button type="button" class="modern-btn btn-gradient-warning" data-bs-toggle="modal"
+                                    data-bs-target="#modalCargarImagen">
+                                    <i class="bi bi-image-fill me-2"></i>
+                                    Cargar Imagen del Carro
+                                </button>
+                                <small class="text-muted mt-2 text-center">
+                                    <i class="bi bi-camera me-1"></i>
+                                    Documentación visual
+                                </small>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -241,12 +394,19 @@
     </div>
 </div>
 
-<!-- Modal Agregar Encargados -->
-<div class="modal fade" id="modalEncargados" tabindex="-1" aria-labelledby="modalEncargadosLabel" aria-hidden="true">
+<!-- Botón Flotante de Ayuda -->
+<div class="floating-action">
+    <button class="floating-btn" data-bs-toggle="tooltip" data-bs-placement="left" title="Ayuda y Soporte">
+        <i class="bi bi-question-lg"></i>
+    </button>
+</div>
+
+<!-- Modal Agregar Encargados Mejorado -->
+<div class="modal fade modal-modern" id="modalEncargados" tabindex="-1" aria-labelledby="modalEncargadosLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="modalEncargadosLabel"><i class="bi bi-person-plus-fill me-2"></i>Agregar
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEncargadosLabel"><i class="bi bi-person-plus-fill me-2"></i>
                     Encargado de Línea</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>

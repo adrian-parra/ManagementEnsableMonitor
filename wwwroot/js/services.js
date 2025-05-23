@@ -549,8 +549,8 @@ export const AssemblyMonitorService = {
 
 
          // Mostrar u ocultar textos de ayuda según el rol
-         document.getElementById('customerHelp').classList.toggle('d-none', !esIngenieria);
-         document.getElementById('projectHelp').classList.toggle('d-none', !esIngenieria);
+       
+        //  document.getElementById('projectHelp').classList.toggle('d-none', !esIngenieria);
 
         if(esIngenieria) {
             AppState.customers = await AssemblyMonitorService.getCustomer()
