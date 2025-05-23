@@ -251,60 +251,372 @@ body {
         box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
     }
 
+    /* Estilos adicionales para los modales mejorados */
+    
+    /* Modal moderno base */
     .modal-modern .modal-content {
-        border-radius: var(--border-radius);
         border: none;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        border-radius: 20px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+        backdrop-filter: blur(10px);
     }
-
-    .modal-modern .modal-header {
-        background: var(--primary-gradient);
-        color: white;
-        border: none;
-        border-radius: var(--border-radius) var(--border-radius) 0 0;
-    }
-
-    .drag-drop-area {
-        border: 2px dashed #667eea;
-        border-radius: var(--border-radius);
-        background: linear-gradient(135deg, #f8f9ff 0%, #e8f0ff 100%);
+    
+    .modal-modern .modal-dialog {
         transition: var(--transition);
     }
-
+    
+    .modal-modern.show .modal-dialog {
+        transform: scale(1) translateY(0);
+    }
+    
+    /* Headers de modales con iconos */
+    .modal-icon-container {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        backdrop-filter: blur(10px);
+    }
+    
+    /* Secciones de formulario */
+    .form-section {
+        background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid rgba(102, 126, 234, 0.1);
+    }
+    
+    .section-title {
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .section-title i {
+        color: var(--primary-color);
+        font-size: 1rem;
+    }
+    
+    /* Contenedor de foto del empleado */
+    .employee-photo-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 120px;
+    }
+    
+    .employee-placeholder {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        border: 2px dashed #cbd5e1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #64748b;
+        font-size: 2rem;
+        transition: var(--transition);
+    }
+    
+    .employee-placeholder:hover {
+        border-color: var(--primary-color);
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        color: var(--primary-color);
+    }
+    
+    .employee-placeholder small {
+        font-size: 0.7rem;
+        font-weight: 500;
+        margin-top: 0.25rem;
+    }
+    
+    .employee-photo {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--primary-color);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        transition: var(--transition);
+    }
+    
+    .employee-photo:hover {
+        transform: scale(1.05);
+        box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+    }
+    
+    /* Tarjeta de información del empleado */
+    .employee-info-card {
+        background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+        border: 1px solid #a7f3d0;
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-top: 1rem;
+        animation: slideInUp 0.3s ease-out;
+    }
+    
+    .employee-info-card .info-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        margin-right: 1rem;
+    }
+    
+    .employee-info-card .status-badge {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        padding: 0.375rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Área de carga de archivos mejorada */
+    .upload-container {
+        margin-bottom: 1.5rem;
+    }
+    
+    .drag-drop-area {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border: 2px dashed #cbd5e1;
+        border-radius: 16px;
+        min-height: 200px;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .drag-drop-area::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+        transition: left 0.5s;
+    }
+    
+    .drag-drop-area:hover::before {
+        left: 100%;
+    }
+    
     .drag-drop-area:hover,
-    .drag-drop-area.drag-over {
-        border-color: #764ba2;
-        background: linear-gradient(135deg, #f0f4ff 0%, #dde8ff 100%);
+    .drag-drop-area.dragover {
+        border-color: var(--primary-color);
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
         transform: scale(1.02);
     }
-
-    .status-indicator {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
+    
+    .upload-content {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .upload-icon {
+        font-size: 4rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+    
+    .upload-title {
+        color: #1e293b;
+        font-weight: 600;
+        font-size: 1.25rem;
+    }
+    
+    .upload-subtitle {
+        color: #64748b;
+        font-size: 1rem;
+    }
+    
+    .upload-specs {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .spec-item {
+        background: rgba(102, 126, 234, 0.1);
+        color: var(--primary-color);
+        padding: 0.375rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+    }
+    
+    /* Vista previa de imagen */
+    .preview-container {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-radius: 12px;
+        padding: 1.5rem;
+    }
+    
+    .image-preview-wrapper {
+        position: relative;
         display: inline-block;
-        margin-right: 0.5rem;
-        animation: pulse 2s infinite;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     }
-
-    .status-active {
-        background: #28a745;
+    
+    .preview-image {
+        max-height: 250px;
+        max-width: 100%;
+        border-radius: 12px;
+        transition: var(--transition);
     }
-
-    .status-inactive {
-        background: #dc3545;
+    
+    .preview-image:hover {
+        transform: scale(1.02);
     }
-
-    .status-pending {
-        background: #ffc107;
+    
+    .remove-image-btn {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        transition: var(--transition);
     }
-
-    @keyframes pulse {
-        0% { opacity: 1; }
-        50% { opacity: 0.5; }
-        100% { opacity: 1; }
+    
+    .remove-image-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 16px rgba(239, 68, 68, 0.6);
     }
-
+    
+    .image-info {
+        margin-top: 1rem;
+    }
+    
+    .info-grid {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .info-item {
+        background: white;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        color: #475569;
+        font-weight: 500;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+    }
+    
+    .info-item i {
+        color: var(--primary-color);
+    }
+    
+    /* Botones de gradiente adicionales */
+    .btn-gradient-secondary {
+        background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+        color: white;
+    }
+    
+    .btn-gradient-success {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+    }
+    
+    /* Animaciones */
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Estados de carga */
+    .loading-state {
+        position: relative;
+        pointer-events: none;
+    }
+    
+    .loading-state::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: inherit;
+        z-index: 10;
+    }
+    
+    /* Responsive design para modales */
+    @media (max-width: 768px) {
+        .modal-modern .modal-dialog {
+            margin: 1rem;
+        }
+        
+        .form-section {
+            padding: 1rem;
+        }
+        
+        .upload-specs {
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .info-grid {
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .employee-photo-container {
+            height: 100px;
+        }
+        
+        .employee-placeholder,
+        .employee-photo {
+            width: 80px;
+            height: 80px;
+        }
+    }
     .loading-skeleton {
         background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
         background-size: 200% 100%;

@@ -20,11 +20,15 @@
             <div class="col-md-4 text-end">
                 <div class="d-flex align-items-center justify-content-end">
                     <span class="status-indicator status-active"></span>
-                    <span class="text-white-50 me-3">Sistema Activo</span>
-                    <span class="info-badge">
+                    <span class="fw-bold" id="userNameDisplay" style="font-size: 0.9rem;">
+                                <span class="placeholder-glow">
+                                    <span class="placeholder col-8 bg-secondary"></span>
+                                </span>
+                    </span>
+                    @* <span class="info-badge">
                         <i class="bi bi-clock me-1"></i>
                         <span id="currentTime"></span>
-                    </span>
+                    </span> *@
                 </div>
             </div>
         </div>
@@ -395,129 +399,254 @@
 </div>
 
 <!-- Botón Flotante de Ayuda -->
-<div class="floating-action">
+@* <div class="floating-action">
     <button class="floating-btn" data-bs-toggle="tooltip" data-bs-placement="left" title="Ayuda y Soporte">
         <i class="bi bi-question-lg"></i>
     </button>
-</div>
+</div> *@
 
 <!-- Modal Agregar Encargados Mejorado -->
 <div class="modal fade modal-modern" id="modalEncargados" tabindex="-1" aria-labelledby="modalEncargadosLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalEncargadosLabel"><i class="bi bi-person-plus-fill me-2"></i>
-                    Encargado de Línea</h5>
+            <div class="modal-header card-header-gradient">
+                <div class="d-flex align-items-center">
+                    <div class="modal-icon-container me-3">
+                        <i class="bi bi-person-plus-fill"></i>
+                    </div>
+                    <div>
+                        <h5 class="modal-title mb-1" id="modalEncargadosLabel">Gestión de Encargados</h5>
+                        <small class="opacity-75">Asignar responsables por turno de trabajo</small>
+                    </div>
+                </div>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body p-4">
                 <form id="formAgregarEncargado">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="selectLider" class="form-label"><i class="bi bi-person-badge me-1"></i>Líder</label>
-                            <select id="selectLider" class="form-select" disabled>
-                                @* <option selected disabled value="">Seleccione un líder...</option> *@
-                                <!-- Las opciones de líderes se cargarán dinámicamente -->
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="selectTurno" class="form-label"><i class="bi bi-clock me-1"></i>Turno</label>
-                            <select id="selectTurno" class="form-select">
-                                @* <option selected disabled value="">Seleccione un turno...</option> *@
-                                <option value="a">Turno A (Mañana)</option>
-                                <option value="b">Turno B (Tarde)</option>
-                                <option value="c">Turno C (Noche)</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-8 d-flex flex-column justify-content-center">
-                            <label for="inputRelojUsuario" class="form-label"><i class="bi bi-credit-card-2-front me-1"></i>Número de Reloj</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
-                                <input type="text" class="form-control" id="inputRelojUsuario"
-                                    placeholder="Ingrese el número de reloj">
-                                <button class="btn btn-primary" type="button" id="btnBuscarEmpleado">
-                                    <i class="bi bi-search"></i> Buscar
-                                </button>
-                            </div>
-                            <div class="form-text text-muted"><i class="bi bi-info-circle me-1"></i>Ingrese el número y presione buscar</div>
-                        </div>
-                        <div class="col-md-4 text-center">
-                            <label class="form-label"><i class="bi bi-camera me-1"></i>Foto</label>
-                            <div id="empleadoImageContainer" class="d-flex justify-content-center align-items-center">
-                                <div id="empleadoImagePlaceholder" class="rounded-circle bg-light d-flex justify-content-center align-items-center" style="width: 100px; height: 100px; border: 2px dashed #ccc;">
-                                    <i class="bi bi-person text-secondary" style="font-size: 2rem;"></i>
+                    <!-- Sección de Configuración Básica -->
+                    <div class="form-section mb-4">
+                        <h6 class="section-title">
+                            <i class="bi bi-gear-fill me-2"></i>
+                            Configuración Básica
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="selectLider" class="modern-label">
+                                    <i class="bi bi-person-badge"></i>
+                                    Líder Asignado
+                                </label>
+                                <div class="modern-input-group input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-award-fill"></i>
+                                    </span>
+                                    <select id="selectLider" class="form-select" disabled>
+                                        <option selected disabled value="">👤 Seleccione un líder...</option>
+                                        <!-- Las opciones de líderes se cargarán dinámicamente -->
+                                    </select>
                                 </div>
-                                <img id="empleadoImage" class="rounded-circle d-none" style="width: 100px; height: 100px; object-fit: cover; border: 3px solid #0d6efd;" alt="Foto del empleado">
+                                <small class="text-muted mt-1 d-block">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Líder responsable del turno
+                                </small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="selectTurno" class="modern-label">
+                                    <i class="bi bi-clock"></i>
+                                    Turno de Trabajo
+                                </label>
+                                <div class="modern-input-group input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-clock-fill"></i>
+                                    </span>
+                                    <select id="selectTurno" class="form-select">
+                                        <option selected disabled value="">⏰ Seleccione un turno...</option>
+                                        <option value="a">🌅 Turno A (06:00 - 14:00)</option>
+                                        <option value="b">🌞 Turno B (14:00 - 22:00)</option>
+                                        <option value="c">🌙 Turno C (22:00 - 06:00)</option>
+                                    </select>
+                                </div>
+                                <small class="text-muted mt-1 d-block">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Horario de responsabilidad
+                                </small>
                             </div>
                         </div>
                     </div>
-                    <div id="empleadoInfo" class="alert alert-info d-none">
-                        <div class="d-flex align-items-center">
-                            <i class="bi bi-info-circle-fill me-2"></i>
-                            <span id="empleadoNombre">Información del empleado</span>
+
+                    <!-- Sección de Búsqueda de Empleado -->
+                    <div class="form-section mb-4">
+                        <h6 class="section-title">
+                            <i class="bi bi-search me-2"></i>
+                            Búsqueda de Empleado
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label for="inputRelojUsuario" class="modern-label">
+                                    <i class="bi bi-credit-card-2-front"></i>
+                                    Número de Reloj
+                                </label>
+                                <div class="modern-input-group input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-person-vcard"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="inputRelojUsuario"
+                                        placeholder="Ingrese el número de reloj del empleado">
+                                    <button class="modern-btn btn-gradient-primary" type="button" id="btnBuscarEmpleado">
+                                        <i class="bi bi-search me-1"></i>
+                                        Buscar
+                                    </button>
+                                </div>
+                                <small class="text-muted mt-1 d-block">
+                                    <i class="bi bi-lightning-fill me-1"></i>
+                                    Ingrese el número y presione buscar para obtener información
+                                </small>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="modern-label">
+                                    <i class="bi bi-camera"></i>
+                                    Fotografía
+                                </label>
+                                <div class="employee-photo-container">
+                                    <div id="empleadoImageContainer" class="d-flex justify-content-center align-items-center">
+                                        <div id="empleadoImagePlaceholder" class="employee-placeholder">
+                                            <i class="bi bi-person"></i>
+                                            <small class="mt-2">Sin foto</small>
+                                        </div>
+                                        <img id="empleadoImage" class="employee-photo d-none" alt="Foto del empleado">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Información del Empleado -->
+                    <div id="empleadoInfo" class="employee-info-card d-none">
+                        <div class="d-flex align-items-center">
+                            <div class="info-icon">
+                                <i class="bi bi-person-check-fill"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">Empleado Encontrado</h6>
+                                <span id="empleadoNombre" class="text-muted">Información del empleado</span>
+                            </div>
+                            <div class="status-badge">
+                                <i class="bi bi-check-circle-fill me-1"></i>
+                                Verificado
+                            </div>
+                        </div>
+                    </div>
+
                     <button type="submit" id="btnSubmitGuardarEncargadoLinea" class="d-none">Guardar</button>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="bi bi-x-circle me-2"></i>Cancelar
+            <div class="modal-footer bg-light">
+                <button type="button" class="modern-btn btn-gradient-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Cancelar
                 </button>
-                <button type="button" class="btn btn-primary" id="btnGuardarEncargado">
-                    <i class="bi bi-save me-2"></i>Guardar Encargado
+                <button type="button" class="modern-btn btn-gradient-success" id="btnGuardarEncargado">
+                    <i class="bi bi-save me-2"></i>
+                    Guardar Encargado
                 </button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal Cargar Imagen del Carro -->
-<div class="modal fade" id="modalCargarImagen" tabindex="-1" aria-labelledby="modalCargarImagenLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+<!-- Modal Cargar Imagen del Carro Mejorado -->
+<div class="modal fade modal-modern" id="modalCargarImagen" tabindex="-1" aria-labelledby="modalCargarImagenLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="modalCargarImagenLabel"><i class="bi bi-image-fill me-2"></i>Cargar Imagen
-                    del Carro de Línea</h5>
+            <div class="modal-header card-header-info">
+                <div class="d-flex align-items-center">
+                    <div class="modal-icon-container me-3">
+                        <i class="bi bi-image-fill"></i>
+                    </div>
+                    <div>
+                        <h5 class="modal-title mb-1" id="modalCargarImagenLabel">Gestión de Imágenes</h5>
+                        <small class="opacity-75">Cargar imagen del carro de línea de producción</small>
+                    </div>
+                </div>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body p-4">
                 <form id="formCargarImagen">
-                    <div class="mb-3" id="containerFile">
-                        <div id="dropArea" class="border border-2 border-dashed rounded p-4 text-center position-relative" 
-                             style="min-height: 150px; transition: all 0.3s ease;">
-                            <input class="position-absolute opacity-0 top-0 start-0 w-100 h-100" type="file" 
-                                   id="inputImagenCarro" accept="image/*" style="cursor: pointer;">
-                            <div class="py-3">
-                                <i class="bi bi-cloud-arrow-up-fill text-primary" style="font-size: 3rem;"></i>
-                                <h5 class="mt-3">Arrastra y suelta tu imagen aquí</h5>
-                                <p class="text-muted mb-0">o haz clic para seleccionar</p>
-                                <small class="d-block mt-2 text-muted">Formatos aceptados: JPG, PNG, GIF</small>
+                    <!-- Área de Carga de Archivos -->
+                    <div class="form-section mb-4">
+                        <h6 class="section-title">
+                            <i class="bi bi-cloud-upload-fill me-2"></i>
+                            Subir Imagen
+                        </h6>
+                        <div class="upload-container">
+                            <div id="dropArea" class="drag-drop-area text-center position-relative">
+                                <input class="position-absolute opacity-0 top-0 start-0 w-100 h-100" type="file" 
+                                       id="inputImagenCarro" accept="image/*" style="cursor: pointer;">
+                                <div class="upload-content py-4">
+                                    <div class="upload-icon mb-3">
+                                        <i class="bi bi-cloud-arrow-up-fill"></i>
+                                    </div>
+                                    <h5 class="upload-title mb-2">Arrastra y suelta tu imagen aquí</h5>
+                                    <p class="upload-subtitle mb-3">o haz clic para seleccionar desde tu dispositivo</p>
+                                    <div class="upload-specs">
+                                        <span class="spec-item">
+                                            <i class="bi bi-file-earmark-image me-1"></i>
+                                            JPG, PNG, GIF
+                                        </span>
+                                        <span class="spec-item">
+                                            <i class="bi bi-hdd me-1"></i>
+                                            Máx. 5MB
+                                        </span>
+                                        <span class="spec-item">
+                                            <i class="bi bi-aspect-ratio me-1"></i>
+                                            Recomendado: 1920x1080
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="mb-3 text-center" id="previewContainer" style="display: none;">
-                        <div class="position-relative d-inline-block">
-                            <img id="imagenPreview" src="#" alt="Vista previa de la imagen" class="img-fluid rounded shadow-sm"
-                                style="max-height: 200px;" />
-                            <button type="button" id="btnRemoveImage" class="btn btn-sm btn-danger position-absolute top-0 end-0 rounded-circle"
-                                style="margin-top: -10px; margin-right: -10px; width: 25px; height: 25px; padding: 0; line-height: 1;">
-                                <i class="bi bi-x"></i>
-                            </button>
+
+                    <!-- Vista Previa de la Imagen -->
+                    <div class="form-section" id="previewSection" style="display: none;">
+                        <h6 class="section-title">
+                            <i class="bi bi-eye-fill me-2"></i>
+                            Vista Previa
+                        </h6>
+                        <div class="preview-container text-center">
+                            <div class="image-preview-wrapper">
+                                <img id="imagenPreview" src="#" alt="Vista previa de la imagen" class="preview-image" />
+                                <button type="button" id="btnRemoveImage" class="remove-image-btn">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </div>
+                            <div class="image-info mt-3">
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <i class="bi bi-file-earmark me-1"></i>
+                                        <span id="fileName">nombre-archivo.jpg</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="bi bi-hdd me-1"></i>
+                                        <span id="fileSize">2.5 MB</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="bi bi-aspect-ratio me-1"></i>
+                                        <span id="imageDimensions">1920 x 1080</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <p class="mt-2 mb-0 text-muted small" id="imageInfo">Información de la imagen</p>
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="bi bi-x-circle me-2"></i>Cancelar
+            <div class="modal-footer bg-light">
+                <button type="button" class="modern-btn btn-gradient-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Cancelar
                 </button>
-                <button type="button" class="btn btn-primary" id="btnSubirImagen" disabled>
-                    <i class="bi bi-upload me-2"></i>Subir Imagen
+                <button type="button" class="modern-btn btn-gradient-success" id="btnSubirImagen" disabled>
+                    <i class="bi bi-upload me-2"></i>
+                    Subir Imagen
                 </button>
             </div>
         </div>
