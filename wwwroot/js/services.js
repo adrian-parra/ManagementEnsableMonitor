@@ -161,7 +161,7 @@ export const EmployeeService = {
 
         try {
             const data = await API.get("/Empleado/GetEmployeeImage?plant=" + AppState.selectedPlant + "&employee=" + reloj);
-            console.log(data);
+           
             return data;
         } catch (error) {
             console.error('Error al obtener la imagen del empleado:', error);
@@ -396,7 +396,7 @@ export const LineManagerService = {
                 // Obtener la imagen del empleado
                 const imagenEmpleadoR = await EmployeeService.getEmployeeImage(reloj);
 
-                console.log(imagenEmpleadoR);
+               
                 
                 
                 // Mostrar confirmación con SweetAlert2 incluyendo la imagen del empleado
@@ -433,11 +433,11 @@ export const LineManagerService = {
                         shift: turnoValue
                     };
 
-                    console.log('Solicitud de guardado:', request);
+                   
 
                     const apiResult = await API.post('/Home/PostManagerLine', request);
 
-                    console.log('Respuesta del servidor:', apiResult);
+                 
 
                     if (apiResult.result !== "SUCCESS") {
                         throw new Error(apiResult.error);
@@ -593,7 +593,7 @@ export const AssemblyMonitorService = {
                 let customerid = document.querySelector("#inputCustomer").value;
                 let projects = await AssemblyMonitorService.getProjectByCustomer(customerid)
 
-                console.log(projects);
+          
 
 
                 // Convertir el input a select y cargar las opciones
@@ -675,7 +675,7 @@ export const AssemblyMonitorService = {
         // Verificar si cada campo existe, si no, crearlo dinámicamente
         additionalFields.forEach(fieldId => {
             if (!document.getElementById(fieldId)) {
-                console.log(`Creando campo adicional: ${fieldId}`);
+           
                 // Aquí se podría implementar la lógica para crear el campo dinámicamente si es necesario
             }
         });

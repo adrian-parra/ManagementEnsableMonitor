@@ -70,8 +70,7 @@ function initUIEvents() {
                 const plant = selectPlanta.value;
                 const lineIdCMS = selectLinea.value;
 
-                // console.log(userDomain.userName)
-                // console.log(userDomain.userName)
+               
     
     
                 const userRol = await API.get('/Empleado/GetUser',
@@ -80,7 +79,7 @@ function initUIEvents() {
                         user_id:AppState.currentUser.userName
                     });
                 
-                console.log(userRol);
+              
 
                 AppState.department = userRol.department;
 
@@ -93,7 +92,7 @@ function initUIEvents() {
                         line_id:AppState.selectedLine,
                     });
 
-                console.log(assemblyMonitor);
+               
 
                 
 
@@ -156,7 +155,7 @@ function initUIEvents() {
                 if(empleado){
                     const dataResponse = await fetch("Empleado/GetEmployeeImage?plant=" + AppState.selectedPlant + "&employee=" + reloj);
                     const data = await dataResponse.json();
-                    console.log(data);
+                  
                     
                     // Mostrar la imagen del empleado si está disponible
                     if(data && data.image) {
@@ -215,7 +214,7 @@ function initUIEvents() {
                 }
             });
 
-            // console.log(data.customer)
+          
 
             
 
@@ -240,7 +239,7 @@ function initUIEvents() {
 
                 const response = await API.post('/Line/UpdateLine', data);
                 
-                console.log(response);
+             
         
                 if(response.statusCode == 200){
                   UI.showAlert(response.description,'success');
@@ -289,9 +288,7 @@ function initUIEvents() {
                const data = await EmployeeService.getEmployeeImage(reloj);
              
                 if(empleado) {
-                    // console.log(empleado);
-                    // alert(empleado.reloj)
-                    // const lideresExist
+                    
                     // Verificar si el empleado ya es líder
                     const lideresExistentes = await LineManagerService.getLineManager()
                     // Verificar si el empleado ya es líder
@@ -553,7 +550,7 @@ async function initPlantAndLineSelectors() {
             selectPlanta.appendChild(option);
         });
         
-        console.log('Plantas cargadas:', plantas);
+      
         
         // Agregar evento de cambio al select de plantas
         selectPlanta.addEventListener('change', async function() {
@@ -587,7 +584,7 @@ async function initPlantAndLineSelectors() {
                     selectLinea.appendChild(option);
                 });
                 
-                console.log('Líneas cargadas:', lineas);
+               
                 
                 // Habilitar el select de líneas
                 UI.updateElement('selectLinea', { disabled: false });
