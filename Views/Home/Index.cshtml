@@ -42,10 +42,14 @@
     <div class="row">
         <div class="col-12">
             <div class="card shadow-sm mb-4">
-                <div class="card-header bg-success text-white">
+                <div class="card-header bg-success text-white" style="display: flex; flex-direction:row; justify-content:space-between; align-items:center;">
                     <h5 class="mb-0"><i class="bi bi-card-list me-2"></i>Información de Línea</h5>
+                     <div class="col-md-6 d-none" id="containerDep" style="text-align: right;" >
+                            <span class="badge bg-info text-dark p-2" id="inputDepartamentoUsuario" style="font-size: 0.9rem;">Departamento no asignado</span>
+                    </div>
                 </div>
                 <div class="card-body">
+                    
                     <form id="formInformacionLinea">
                         <div class="row g-3">
                               <div class="col-md-6">
@@ -150,6 +154,7 @@
                                     <input type="text" class="form-control" id="inputNombreLinea" name="nombreLinea" readonly>
                                 </div>
                             </div>
+                           
                             @* <div class="col-md-6">
                                 <label for="inputWorkProcess" class="form-label">Proceso de Trabajo</label>
                                 <input type="text" class="form-control" id="inputWorkProcess" name="workProccess" readonly>
