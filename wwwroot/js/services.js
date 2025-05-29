@@ -14,7 +14,7 @@ export const UserService = {
                 return AppState.currentUser;
             }
             
-            const userDomain = await API.get('/Home/GetUserDomain');
+            const userDomain = await API.get('/Monitor/GetUserDomain');
 
             // Actualizar el estado global
             AppState.currentUser = userDomain;
@@ -51,7 +51,7 @@ export const PlantService = {
      */
     async getPlants() {
         try {
-            return await API.get('/Home/GetPlants');
+            return await API.get('/Monitor/GetPlants');
         } catch (error) {
             UI.showAlert('No se pudieron cargar las plantas. Por favor, intente nuevamente más tarde.', 'error');
             throw error;
@@ -65,7 +65,7 @@ export const PlantService = {
      */
     async getLines(plantId) {
         try {
-            return await API.get('/Home/GetLines', { plant_id: plantId });
+            return await API.get('/Monitor/GetLines', { plant_id: plantId });
         } catch (error) {
             UI.showAlert('No se pudieron cargar las líneas. Por favor, intente nuevamente más tarde.', 'error');
             throw error;
@@ -233,7 +233,7 @@ export const ImageService = {
             };
             
             // Enviar la solicitud al servidor
-            const result = await API.post('/Home/PostImageCar', request);
+            const result = await API.post('/Monitor/PostImageCar', request);
             
             // Restaurar el botón
             UI.updateElement('btnSubirImagen', {
@@ -435,7 +435,7 @@ export const LineManagerService = {
 
                    
 
-                    const apiResult = await API.post('/Home/PostManagerLine', request);
+                    const apiResult = await API.post('/Monitor/PostManagerLine', request);
 
                  
 
@@ -475,7 +475,7 @@ export const LineManagerService = {
 
     async getLineManager() {
         try {
-            const data = await API.get(`/Home/GetLineManager?plant=${AppState.selectedPlant}&line_id=${AppState.selectedLine}`);
+            const data = await API.get(`/Monitor/GetLineManager?plant=${AppState.selectedPlant}&line_id=${AppState.selectedLine}`);
             return data;
         } catch (error) {
             console.error('Error al obtener el encargado:', error);
@@ -486,7 +486,7 @@ export const LineManagerService = {
 
     async deleteLineManager(reloj) {
         try {
-            const data = await API.get(`/Home/DeleteManagerLine?plant=${AppState.selectedPlant}&employee=${reloj}`);
+            const data = await API.get(`/Monitor/DeleteManagerLine?plant=${AppState.selectedPlant}&employee=${reloj}`);
             return data;
         }catch (error) {
             console.error('Error al eliminar el encargado:', error);
@@ -694,7 +694,7 @@ export const AssemblyMonitorService = {
 
     async getCustomer() {
         try {
-            const data = await API.get('/Home/GetCustomer',{plant:AppState.selectedPlant});
+            const data = await API.get('/Monitor/GetCustomer',{plant:AppState.selectedPlant});
             return data;
         }catch (error) {
             console.error('Error al obtener información del cliente:', error);
@@ -705,7 +705,7 @@ export const AssemblyMonitorService = {
 
     async getProjectByCustomer(id_customer){
         try {
-            const data = await API.get('/Home/GetProjectByCustomer',{id_customer:id_customer,plant:AppState.selectedPlant});
+            const data = await API.get('/Monitor/GetProjectByCustomer',{id_customer:id_customer,plant:AppState.selectedPlant});
             return data;
         }catch (error) {
             console.error('Error al obtener información del proyecto:', error);

@@ -1,19 +1,19 @@
 using System.Diagnostics;
-using AppManagementEnsableMonitor.Models;
+using AM_web.Models;
 using Microsoft.AspNetCore.Mvc;
-using AppManagementEnsableMonitor.Services.Interfaces;
+using AM_web.Services.Interfaces;
 using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 
-namespace AppManagementEnsableMonitor.Controllers
+namespace AM_web.Controllers
 {
-    public class HomeController : Controller
+    public class MonitorController : Controller
     {
 
         private readonly IAssemby _assembly;
 
-        public HomeController(ILogger<HomeController> logger, IAssemby assembly)
+        public MonitorController(ILogger<MonitorController> logger, IAssemby assembly)
         {
 
             _assembly = assembly;
@@ -89,7 +89,7 @@ namespace AppManagementEnsableMonitor.Controllers
                 // Asignar un nombre de software predeterminado si no se proporciona
                 if (string.IsNullOrEmpty(software_name))
                 {
-                    software_name = "AppManagementEnsableMonitor";
+                    software_name = "AM_web";
                 }
 
                 var userDomain = await _assembly.GetUserDomain(software_name, ip_add);

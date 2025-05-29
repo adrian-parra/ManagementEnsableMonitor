@@ -1,5 +1,5 @@
-using AppManagementEnsableMonitor.Services.Implementation;
-using AppManagementEnsableMonitor.Services.Interfaces;
+using AM_web.Services.Implementation;
+using AM_web.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +32,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Monitor}/{action=Index}/{id?}");
 
 app.Run();

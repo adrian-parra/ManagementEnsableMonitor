@@ -87,7 +87,7 @@ function initUIEvents() {
                 document.getElementById('inputDepartamentoUsuario').textContent = "Departamento: "  + userRol.department || 'No asignado';
                 
                 //const assemblyMonitor = await AssemblyMonitorService.getAssemblyMonitor(plant, lineIdCMS);
-                   const assemblyMonitor = await API.get('/Home/GetLineDetail',
+                   const assemblyMonitor = await API.get('/Monitor/GetLineDetail',
                     {
                         line_id:AppState.selectedLine,
                     });

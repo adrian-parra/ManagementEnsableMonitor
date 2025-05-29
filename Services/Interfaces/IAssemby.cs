@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AppManagementEnsableMonitor.Models;
+using AM_web.Models;
 
-namespace AppManagementEnsableMonitor.Services.Interfaces
+namespace AM_web.Services.Interfaces
 {
     public interface IAssemby
     {

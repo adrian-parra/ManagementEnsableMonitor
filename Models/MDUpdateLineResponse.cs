@@ -1,4 +1,4 @@
-namespace AppManagementEnsableMonitor.Models
+namespace AM_web.Models
 {
     public class MDUpdateLineResponse
     {

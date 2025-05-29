@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AppManagementEnsableMonitor.Models
+namespace AM_web.Models
 {
     public class MDUser
     {

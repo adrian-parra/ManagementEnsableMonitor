@@ -2,11 +2,11 @@ using System;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
-using AppManagementEnsableMonitor.Models;
-using AppManagementEnsableMonitor.Services.Interfaces;
+using AM_web.Models;
+using AM_web.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 
-namespace AppManagementEnsableMonitor.Services.Implementation
+namespace AM_web.Services.Implementation
 {
     public class EmpleadoImp : IEmpleado
     {

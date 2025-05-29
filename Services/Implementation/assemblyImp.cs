@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AppManagementEnsableMonitor.Models;
-using AppManagementEnsableMonitor.Services.Interfaces;
+using AM_web.Models;
+using AM_web.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text;
 
-namespace AppManagementEnsableMonitor.Services.Implementation
+namespace AM_web.Services.Implementation
 {
     public class AssemblyImp : IAssemby
     {

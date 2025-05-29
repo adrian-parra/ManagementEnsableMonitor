@@ -1,11 +1,11 @@
 using System;
 using System.Threading.Tasks;
-using AppManagementEnsableMonitor.Models;
-using AppManagementEnsableMonitor.Services.Interfaces;
+using AM_web.Models;
+using AM_web.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace AppManagementEnsableMonitor.Controllers
+namespace AM_web.Controllers
 {
     public class LineController : ControllerBase
     {

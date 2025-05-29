@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace AppManagementEnsableMonitor.Models
+namespace AM_web.Models
 {
     public class MDPlant
     {
