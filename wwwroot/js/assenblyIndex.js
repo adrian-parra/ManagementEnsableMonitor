@@ -84,7 +84,7 @@ function initUIEvents() {
                 AppState.department = userRol.department;
 
                 document.querySelector("#containerDep").classList.remove("d-none");
-                document.getElementById('inputDepartamentoUsuario').textContent = "Departamento: "  + userRol.department || 'No asignado';
+                document.getElementById('inputDepartamentoUsuario').textContent = "DEPARTAMENTO: "  + userRol.department.toUpperCase() || 'No asignado';
                 
                 //const assemblyMonitor = await AssemblyMonitorService.getAssemblyMonitor(plant, lineIdCMS);
                    const assemblyMonitor = await API.get('/Monitor/GetLineDetail',
@@ -533,12 +533,20 @@ async function initPlantAndLineSelectors() {
         const selectLinea = document.getElementById('selectLinea');
         
         if (!selectPlanta || !selectLinea) return;
-        
+
+        // Mostrar indicador de carga
+        UI.updateElement('selectPlanta', {
+            disabled: true,
+            html: '<option selected disabled value="">Cargando plantas...</option>'
+        });
         // Obtener plantas
         const plantas = await PlantService.getPlants();
+
+        UI.updateElement('selectPlanta', {
+            disabled: false,
+            html: '<option selected disabled value="">Seleccione una planta...</option>'
+        })
         
-        // Limpiar opciones existentes
-        selectPlanta.innerHTML = '<option selected disabled value="">Seleccione una planta...</option>';
         
         // Agregar nuevas opciones
         plantas.forEach(planta => {
