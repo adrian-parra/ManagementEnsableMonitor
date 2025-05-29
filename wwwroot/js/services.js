@@ -22,7 +22,7 @@ export const UserService = {
             // Actualizar la interfaz de usuario
             const userNameDisplay = document.getElementById('userNameDisplay');
             if (userNameDisplay && userDomain && userDomain.userName) {
-                userNameDisplay.textContent = userDomain.userName;
+                userNameDisplay.innerHTML =` <i class="bi bi-person-circle me-1"></i> ${userDomain.userName.toUpperCase()}`;
             }
             
             return userDomain;
