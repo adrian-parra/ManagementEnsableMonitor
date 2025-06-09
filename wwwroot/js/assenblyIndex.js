@@ -84,13 +84,29 @@ function initUIEvents() {
                 AppState.department = userRol.department;
 
                 document.querySelector("#containerDep").classList.remove("d-none");
-document.getElementById('inputDepartamentoUsuario').innerHTML = '<i class="bi bi-building"></i> DEPARTAMENTO: ' + userRol.department.toUpperCase() || 'No asignado';
-                
+                if(userRol.department){
+                    document.getElementById('inputDepartamentoUsuario').innerHTML = '<i class="bi bi-building"></i> DEPARTAMENTO: ' + userRol.department.toUpperCase() || 'No asignado';
+              
+                }else{
+                    document.getElementById('inputDepartamentoUsuario').innerHTML = '<i class="bi bi-building"></i> DEPARTAMENTO: No asignado';
+                }
+  
                 //const assemblyMonitor = await AssemblyMonitorService.getAssemblyMonitor(plant, lineIdCMS);
-                   const assemblyMonitor = await API.get('/Monitor/GetLineDetail',
-                    {
-                        line_id:AppState.selectedLine,
-                    });
+
+                let assemblyMonitor = null;
+
+                    try {
+                        assemblyMonitor = await API.get('/Monitor/GetLineDetail',
+                            {
+                                line_id:AppState.selectedLine,
+                                plant:AppState.selectedPlant,
+                            });
+
+                            console.log(assemblyMonitor);
+                    } catch (error) {
+                        console.error('Error al obtener la información del monitor:', error);
+                    }
+                   
 
                
 

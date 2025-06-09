@@ -402,12 +402,12 @@ namespace AM_web.Services.Implementation
             }
         }
         
-        public async Task<MDLineDetail> GetLineDetail(string lineId)
+        public async Task<MDLineDetail> GetLineDetail(string lineId, string plant)
         {
             try
             {
                 // Construir la URL completa para la solicitud
-                string requestUrl = $"{_apiBaseUrlMch1}/line/GetLineDetail?line_id={lineId}";
+                string requestUrl = $"{_apiBaseUrl}/assemblymonitor/GetLineDetail?line_id={lineId}&plant_id={plant}";
                 
                 // Realizar la solicitud HTTP GET
                 HttpResponseMessage response = await _httpClient.GetAsync(requestUrl);

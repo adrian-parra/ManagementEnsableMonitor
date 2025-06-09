@@ -14,7 +14,7 @@ namespace AM_web.Services.Interfaces
         Task<List<MDManagerType>> GetManagerType(string plant);
         Task<MDManagerLineResponse> PostManagerLine(MDManagerLineRequest request);
         Task<MDAssemblyMonitor> GetAssemblyMonitor(string plant, string lineIdCMS);
-        Task<MDLineDetail> GetLineDetail(string lineId);
+        Task<MDLineDetail> GetLineDetail(string lineId, string plant);
         Task<MDUpdateLineResponse> UpdateLine(MDUpdateLineRequest request);
         Task<List<MDLineManager>> GetLineManager(string plant, string lineId);
         Task<MDManagerLineResponse> DeleteManagerLine(string plant, string employee);

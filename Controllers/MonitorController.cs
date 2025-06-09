@@ -217,7 +217,7 @@ namespace AM_web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetLineDetail(string line_id)
+        public async Task<IActionResult> GetLineDetail(string line_id, string plant)
         {
             try
             {
@@ -226,7 +226,12 @@ namespace AM_web.Controllers
                     return BadRequest(new { success = false, message = "El parámetro line_id es requerido" });
                 }
 
-                var lineDetail = await _assembly.GetLineDetail(line_id);
+                if (string.IsNullOrEmpty(plant))
+                {
+                    return BadRequest(new { success = false, message = "El parámetro plant es requerido" });
+                }
+
+                var lineDetail = await _assembly.GetLineDetail(line_id, plant);
                 return Ok(lineDetail);
             }
             catch (Exception ex)
