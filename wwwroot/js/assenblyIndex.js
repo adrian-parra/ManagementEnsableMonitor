@@ -102,7 +102,7 @@ function initUIEvents() {
                                 plant:AppState.selectedPlant,
                             });
 
-                            console.log(assemblyMonitor);
+                            
                     } catch (error) {
                         console.error('Error al obtener la información del monitor:', error);
                     }
@@ -128,10 +128,23 @@ function initUIEvents() {
                     if(esIngenieria){
                         UI.updateElement('btnAgregarEncargados',{addClass: "d-none",})
                     }else if(esManufactura){
-                        UI.updateElement('btnCargarImagen',{addClass: "d-none",})
+                        // alert("No tienes permisos para realizar esta acción")
+                        // UI.updateElement('btnCargarImagen',{addClass: "d-none",})
+
+                        // Evento para el botón de encargados de línea
+                        const btnEncargadosLinea = document.getElementById('btnAgregarEncargados');
+                        // console.log(btnEncargadosLinea)
+                        
+                        if (btnEncargadosLinea) {
+                            
+                            btnEncargadosLinea.addEventListener('click', LineManagerService.openLineManagerModal);
+                        }
                     }else if(esRh){
                     //    UI.updateElement('btnAgregarEncargados',{addClass: "d-none",})
                        UI.updateElement("CardSectionAccionesAdicionales",{addClass: "d-none"})
+                    }else {
+                        // UI.updateElement('btnAgregarEncargados',{addClass: "d-none",})
+                        // UI.updateElement('btnCargarImagen',{addClass: "d-none",})
                     }
                     
                     // Mostrar mensaje de éxito
@@ -152,11 +165,7 @@ function initUIEvents() {
         });
     }
     
-    // Evento para el botón de encargados de línea
-    const btnEncargadosLinea = document.getElementById('btnEncargadosLinea');
-    if (btnEncargadosLinea) {
-        btnEncargadosLinea.addEventListener('click', LineManagerService.openLineManagerModal);
-    }
+    
     
     // Evento para el botón de subir imagen
     const btnSubirImagen = document.getElementById('btnSubirImagen');
