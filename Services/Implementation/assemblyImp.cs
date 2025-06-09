@@ -84,7 +84,7 @@ namespace AM_web.Services.Implementation
             try
             {
                 // Construir la URL completa para la solicitud
-                string requestUrl = $"{_apiBaseUrlMch1}/line/GetLines?plant_id={plantId}";
+                string requestUrl = $"{_apiBaseUrl}/assemblymonitor/GetCMSLines?plant={plantId}";
                 
                 // Realizar la solicitud HTTP GET
                 HttpResponseMessage response = await _httpClient.GetAsync(requestUrl);

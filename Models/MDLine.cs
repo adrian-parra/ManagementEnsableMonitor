@@ -14,5 +14,11 @@ namespace AM_web.Models
         public string LineId2 { get; set; }
         public int IdTipoConfiguracion { get; set; }
         public bool Estatus { get; set; }
+        public string NumeroParte { get; set; }
+        public string MetaProductividad { get; set; }
+        public string Descripcion { get; set; }
+        public string Customer { get; set; }
+        public string Project { get; set; }
+        public string Comunizada { get; set; }
     }
 }
