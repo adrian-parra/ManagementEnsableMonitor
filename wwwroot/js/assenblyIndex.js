@@ -84,7 +84,7 @@ function initUIEvents() {
                 AppState.department = userRol.department;
 
                 document.querySelector("#containerDep").classList.remove("d-none");
-                document.getElementById('inputDepartamentoUsuario').textContent = "DEPARTAMENTO: "  + userRol.department.toUpperCase() || 'No asignado';
+document.getElementById('inputDepartamentoUsuario').innerHTML = '<i class="bi bi-building"></i> DEPARTAMENTO: ' + userRol.department.toUpperCase() || 'No asignado';
                 
                 //const assemblyMonitor = await AssemblyMonitorService.getAssemblyMonitor(plant, lineIdCMS);
                    const assemblyMonitor = await API.get('/Monitor/GetLineDetail',
@@ -101,6 +101,22 @@ function initUIEvents() {
                 // Actualizar la interfaz con los datos obtenidos
                 if (assemblyMonitor) {
                     AssemblyMonitorService.updateMonitorUI(assemblyMonitor);
+
+                    document.querySelector("#cardInformacionLinea").classList.remove("d-none")
+                    document.querySelector("#CardSectionAccionesAdicionales").classList.remove("d-none")
+
+                    const esIngenieria = AppState.department === "Ingenieria";
+                    const esRh = AppState.department === "RH";
+                    const esManufactura = AppState.department === "Manufactura";
+
+                    if(esIngenieria){
+                        UI.updateElement('btnAgregarEncargados',{addClass: "d-none",})
+                    }else if(esManufactura){
+                        UI.updateElement('btnCargarImagen',{addClass: "d-none",})
+                    }else if(esRh){
+                    //    UI.updateElement('btnAgregarEncargados',{addClass: "d-none",})
+                       UI.updateElement("CardSectionAccionesAdicionales",{addClass: "d-none"})
+                    }
                     
                     // Mostrar mensaje de éxito
                     // UI.showAlert(`Información de la línea ${assemblyMonitor.nombreLinea} cargada correctamente.`, 'success');

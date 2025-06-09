@@ -541,6 +541,8 @@ export const AssemblyMonitorService = {
     async updateMonitorUI(data) {
         if (!data) return;
 
+        // AppState.department = 'Manufactura'
+
         // Verificar si el usuario pertenece al departamento de ingeniería
         const esIngenieria = AppState.department === "Ingenieria";
         const esRh = AppState.department === "RH";

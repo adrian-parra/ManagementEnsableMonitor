@@ -297,6 +297,8 @@ export const UI = {
      * @param {string} [options.valueProperty] - Propiedad para el valor del select
      * @param {string} [options.textProperty] - Propiedad para el texto del select
      * @param {boolean} [options.selectedDefault] - Indica si se debe agregar una opción por defecto
+     * @param {string|Array} [options.addClass] - Clase(s) CSS a añadir al elemento
+     * @param {string|Array} [options.removeClass] - Clase(s) CSS a eliminar del elemento
      */
     updateElement(elementId, options = {}) {
         let element = document.getElementById(elementId);
@@ -362,6 +364,28 @@ export const UI = {
         if (options.html !== undefined) element.innerHTML = options.html;
         if (options.display !== undefined) element.style.display = options.display;
         if (options.readonly !== undefined) element.readOnly = options.readonly;
+        
+        // Agregar clases CSS
+        if (options.addClass) {
+            if (Array.isArray(options.addClass)) {
+                options.addClass.forEach(className => {
+                    element.classList.add(className);
+                });
+            } else if (typeof options.addClass === 'string') {
+                element.classList.add(options.addClass);
+            }
+        }
+        
+        // Eliminar clases CSS
+        if (options.removeClass) {
+            if (Array.isArray(options.removeClass)) {
+                options.removeClass.forEach(className => {
+                    element.classList.remove(className);
+                });
+            } else if (typeof options.removeClass === 'string') {
+                element.classList.remove(options.removeClass);
+            }
+        }
     },
 
     /**

@@ -52,7 +52,7 @@
 
     <div class="row">
         <div class="col-12">
-            <div class="card shadow-sm mb-4">
+            <div class="card shadow-sm mb-4 d-none" id="cardInformacionLinea">
                 <div class="card-header bg-success text-white" style="display: flex; flex-direction:row; justify-content:space-between; align-items:center;">
                     <h5 class="mb-0"><i class="bi bi-card-list me-2"></i>Información de Línea</h5>
                      <div class="col-md-6 d-none" id="containerDep" style="text-align: right;" >
@@ -232,20 +232,20 @@
 
     <div class="row">
         <div class="col-12">
-            <div class="card shadow-sm">
+            <div class="card shadow-sm d-none" id="CardSectionAccionesAdicionales">
                 <div class="card-header">
                     <h5 class="mb-0"><i class="bi bi-tools me-2"></i>Acciones Adicionales</h5>
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <button type="button" class="btn btn-info w-100" data-bs-toggle="modal"
+                            <button type="button" class="btn btn-info w-100" id="btnAgregarEncargados" data-bs-toggle="modal"
                                 data-bs-target="#modalEncargados" id="btnEncargadosLinea">
                                 <i class="bi bi-person-plus-fill me-2"></i>Agregar Encargados de Línea
                             </button>
                         </div>
                         <div class="col-md-6">
-                            <button type="button" class="btn btn-secondary w-100" data-bs-toggle="modal"
+                            <button type="button" class="btn btn-secondary w-100" id="btnCargarImagen" data-bs-toggle="modal"
                                 data-bs-target="#modalCargarImagen">
                                 <i class="bi bi-image-fill me-2"></i>Cargar Imagen del Carro de Línea
                             </button>
