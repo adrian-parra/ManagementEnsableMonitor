@@ -176,6 +176,39 @@ export const EmployeeService = {
  * @namespace ImageService
  */
 export const ImageService = {
+
+    async openImageModal() {
+        try {
+            
+
+            // Validaciones     
+            const imageCar = await this.getImage(AppState.selectedPlant,AppState.selectedLine);
+
+            console.log(imageCar);
+
+            const image = document.getElementById('imagenCarro');
+
+            image.src =  "data:image/jpeg;base64," +imageCar.imageBase64;
+            
+
+            return false
+        } catch (error) {
+            console.error('Error al abrir el modal de imágenes:', error);
+            UI.showAlert('Error al abrir el modal de imágenes. Por favor, intente nuevamente más tarde.', 'error');
+        }
+    } ,
+
+    async getImage(plant,line) {
+        try {
+            const data = await API.get("/Monitor/GetImageCar?plant=" + plant + "&line_id=" + line );
+            return data;
+        } catch (error) {
+            console.error('Error al obtener la imagen:', error);
+            UI.showAlert('No se pudo obtener la imagen. Por favor, intente nuevamente más tarde.', 'error');
+            return null;
+        }
+    },
+
     /**
      * Sube una imagen del carro de línea
      * @returns {Promise<void>}

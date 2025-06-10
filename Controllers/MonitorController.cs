@@ -334,5 +334,26 @@ namespace AM_web.Controllers
                 return StatusCode(500, new { success = false, message = "Error al recuperar proyectos", error = ex.Message });
             }
         }
+
+        public async Task<IActionResult> GetImageCar(string plant, string line_id)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(plant))
+                {
+                    return BadRequest(new { success = false, message = "El parámetro plant es requerido" });
+                }
+
+                if (string.IsNullOrEmpty(line_id))
+                {
+                    return BadRequest(new { success = false, message = "El parámetro line_id es requerido" });
+                }
+                var imageCar = await _assembly.GetImageCar(plant, line_id);
+                return Ok(imageCar);
+            } catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = "Error al recuperar imagen del carro", error = ex.Message });
+            }
+        }
     }
 }

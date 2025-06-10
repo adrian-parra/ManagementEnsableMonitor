@@ -129,7 +129,7 @@ function initUIEvents() {
                         UI.updateElement('btnAgregarEncargados',{addClass: "d-none",})
                     }else if(esManufactura){
                         // alert("No tienes permisos para realizar esta acción")
-                        // UI.updateElement('btnCargarImagen',{addClass: "d-none",})
+                         UI.updateElement('btnCargarImagen',{addClass: "d-none",})
 
                         // Evento para el botón de encargados de línea
                         const btnEncargadosLinea = document.getElementById('btnAgregarEncargados');
@@ -143,8 +143,8 @@ function initUIEvents() {
                     //    UI.updateElement('btnAgregarEncargados',{addClass: "d-none",})
                        UI.updateElement("CardSectionAccionesAdicionales",{addClass: "d-none"})
                     }else {
-                        // UI.updateElement('btnAgregarEncargados',{addClass: "d-none",})
-                        // UI.updateElement('btnCargarImagen',{addClass: "d-none",})
+                        UI.updateElement('btnAgregarEncargados',{addClass: "d-none",})
+                        UI.updateElement('btnCargarImagen',{addClass: "d-none",})
                     }
                     
                     // Mostrar mensaje de éxito
@@ -425,6 +425,14 @@ function initUIEvents() {
                 this.innerHTML = '<i class="bi bi-search"></i>';
                 this.disabled = false;
             }
+        });
+    }
+
+    // EVENTO PARA EVENTO CARGA IMAGEN CARRO
+    const btnCargarImagen = document.getElementById('btnCargarImagen');
+    if (btnCargarImagen) {
+        btnCargarImagen.addEventListener('click',() =>{
+            ImageService.openImageModal();
         });
     }
 }

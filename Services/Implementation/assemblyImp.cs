@@ -650,5 +650,31 @@ namespace AM_web.Services.Implementation
             }
         }
     
+        public async Task<MDImageCar> GetImageCar(string plant, string lineId){
+            try
+            {
+                // Construir la URL completa para la solicitud
+                string requestUrl = $"{_apiBaseUrl}/assemblymonitor/GetLineImageCar?plant={plant}&line_id={lineId}";
+
+                // Realizar la solicitud HTTP GET
+                HttpResponseMessage response = await _httpClient.GetAsync(requestUrl);
+
+                // Verificar si la solicitud fue exitosa
+                if (response.IsSuccessStatusCode)
+                {
+                    // Leer y deserializar la respuesta
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    var imageCar = JsonSerializer.Deserialize<MDImageCar>(jsonResponse,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    return imageCar;    
+                }
+            } catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener la imagen del carro: {ex.Message}");
+            }
+
+            return null;
+        }
     }
 }
