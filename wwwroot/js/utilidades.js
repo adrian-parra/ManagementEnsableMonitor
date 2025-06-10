@@ -299,6 +299,7 @@ export const UI = {
      * @param {boolean} [options.selectedDefault] - Indica si se debe agregar una opción por defecto
      * @param {string|Array} [options.addClass] - Clase(s) CSS a añadir al elemento
      * @param {string|Array} [options.removeClass] - Clase(s) CSS a eliminar del elemento
+     * @param {boolean} [options.convertToInputText] - Indica si se debe convertir a input text
      */
     updateElement(elementId, options = {}) {
         let element = document.getElementById(elementId);
@@ -357,6 +358,29 @@ export const UI = {
             
             // Actualizar la referencia al elemento
             element = selectElement;
+        } else if (options.convertToInputText) {
+            const parentNode = element.parentNode;
+            let inputElement = document.createElement('input');
+            inputElement.type = 'text';
+
+            // Copiar atributos importantes
+            inputElement.id = element.id;
+            inputElement.name = element.name;
+            inputElement.className = element.className;
+            
+            // Establecer el valor si se proporciona
+            if (options.value !== undefined) {
+                inputElement.value = options.value;
+            } else if (element.tagName === 'SELECT' && element.options.length > 0) {
+                // Si el elemento original era un select, intentar obtener el texto de la opción seleccionada
+                inputElement.value = element.options[element.selectedIndex].textContent;
+            }
+
+            // Reemplazar el select con el input
+            parentNode.replaceChild(inputElement, element);
+            
+            // Actualizar la referencia al elemento
+            element = inputElement;
         }
 
         if (options.disabled !== undefined) element.disabled = options.disabled;

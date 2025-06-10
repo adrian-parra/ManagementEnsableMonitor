@@ -641,12 +641,15 @@ export const AssemblyMonitorService = {
             })
 
         }else{
-            UI.updateElement('inputCustomer', { 
+            UI.updateElement('inputCustomer', {
+                convertToInputText: true,
                 value: data.customer || 'No disponible',
                 readonly:!esIngenieria
-            });
+            })
+            
 
             UI.updateElement('inputProject', {
+                convertToInputText: true,
                 value: data.project || '',
                 readonly:!esIngenieria
             });

@@ -104,7 +104,7 @@ function initUIEvents() {
 
                             
                     } catch (error) {
-                        .error('Error al obtener la información del moniconsoletor:', error);
+                        
                     }
                    
 
@@ -121,30 +121,46 @@ function initUIEvents() {
                     document.querySelector("#cardInformacionLinea").classList.remove("d-none")
                     document.querySelector("#CardSectionAccionesAdicionales").classList.remove("d-none")
 
-                    const esIngenieria = AppState.department === "Ingenieria";
-                    const esRh = AppState.department === "RH";
-                    const esManufactura = AppState.department === "Manufactura";
+                    
 
-                    if(esIngenieria){
-                        UI.updateElement('btnAgregarEncargados',{addClass: "d-none",})
-                    }else if(esManufactura){
-                        // alert("No tienes permisos para realizar esta acción")
-                         UI.updateElement('btnCargarImagen',{addClass: "d-none",})
+                    const department = AppState.department;
 
-                        // Evento para el botón de encargados de línea
-                        const btnEncargadosLinea = document.getElementById('btnAgregarEncargados');
-                        // console.log(btnEncargadosLinea)
-                        
-                        if (btnEncargadosLinea) {
+                    // Define las configuraciones de UI por departamento
+                    const departmentConfigs = {
+                        "Ingenieria": {
+                            btnAgregarEncargados: { addClass: "d-none" },
+                            btnCargarImagen: { removeClass: "d-none" }
                             
+                        },
+                        "Manufactura": {
+                            btnCargarImagen: { addClass: "d-none" },
+                            btnAgregarEncargados: { removeClass: "d-none" }
+                        },
+                        "RH": {
+                            CardSectionAccionesAdicionales: { addClass: "d-none" }
+                        },
+                        "default": {
+                            btnAgregarEncargados: { addClass: "d-none" },
+                            btnCargarImagen: { addClass: "d-none" }
+                        }
+                    };
+
+                    // Obtiene la configuración para el departamento actual o la configuración por defecto
+                    const currentConfig = departmentConfigs[department] || departmentConfigs["default"];
+
+                    // Aplica las actualizaciones de UI basadas en la configuración
+                    for (const elementId in currentConfig) {
+                        UI.updateElement(elementId, currentConfig[elementId]);
+                    }
+
+                    // Manejo específico del evento para el botón de encargados de línea en Manufactura
+                    if (department === "Manufactura") {
+                        const btnEncargadosLinea = document.getElementById('btnAgregarEncargados');
+                        if (btnEncargadosLinea) {
+                            // Se recomienda añadir el event listener una sola vez si la lógica lo permite
+                            // Para este caso, asumo que se puede añadir cada vez que se consulta la información
                             btnEncargadosLinea.addEventListener('click', LineManagerService.openLineManagerModal);
                         }
-                    }else if(esRh){
-                    //    UI.updateElement('btnAgregarEncargados',{addClass: "d-none",})
-                       UI.updateElement("CardSectionAccionesAdicionales",{addClass: "d-none"})
-                    }else {
-                        UI.updateElement('btnAgregarEncargados',{addClass: "d-none",})
-                        UI.updateElement('btnCargarImagen',{addClass: "d-none",})
                     }
                     
                     // Mostrar mensaje de éxito
