@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', async function() {
        UI.makeModalDraggable("modalCargarImagen")
        
     } catch (error) {
-        console.error('Error al inicializar la aplicación:', error);
+       
         UI.showAlert('Error al inicializar la aplicación. Por favor, recargue la página.', 'error');
     }
 });
@@ -104,7 +104,7 @@ function initUIEvents() {
 
                             
                     } catch (error) {
-                        console.error('Error al obtener la información del monitor:', error);
+                        .error('Error al obtener la información del moniconsoletor:', error);
                     }
                    
 
@@ -153,7 +153,7 @@ function initUIEvents() {
                     UI.showAlert('No se pudo obtener la información de la línea. Por favor, intente nuevamente más tarde.', 'error');
                 }
             } catch (error) {
-                console.error('Error al consultar información:', error);
+               
                 UI.showAlert(`Error al consultar información: ${error.message}`, 'error');
             } finally {
                 // Restaurar el botón
@@ -278,14 +278,20 @@ function initUIEvents() {
                     html: '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Guardando...'
                 })
 
+                 data.plantId = AppState.selectedPlant;
+
+                // console.log(data)
+
                 const response = await API.post('/Line/UpdateLine', data);
+
+                
                 
              
         
-                if(response.statusCode == 200){
-                  UI.showAlert(response.description,'success');
+                if(response.result == "UPDATE_OK"){
+                  UI.showAlert(response.msj,'success');
                 }else{
-                    UI.showAlert(response.description,'error');
+                    UI.showAlert(response.msj,'error');
                 }
         
             }catch(error) {
@@ -410,7 +416,7 @@ function initUIEvents() {
                     placeholderElement.classList.remove('d-none');
                 }
             } catch (error) {
-                console.error('Error al buscar empleado:', error);
+               
                 
                 // Mostrar mensaje de error
                 const infoElement = document.getElementById('empleadoInfo');
@@ -473,7 +479,7 @@ function initDragAndDrop() {
     
     // Si alguno de los elementos no existe, salir de la función
     if (!dropArea || !inputFile || !previewContainer || !imagenPreview) {
-        console.log('Algunos elementos para drag and drop no están disponibles en esta página');
+       
         return;
     }
     
@@ -646,7 +652,7 @@ async function initPlantAndLineSelectors() {
                 // Habilitar el select de líneas
                 UI.updateElement('selectLinea', { disabled: false });
             } catch (error) {
-                console.error('Error al cargar líneas:', error);
+              
                 UI.updateElement('selectLinea', {
                     disabled: false,
                     html: '<option selected disabled value="">Error al cargar líneas</option>'
@@ -660,7 +666,7 @@ async function initPlantAndLineSelectors() {
             AppState.selectedLine = this.value;
         });
     } catch (error) {
-        console.error('Error al inicializar selectores:', error);
+        
         UI.showAlert('Error al cargar datos iniciales. Por favor, recargue la página.', 'error');
     }
 }

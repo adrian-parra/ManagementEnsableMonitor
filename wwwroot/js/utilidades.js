@@ -49,7 +49,7 @@ export const API = {
 
             return data;
         } catch (error) {
-            console.error('Error en petición GET:', error);
+            
             throw error;
         } finally {
             AppState.setLoading(false);
@@ -97,7 +97,7 @@ export const API = {
 
             return responseData;
         } catch (error) {
-            console.error('Error en petición POST:', error);
+            
             throw error;
         } finally {
             AppState.setLoading(false);
@@ -121,7 +121,7 @@ export const UI = {
     showAlert(message, type = 'info', delay = 2000) {
         // Usar SweetAlert para mostrar notificaciones más atractivas
         Swal.fire({
-            title: this.getTitleByType(type),
+            // title: this.getTitleByType(type),
             text: message,
             icon: type,
             timer: delay,
@@ -405,7 +405,7 @@ export const UI = {
                 $(modalElement).modal('hide');
             }
         } catch (error) {
-            console.error(`Error al cerrar el modal ${modalId}:`, error);
+            
         }
     },
 

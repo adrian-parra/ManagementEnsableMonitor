@@ -39,7 +39,7 @@ namespace AM_web.Controllers
               
 
                 
-                if (result.statusCode == 200)
+                if (result.result == "UPDATE_OK")
                 {
                     return Ok(result);
                 }
@@ -52,9 +52,9 @@ namespace AM_web.Controllers
             {
                  return StatusCode(500, new MDUpdateLineResponse
                 {
-                    statusCode = 500,
-                    message = "Error al actualizar la línea",
-                    description = ex.Message,
+                    
+                    msj = "Error al actualizar la línea",
+                    result = ex.Message,
                 });
             }
         }

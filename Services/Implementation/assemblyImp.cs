@@ -454,7 +454,7 @@ namespace AM_web.Services.Implementation
             try
             {
                 // Construir la URL completa para la solicitud
-                string requestUrl = $"{_apiBaseUrlMch1}/line/UpdateLine";
+                string requestUrl = $"{_apiBaseUrl}/assemblymonitor/UpdateLine";
                 
                 // Serializar el objeto de solicitud a JSON
                 string jsonRequest = JsonSerializer.Serialize(request);
@@ -479,9 +479,9 @@ namespace AM_web.Services.Implementation
                     string errorContent = await response.Content.ReadAsStringAsync();
                     return new MDUpdateLineResponse
                     {
-                        statusCode = 500,
-                        message = "Error al actualizar la línea",
-                        description = $"Error al actualizar la línea. Código: {response.StatusCode}, Mensaje: {errorContent}"
+                        
+                        msj = "Error al actualizar la línea",
+                        result = $"Error al actualizar la línea. Código: {response.StatusCode}, Mensaje: {errorContent}"
                     };
                 }
             }
@@ -489,18 +489,18 @@ namespace AM_web.Services.Implementation
             {
                 return new MDUpdateLineResponse
                 {
-                    statusCode = 500,
-                    message = "Error de conexión al actualizar la línea",
-                    description = $"Error de conexión al actualizar la línea: {ex.Message}"
+                    
+                    msj = "Error de conexión al actualizar la línea",
+                    result = $"Error de conexión al actualizar la línea: {ex.Message}"
                 };
             }
             catch (JsonException ex)
             {
                 return new MDUpdateLineResponse
                 {
-                    statusCode = 500,
-                    message = "ERROR",
-                    description = $"Error al procesar la respuesta JSON: {ex.Message}"
+                    
+                    msj = "ERROR",
+                    result = $"Error al procesar la respuesta JSON: {ex.Message}"
                 };
             }
             catch (Exception ex)
@@ -509,9 +509,9 @@ namespace AM_web.Services.Implementation
                 Console.WriteLine($"Error al actualizar la línea: {ex.Message}");
                 return new MDUpdateLineResponse
                 {
-                    statusCode = 500,
-                    message = "ERROR",
-                    description = $"Error al actualizar la línea: {ex.Message}"
+                    
+                    msj = "ERROR",
+                    result = $"Error al actualizar la línea: {ex.Message}"
                 };
             }
         }

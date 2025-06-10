@@ -5,6 +5,8 @@ namespace AM_web.Models
     public class MDUpdateLineRequest
     {
         public string LineId { get; set; }
+
+         public string plantId { get; set; }
         public string WorkProccess { get; set; }
         public string TressId { get; set; }
         public string NombreLinea { get; set; }
