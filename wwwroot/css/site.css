@@ -44,3 +44,28 @@ body {
 }
 
 
+.input-group:has(input[readonly]) {
+  position: relative; /* Necesario para posicionar el pseudo-elemento */
+  pointer-events: none; /* Evita que el input sea interactivo */;
+}
+
+.input-group:has(input[readonly])::after {
+  content: '';
+  position: absolute;
+  right: 10px; /* Ajusta la posición del icono */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M144 144v48H304V144c0-44.2-35.8-80-80-80s-80 35.8-80 80zM80 192V144C80 64.5 144.5 0 224 0s144 64.5 144 144v48h16c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V256c0-35.3 28.7-64 64-64H80z"/></svg>');
+  background-size: contain;
+  background-repeat: no-repeat;
+  pointer-events: none; /* Para que no interfiera con la interacción del input */
+}
+
+/* También puedes aplicar un estilo al input dentro del input-group para que el texto no se superponga con el icono */
+.input-group > input[readonly] {
+  padding-right: 30px; /* Espacio para el icono */
+  background-color: #e9ecef; /* Un color de fondo para indicar que es de solo lectura */
+  cursor: not-allowed;
+}
