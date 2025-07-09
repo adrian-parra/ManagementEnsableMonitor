@@ -555,6 +555,10 @@ function initDragAndDrop() {
         
         if (!file.type.startsWith('image/')) {
             alert('Por favor, seleccione un archivo de imagen válido.');
+            UI.showAlert({
+                message: 'Por favor, seleccione un archivo de imagen válido.',
+                type: 'warning'
+            })
             return;
         }
         

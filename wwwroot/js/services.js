@@ -326,6 +326,31 @@ export const ImageService = {
         const file = event.target.files[0];
         
         if (file) {
+            const allowedTypes = ['image/jpeg', 'image/png'];
+            const maxSize = 1 * 1024 * 1024; // 1MB
+
+            if (!allowedTypes.includes(file.type)) {
+                UI.showAlert({
+                    message: 'Formato de imagen no permitido. Solo se aceptan JPG y PNG.',
+                    type: 'error'
+                });
+                event.target.value = ''; // Clear the input
+                imagenPreview.src = '#';
+                previewContainer.style.display = 'none';
+                return;
+            }
+
+            if (file.size > maxSize) {
+                UI.showAlert({
+                    message: 'La imagen es demasiado grande. El tamaño máximo permitido es 1MB.',
+                    type: 'error'
+                });
+                event.target.value = ''; // Clear the input
+                imagenPreview.src = '#';
+                previewContainer.style.display = 'none';
+                return;
+            }
+
             const reader = new FileReader();
             reader.onload = function(e) {
                 imagenPreview.src = e.target.result;
