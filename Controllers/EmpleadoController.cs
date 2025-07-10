@@ -46,7 +46,7 @@ namespace AM_web.Controllers
                     return BadRequest(new { success = false, message = "Los parámetros plant y employee son requeridos" });
                 }
 
-                var employeeImage = await _empleadoService.GetEmployeeImage(plant, employee);
+                var employeeImage = await _empleadoService.GetEmployeeImage("mch1", employee);
                 return Ok(employeeImage);
             }
             catch (Exception ex)

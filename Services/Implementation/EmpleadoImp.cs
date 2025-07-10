@@ -85,7 +85,7 @@ namespace AM_web.Services.Implementation
                     string jsonResponse = await response.Content.ReadAsStringAsync();
                     var employeeImage = JsonSerializer.Deserialize<MDEmployeeImage>(jsonResponse, 
                         new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                    
+
                     return employeeImage;
                 }
                 else

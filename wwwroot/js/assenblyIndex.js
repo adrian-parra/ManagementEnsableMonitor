@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', async function() {
        UI.makeModalDraggable("modalCargarImagen")
        
     } catch (error) {
-       
+        console.log(error)
         UI.showAlert('Error al inicializar la aplicación. Por favor, recargue la página.', 'error');
     }
 });
@@ -38,6 +38,9 @@ function initUIEvents() {
     if (inputImagenCarro) {
         inputImagenCarro.addEventListener('change', ImageService.showImagePreview);
     }
+    
+    // Eventos para cargar investigación
+    initInvestigacionEvents();
     
     // Evento para el botón de consultar
     const btnConsultar = document.getElementById('btnConsultar');
@@ -120,7 +123,7 @@ function initUIEvents() {
 
                     document.querySelector("#cardInformacionLinea").classList.remove("d-none")
                     document.querySelector("#CardSectionAccionesAdicionales").classList.remove("d-none")
-
+                    document.querySelector("#CardSectionCargarInvestigacion").classList.remove("d-none") 
                     
 
                     const department = AppState.department;
@@ -459,6 +462,222 @@ function initUIEvents() {
     }
 }
 
+/**
+ * Inicializa los eventos relacionados con la carga de investigación
+ */
+function initInvestigacionEvents() {
+    const inputArchivoInvestigacion = document.getElementById('inputArchivoInvestigacion');
+    const dropAreaInvestigacion = document.getElementById('dropAreaInvestigacion');
+    const btnSubirInvestigacion = document.getElementById('btnSubirInvestigacion');
+    const btnRemoveFileInvestigacion = document.getElementById('btnRemoveFileInvestigacion');
+    
+    if (inputArchivoInvestigacion) {
+        inputArchivoInvestigacion.addEventListener('change', handleInvestigacionFileSelect);
+    }
+    
+    if (dropAreaInvestigacion) {
+        // Eventos de drag and drop
+        dropAreaInvestigacion.addEventListener('dragover', window.handleDragOver);
+        dropAreaInvestigacion.addEventListener('dragleave', window.handleDragLeave);
+        dropAreaInvestigacion.addEventListener('drop', handleInvestigacionFileDrop);
+    }
+    
+    if (btnSubirInvestigacion) {
+        btnSubirInvestigacion.addEventListener('click', uploadInvestigacion);
+    }
+    
+    if (btnRemoveFileInvestigacion) {
+        btnRemoveFileInvestigacion.addEventListener('click', removeInvestigacionFile);
+    }
+}
+
+/**
+ * Maneja la selección de archivo de investigación
+ */
+function handleInvestigacionFileSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+        validateAndShowInvestigacionFile(file);
+    }
+}
+
+/**
+ * Maneja el drop de archivo de investigación
+ */
+function handleInvestigacionFileDrop(event) {
+    event.preventDefault();
+    const dropArea = document.getElementById('dropAreaInvestigacion');
+    dropArea.style.borderColor = '#17a2b8';
+    dropArea.style.backgroundColor = '';
+    
+    const files = event.dataTransfer.files;
+    if (files.length > 0) {
+        const file = files[0];
+        document.getElementById('inputArchivoInvestigacion').files = files;
+        validateAndShowInvestigacionFile(file);
+    }
+}
+
+/**
+ * Valida y muestra la información del archivo de investigación
+ */
+function validateAndShowInvestigacionFile(file) {
+    // Validar tipo de archivo
+    const allowedTypes = [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-powerpoint',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        'text/plain'
+    ];
+    
+    if (!allowedTypes.includes(file.type)) {
+        UI.showAlert('Tipo de archivo no permitido. Por favor, seleccione un archivo válido.', 'error');
+        return;
+    }
+    
+    // Validar tamaño (10MB máximo)
+    const maxSize = 10 * 1024 * 1024; // 10MB en bytes
+    if (file.size > maxSize) {
+        UI.showAlert('El archivo es demasiado grande. El tamaño máximo permitido es 10MB.', 'error');
+        return;
+    }
+    
+    // Mostrar información del archivo
+    showInvestigacionFilePreview(file);
+}
+
+/**
+ * Muestra la vista previa del archivo de investigación
+ */
+function showInvestigacionFilePreview(file) {
+    const previewContainer = document.getElementById('previewContainerInvestigacion');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const fileSizeDisplay = document.getElementById('fileSizeDisplay');
+    const btnSubirInvestigacion = document.getElementById('btnSubirInvestigacion');
+    
+    if (fileNameDisplay) {
+        fileNameDisplay.textContent = file.name;
+    }
+    
+    if (fileSizeDisplay) {
+        const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+        fileSizeDisplay.textContent = `Tamaño: ${sizeInMB} MB`;
+    }
+    
+    if (previewContainer) {
+        previewContainer.style.display = 'block';
+    }
+    
+    if (btnSubirInvestigacion) {
+        btnSubirInvestigacion.disabled = false;
+    }
+}
+
+/**
+ * Remueve el archivo de investigación seleccionado
+ */
+function removeInvestigacionFile() {
+    const inputArchivoInvestigacion = document.getElementById('inputArchivoInvestigacion');
+    const previewContainer = document.getElementById('previewContainerInvestigacion');
+    const btnSubirInvestigacion = document.getElementById('btnSubirInvestigacion');
+    
+    if (inputArchivoInvestigacion) {
+        inputArchivoInvestigacion.value = '';
+    }
+    
+    if (previewContainer) {
+        previewContainer.style.display = 'none';
+    }
+    
+    if (btnSubirInvestigacion) {
+        btnSubirInvestigacion.disabled = true;
+    }
+}
+
+/**
+ * Sube el archivo de investigación
+ */
+async function uploadInvestigacion() {
+    try {
+        const titulo = document.getElementById('inputTituloInvestigacion').value.trim();
+        const descripcion = document.getElementById('textareaDescripcionInvestigacion').value.trim();
+        const fileInput = document.getElementById('inputArchivoInvestigacion');
+        const file = fileInput.files[0];
+        
+        // Validaciones
+        if (!titulo) {
+            UI.showAlert('Por favor, ingrese un título para la investigación.', 'warning');
+            return;
+        }
+        
+        if (!file) {
+            UI.showAlert('Por favor, seleccione un archivo para subir.', 'warning');
+            return;
+        }
+        
+        if (!AppState.selectedPlant || !AppState.selectedLine) {
+            UI.showAlert('Por favor, seleccione una planta y línea antes de subir la investigación.', 'warning');
+            return;
+        }
+        
+        // Mostrar indicador de carga
+        const btnSubirInvestigacion = document.getElementById('btnSubirInvestigacion');
+        const originalText = btnSubirInvestigacion.innerHTML;
+        btnSubirInvestigacion.disabled = true;
+        btnSubirInvestigacion.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Subiendo...';
+        
+        // Crear FormData para enviar el archivo
+        const formData = new FormData();
+        formData.append('archivo', file);
+        formData.append('titulo', titulo);
+        formData.append('descripcion', descripcion);
+        formData.append('planta', AppState.selectedPlant);
+        formData.append('linea', AppState.selectedLine);
+        formData.append('usuario', AppState.currentUser.userName);
+        
+        // Realizar la petición (ajusta la URL según tu endpoint)
+        const response = await fetch('/Monitor/UploadInvestigacion', {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Error en la petición: ${response.status} ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            UI.showAlert('Investigación subida exitosamente.', 'success');
+            
+            // Limpiar el formulario
+            document.getElementById('formCargarInvestigacion').reset();
+            removeInvestigacionFile();
+            
+            // Cerrar el modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalCargarInvestigacion'));
+            if (modal) {
+                modal.hide();
+            }
+        } else {
+            UI.showAlert(result.message || 'Error al subir la investigación.', 'error');
+        }
+        
+    } catch (error) {
+        console.error('Error al subir investigación:', error);
+        UI.showAlert('Error al subir la investigación. Por favor, intente nuevamente.', 'error');
+    } finally {
+        // Restaurar el botón
+        const btnSubirInvestigacion = document.getElementById('btnSubirInvestigacion');
+        btnSubirInvestigacion.disabled = false;
+        btnSubirInvestigacion.innerHTML = '<i class="bi bi-upload me-2"></i>Subir Investigación';
+    }
+}
+
 
 function cargarImagenLider(data , empleado){
     // Mostrar la imagen del empleado si está disponible
@@ -527,6 +746,21 @@ function initDragAndDrop() {
         dropArea.classList.remove('border-primary');
         dropArea.style.backgroundColor = '';
     }
+    
+    // Funciones globales para drag and drop de investigación
+    window.handleDragOver = function(e) {
+        e.preventDefault();
+        const dropArea = document.getElementById('dropAreaInvestigacion');
+        dropArea.style.borderColor = '#007bff';
+        dropArea.style.backgroundColor = 'rgba(0, 123, 255, 0.05)';
+    };
+    
+    window.handleDragLeave = function(e) {
+        e.preventDefault();
+        const dropArea = document.getElementById('dropAreaInvestigacion');
+        dropArea.style.borderColor = '#17a2b8';
+        dropArea.style.backgroundColor = '';
+    };
     
     // Manejar el evento de soltar archivos
     dropArea.addEventListener('drop', handleDrop, false);
@@ -690,10 +924,3 @@ async function initPlantAndLineSelectors() {
         UI.showAlert('Error al cargar datos iniciales. Por favor, recargue la página.', 'error');
     }
 }
-
-
-
-
-
-
-
