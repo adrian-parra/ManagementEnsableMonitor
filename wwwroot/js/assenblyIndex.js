@@ -1009,52 +1009,56 @@ function validateAndShowMailaImage(file) {
  * Muestra la vista previa de la imagen  del Mayla
  */
 function showMailaImagePreview(file) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const previewContainer = document.getElementById('previewContainerMaila');
-        const imagenPreview = document.getElementById('imagenPreviewMaila');
-        const imageInfo = document.getElementById('imageInfoMaila');
-        const btnSubir = document.getElementById('btnSubirImagenMaila');
-        
-        if (imagenPreview) {
-            imagenPreview.src = e.target.result;
-        }
-        
-        if (imageInfo) {
-            const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
-            imageInfo.textContent = `${file.name} - ${sizeInMB} MB`;
-        }
-        
-        if (previewContainer) {
-            previewContainer.style.display = 'block';
-        }
-        
-        if (btnSubir) {
-            btnSubir.disabled = false;
-        }
-    };
-    reader.readAsDataURL(file);
-}
+    const dropArea = document.getElementById('dropAreaMaila');
+    const previewContainer = document.getElementById('mailaImagePreview');
+    
+    // Ocultar el área de drop
+    dropArea.style.display = 'none';
+    
+    // Crear elemento de imagen
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(file);
+    img.className = 'img-fluid rounded';
+    img.style.maxHeight = '200px';
+    img.style.objectFit = 'contain';
+    
+    // Crear botón de eliminar
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'btn btn-outline-danger btn-sm mt-2';
+    removeBtn.innerHTML = '<i class="bi bi-trash"></i> Eliminar imagen';
+    removeBtn.onclick = removeMailaImage;
+    
+    // Limpiar y agregar contenido al preview
+    previewContainer.innerHTML = '';
+    previewContainer.appendChild(img);
+    previewContainer.appendChild(removeBtn);
+    previewContainer.style.display = 'block';
 
+    document.querySelector("#btnSubirImagenMaila").disabled = false;
+}
 /**
  * Remueve la imagen  del Mayla seleccionada
  */
 function removeMailaImage() {
-    const inputImagenMaila = document.getElementById('inputImagenMaila');
-    const previewContainer = document.getElementById('previewContainerMaila');
-    const btnSubir = document.getElementById('btnSubirImagenMaila');
+    const dropArea = document.getElementById('dropAreaMaila');
+    const previewContainer = document.getElementById('mailaImagePreview');
+    const fileInput = document.getElementById('inputImagenMaila');
     
-    if (inputImagenMaila) {
-        inputImagenMaila.value = '';
-    }
+    // Limpiar el input de archivo
+    fileInput.value = '';
     
-    if (previewContainer) {
-        previewContainer.style.display = 'none';
-    }
+    // Ocultar preview y mostrar área de drop
+    previewContainer.style.display = 'none';
+    previewContainer.innerHTML = '';
+    dropArea.style.display = 'block';
     
-    if (btnSubir) {
-        btnSubir.disabled = true;
+    // Limpiar variable global si existe
+    if (window.selectedMailaImage) {
+        window.selectedMailaImage = null;
     }
+
+    document.querySelector("#btnSubirImagenMaila").disabled = true;
 }
 
 /**
