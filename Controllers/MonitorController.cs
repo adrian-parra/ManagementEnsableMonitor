@@ -355,5 +355,39 @@ namespace AM_web.Controllers
                 return StatusCode(500, new { success = false, message = "Error al recuperar imagen del carro", error = ex.Message });
             }
         }
+
+        [HttpPost]
+        [Route("api/assemblymonitor/PostImageMaylar")]
+        public async Task<IActionResult> PostImageMaylar([FromBody] MDImageMaylarRequest request)
+        {
+            try
+            {
+                // Validar el modelo
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new { success = false, message = "Datos de solicitud inválidos", errors = ModelState });
+                }
+
+                // Validar que los campos requeridos no estén vacíos
+                if (string.IsNullOrEmpty(request.Plant) ||
+                    string.IsNullOrEmpty(request.LineId) ||
+                    string.IsNullOrEmpty(request.ImageBase64) ||
+                    string.IsNullOrEmpty(request.RegisterUser))
+                {
+                    return BadRequest(new { success = false, message = "Todos los campos son requeridos" });
+                }
+
+                var response = await _assembly.PostImageMaylar(request);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new MDImageMaylarResponse
+                {
+                    Msj = "Error al subir la imagen del maylar",
+                    Result = ex.Message
+                });
+            }
+        }
     }
 }

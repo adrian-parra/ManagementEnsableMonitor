@@ -1081,17 +1081,24 @@ async function uploadMailaImage() {
         btnSubir.disabled = true;
         btnSubir.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Subiendo...';
         
-        // Crear FormData
-        const formData = new FormData();
-        formData.append('imagen', file);
-        formData.append('planta', AppState.selectedPlant);
-        formData.append('linea', AppState.selectedLine);
-        formData.append('tipo', 'maila');
+        // Convertir imagen a Base64
+        const imageBase64 = await convertFileToBase64(file);
         
-        // Realizar petición
-        const response = await fetch('/Monitor/UploadMailaImage', {
+        // Crear objeto de request
+        const requestData = {
+            plant: AppState.selectedPlant,
+            lineId: AppState.selectedLine,
+            imageBase64: imageBase64,
+            registerUser: AppState.currentUser.userName || 'Usuario' // Asegúrate de tener el usuario actual
+        };
+        
+        // Realizar petición al nuevo endpoint
+        const response = await fetch('/api/assemblymonitor/PostImageMaylar', {
             method: 'POST',
-            body: formData
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
         });
         
         if (!response.ok) {
@@ -1100,7 +1107,7 @@ async function uploadMailaImage() {
         
         const result = await response.json();
         
-        if (result.success) {
+        if (result.result === 'SUCCESS' || result.result === 'OK') {
             UI.showAlert('Imagen del maila subida exitosamente.', 'success');
             
             // Limpiar formulario
@@ -1113,7 +1120,7 @@ async function uploadMailaImage() {
                 modal.hide();
             }
         } else {
-            UI.showAlert(result.message || 'Error al subir la imagen del maila.', 'error');
+            UI.showAlert(result.msj || 'Error al subir la imagen del maila.', 'error');
         }
         
     } catch (error) {
@@ -1125,4 +1132,18 @@ async function uploadMailaImage() {
         btnSubir.disabled = false;
         btnSubir.innerHTML = '<i class="bi bi-upload me-2"></i>Subir Imagen del Maila';
     }
+}
+
+// Función auxiliar para convertir archivo a Base64
+function convertFileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            // Remover el prefijo "data:image/...;base64," si existe
+            const base64 = reader.result.split(',')[1] || reader.result;
+            resolve(base64);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
 }

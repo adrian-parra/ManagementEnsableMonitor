@@ -20,7 +20,7 @@ namespace AM_web.Services.Interfaces
         Task<MDManagerLineResponse> DeleteManagerLine(string plant, string employee);
         Task<List<MDCustomer>> GetCustomer(string plant);
         Task<List<MDProject>> GetProjectByCustomer(string idCustomer, string plant);
-
         Task<MDImageCar> GetImageCar(string plant, string lineId);
+        Task<MDImageMaylarResponse> PostImageMaylar(MDImageMaylarRequest request);
     }
 }

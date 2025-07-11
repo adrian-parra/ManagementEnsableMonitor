@@ -676,5 +676,59 @@ namespace AM_web.Services.Implementation
 
             return null;
         }
+
+
+        public async Task<MDImageMaylarResponse> PostImageMaylar(MDImageMaylarRequest request)
+        {
+            try
+            {
+                // Construir la URL completa para la solicitud
+                string requestUrl = $"{_apiBaseUrl}/assemblymonitor/PostImageMaylar";
+
+                // Serializar el objeto de solicitud a JSON
+                string jsonRequest = JsonSerializer.Serialize(request);
+                var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+                // Realizar la solicitud HTTP POST
+                HttpResponseMessage response = await _httpClient.PostAsync(requestUrl, content);
+
+                // Verificar si la solicitud fue exitosa
+                if (response.IsSuccessStatusCode)
+                {
+                    // Leer y deserializar la respuesta
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    var imageMaylarResponse = JsonSerializer.Deserialize<MDImageMaylarResponse>(jsonResponse,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    return imageMaylarResponse;
+                }
+                else
+                {
+                    // Manejar errores de la API
+                    string errorContent = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Error al subir la imagen del maylar. Código: {response.StatusCode}, Mensaje: {errorContent}");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                // Manejar errores de conexión
+                Console.WriteLine($"Error de conexión al subir la imagen del maylar: {ex.Message}");
+                throw new Exception($"Error de conexión al subir la imagen del maylar: {ex.Message}", ex);
+            }
+            catch (JsonException ex)
+            {
+                // Manejar errores de serialización/deserialización
+                Console.WriteLine($"Error al procesar la respuesta JSON: {ex.Message}");
+                throw new Exception($"Error al procesar la respuesta JSON: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                // Manejar otros errores
+                Console.WriteLine($"Error al subir la imagen del maylar: {ex.Message}");
+                throw;
+            }
+        }
     }
 }
+
+
