@@ -389,5 +389,30 @@ namespace AM_web.Controllers
                 });
             }
         }
+
+        [HttpGet]
+        [Route("api/assemblymonitor/GetLineImageMaylar")]
+        public async Task<IActionResult> GetLineImageMaylar(string plant, string line_id)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(plant))
+                {
+                    return BadRequest(new { success = false, message = "El parámetro plant es requerido" });
+                }
+
+                if (string.IsNullOrEmpty(line_id))
+                {
+                    return BadRequest(new { success = false, message = "El parámetro line_id es requerido" });
+                }
+
+                var lineImageMaylar = await _assembly.GetLineImageMaylar(plant, line_id);
+                return Ok(lineImageMaylar);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = "Error al recuperar imagen del maylar", error = ex.Message });
+            }
+        }
     }
 }

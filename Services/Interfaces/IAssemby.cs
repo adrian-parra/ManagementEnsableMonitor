@@ -22,5 +22,6 @@ namespace AM_web.Services.Interfaces
         Task<List<MDProject>> GetProjectByCustomer(string idCustomer, string plant);
         Task<MDImageCar> GetImageCar(string plant, string lineId);
         Task<MDImageMaylarResponse> PostImageMaylar(MDImageMaylarRequest request);
+        Task<MDLineImageMaylar> GetLineImageMaylar(string plant, string lineId);
     }
 }

@@ -39,7 +39,7 @@ function initUIEvents() {
         inputImagenCarro.addEventListener('change', ImageService.showImagePreview);
     }
 
-    // Eventos para cargar imagen del maila
+    // Eventos para cargar imagen  del Mayla
     initMailaImageEvents();
     
     // Eventos para cargar investigación
@@ -929,9 +929,9 @@ async function initPlantAndLineSelectors() {
 }
 
 
-// ? CODIGO PARA CARGAR IMAGEN MAILAB
+// ? CODIGO PARA CARGAR IMAGENMaylaB
 /**
- * Inicializa los eventos para la carga de imagen del maila
+ * Inicializa los eventos para la carga de imagen  del Mayla
  */
 function initMailaImageEvents() {
     const inputImagenMaila = document.getElementById('inputImagenMaila');
@@ -959,7 +959,7 @@ function initMailaImageEvents() {
 }
 
 /**
- * Maneja la selección de imagen del maila
+ * Maneja la selección de imagen  del Mayla
  */
 function handleMailaImageSelect(event) {
     const file = event.target.files[0];
@@ -969,7 +969,7 @@ function handleMailaImageSelect(event) {
 }
 
 /**
- * Maneja el drop de imagen del maila
+ * Maneja el drop de imagen  del Mayla
  */
 function handleMailaImageDrop(event) {
     event.preventDefault();
@@ -986,7 +986,7 @@ function handleMailaImageDrop(event) {
 }
 
 /**
- * Valida y muestra la imagen del maila
+ * Valida y muestra la imagen  del Mayla
  */
 function validateAndShowMailaImage(file) {
     // Validar tipo de archivo
@@ -1006,7 +1006,7 @@ function validateAndShowMailaImage(file) {
 }
 
 /**
- * Muestra la vista previa de la imagen del maila
+ * Muestra la vista previa de la imagen  del Mayla
  */
 function showMailaImagePreview(file) {
     const reader = new FileReader();
@@ -1037,7 +1037,7 @@ function showMailaImagePreview(file) {
 }
 
 /**
- * Remueve la imagen del maila seleccionada
+ * Remueve la imagen  del Mayla seleccionada
  */
 function removeMailaImage() {
     const inputImagenMaila = document.getElementById('inputImagenMaila');
@@ -1058,7 +1058,7 @@ function removeMailaImage() {
 }
 
 /**
- * Sube la imagen del maila
+ * Sube la imagen  del Mayla
  */
 async function uploadMailaImage() {
     try {
@@ -1108,7 +1108,7 @@ async function uploadMailaImage() {
         const result = await response.json();
         
         if (result.result === 'SUCCESS' || result.result === 'OK') {
-            UI.showAlert('Imagen del maila subida exitosamente.', 'success');
+            UI.showAlert('Imagen  del Mayla subida exitosamente.', 'success');
             
             // Limpiar formulario
             document.getElementById('formCargarImagenMaila').reset();
@@ -1120,17 +1120,17 @@ async function uploadMailaImage() {
                 modal.hide();
             }
         } else {
-            UI.showAlert(result.msj || 'Error al subir la imagen del maila.', 'error');
+            UI.showAlert(result.msj || 'Error al subir la imagen  del Mayla.', 'error');
         }
         
     } catch (error) {
-        console.error('Error al subir imagen del maila:', error);
+        console.error('Error al subir imagen  del Mayla:', error);
         UI.showAlert('Error al subir la imagen. Por favor, intente nuevamente.', 'error');
     } finally {
         // Restaurar botón
         const btnSubir = document.getElementById('btnSubirImagenMaila');
         btnSubir.disabled = false;
-        btnSubir.innerHTML = '<i class="bi bi-upload me-2"></i>Subir Imagen del Maila';
+        btnSubir.innerHTML = '<i class="bi bi-upload me-2"></i>Subir Imagen  del Mayla';
     }
 }
 
@@ -1147,3 +1147,52 @@ function convertFileToBase64(file) {
         reader.readAsDataURL(file);
     });
 }
+
+// Función para obtener la imagen del maylar
+async function getLineImageMaylar(plant, lineId) {
+    try {
+        const response = await fetch(`/api/assemblymonitor/GetLineImageMaylar?plant=${encodeURIComponent(plant)}&line_id=${encodeURIComponent(lineId)}`);
+        
+        if (!response.ok) {
+            throw new Error(`Error en la petición: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error('Error al obtener imagen del maylar:', error);
+        throw error;
+    }
+}
+
+// Función para mostrar la imagen del maylar en el modal
+async function loadMailaImageToModal(plant, lineId) {
+    try {
+        const imageData = await getLineImageMaylar(plant, lineId);
+        
+        if (imageData && imageData.imageBase64) {
+            // Mostrar la imagen actual en el modal
+            const imgElement = document.getElementById('imagenMailaActual');
+            const containerElement = document.getElementById('imagenMailaContainer');
+            
+            if (imgElement && containerElement) {
+                imgElement.src = `data:image/jpeg;base64,${imageData.imageBase64}`;
+                containerElement.style.display = 'block';
+            }
+        }
+    } catch (error) {
+        console.error('Error al cargar imagen del maylar:', error);
+        // Ocultar el contenedor si hay error
+        const containerElement = document.getElementById('imagenMailaContainer');
+        if (containerElement) {
+            containerElement.style.display = 'none';
+        }
+    }
+}
+
+// Ejemplo de uso cuando se abre el modal
+$('#modalCargarImagenMaila').on('show.bs.modal', function() {
+    if (AppState.selectedPlant && AppState.selectedLine) {
+        loadMailaImageToModal(AppState.selectedPlant, AppState.selectedLine);
+    }
+});
