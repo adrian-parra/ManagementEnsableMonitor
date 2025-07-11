@@ -38,6 +38,9 @@ function initUIEvents() {
     if (inputImagenCarro) {
         inputImagenCarro.addEventListener('change', ImageService.showImagePreview);
     }
+
+    // Eventos para cargar imagen del maila
+    initMailaImageEvents();
     
     // Eventos para cargar investigación
     initInvestigacionEvents();
@@ -922,5 +925,204 @@ async function initPlantAndLineSelectors() {
     } catch (error) {
         
         UI.showAlert('Error al cargar datos iniciales. Por favor, recargue la página.', 'error');
+    }
+}
+
+
+// ? CODIGO PARA CARGAR IMAGEN MAILAB
+/**
+ * Inicializa los eventos para la carga de imagen del maila
+ */
+function initMailaImageEvents() {
+    const inputImagenMaila = document.getElementById('inputImagenMaila');
+    const dropAreaMaila = document.getElementById('dropAreaMaila');
+    const btnSubirImagenMaila = document.getElementById('btnSubirImagenMaila');
+    const btnRemoveImageMaila = document.getElementById('btnRemoveImageMaila');
+    
+    if (inputImagenMaila) {
+        inputImagenMaila.addEventListener('change', handleMailaImageSelect);
+    }
+    
+    if (dropAreaMaila) {
+        dropAreaMaila.addEventListener('dragover', window.handleDragOver);
+        dropAreaMaila.addEventListener('dragleave', window.handleDragLeave);
+        dropAreaMaila.addEventListener('drop', handleMailaImageDrop);
+    }
+    
+    if (btnSubirImagenMaila) {
+        btnSubirImagenMaila.addEventListener('click', uploadMailaImage);
+    }
+    
+    if (btnRemoveImageMaila) {
+        btnRemoveImageMaila.addEventListener('click', removeMailaImage);
+    }
+}
+
+/**
+ * Maneja la selección de imagen del maila
+ */
+function handleMailaImageSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+        validateAndShowMailaImage(file);
+    }
+}
+
+/**
+ * Maneja el drop de imagen del maila
+ */
+function handleMailaImageDrop(event) {
+    event.preventDefault();
+    const dropArea = document.getElementById('dropAreaMaila');
+    dropArea.style.borderColor = '#ffc107';
+    dropArea.style.backgroundColor = '';
+    
+    const files = event.dataTransfer.files;
+    if (files.length > 0) {
+        const file = files[0];
+        document.getElementById('inputImagenMaila').files = files;
+        validateAndShowMailaImage(file);
+    }
+}
+
+/**
+ * Valida y muestra la imagen del maila
+ */
+function validateAndShowMailaImage(file) {
+    // Validar tipo de archivo
+    if (!file.type.startsWith('image/')) {
+        UI.showAlert('Por favor, seleccione un archivo de imagen válido.', 'error');
+        return;
+    }
+    
+    // Validar tamaño (2MB máximo)
+    const maxSize = 2 * 1024 * 1024;
+    if (file.size > maxSize) {
+        UI.showAlert('La imagen es demasiado grande. El tamaño máximo permitido es 2MB.', 'error');
+        return;
+    }
+    
+    showMailaImagePreview(file);
+}
+
+/**
+ * Muestra la vista previa de la imagen del maila
+ */
+function showMailaImagePreview(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const previewContainer = document.getElementById('previewContainerMaila');
+        const imagenPreview = document.getElementById('imagenPreviewMaila');
+        const imageInfo = document.getElementById('imageInfoMaila');
+        const btnSubir = document.getElementById('btnSubirImagenMaila');
+        
+        if (imagenPreview) {
+            imagenPreview.src = e.target.result;
+        }
+        
+        if (imageInfo) {
+            const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+            imageInfo.textContent = `${file.name} - ${sizeInMB} MB`;
+        }
+        
+        if (previewContainer) {
+            previewContainer.style.display = 'block';
+        }
+        
+        if (btnSubir) {
+            btnSubir.disabled = false;
+        }
+    };
+    reader.readAsDataURL(file);
+}
+
+/**
+ * Remueve la imagen del maila seleccionada
+ */
+function removeMailaImage() {
+    const inputImagenMaila = document.getElementById('inputImagenMaila');
+    const previewContainer = document.getElementById('previewContainerMaila');
+    const btnSubir = document.getElementById('btnSubirImagenMaila');
+    
+    if (inputImagenMaila) {
+        inputImagenMaila.value = '';
+    }
+    
+    if (previewContainer) {
+        previewContainer.style.display = 'none';
+    }
+    
+    if (btnSubir) {
+        btnSubir.disabled = true;
+    }
+}
+
+/**
+ * Sube la imagen del maila
+ */
+async function uploadMailaImage() {
+    try {
+        const fileInput = document.getElementById('inputImagenMaila');
+        const file = fileInput.files[0];
+        
+        if (!file) {
+            UI.showAlert('Por favor, seleccione una imagen para subir.', 'warning');
+            return;
+        }
+        
+        if (!AppState.selectedPlant || !AppState.selectedLine) {
+            UI.showAlert('Por favor, seleccione una planta y línea antes de subir la imagen.', 'warning');
+            return;
+        }
+        
+        // Mostrar indicador de carga
+        const btnSubir = document.getElementById('btnSubirImagenMaila');
+        const originalText = btnSubir.innerHTML;
+        btnSubir.disabled = true;
+        btnSubir.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Subiendo...';
+        
+        // Crear FormData
+        const formData = new FormData();
+        formData.append('imagen', file);
+        formData.append('planta', AppState.selectedPlant);
+        formData.append('linea', AppState.selectedLine);
+        formData.append('tipo', 'maila');
+        
+        // Realizar petición
+        const response = await fetch('/Monitor/UploadMailaImage', {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Error en la petición: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            UI.showAlert('Imagen del maila subida exitosamente.', 'success');
+            
+            // Limpiar formulario
+            document.getElementById('formCargarImagenMaila').reset();
+            removeMailaImage();
+            
+            // Cerrar modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalCargarImagenMaila'));
+            if (modal) {
+                modal.hide();
+            }
+        } else {
+            UI.showAlert(result.message || 'Error al subir la imagen del maila.', 'error');
+        }
+        
+    } catch (error) {
+        console.error('Error al subir imagen del maila:', error);
+        UI.showAlert('Error al subir la imagen. Por favor, intente nuevamente.', 'error');
+    } finally {
+        // Restaurar botón
+        const btnSubir = document.getElementById('btnSubirImagenMaila');
+        btnSubir.disabled = false;
+        btnSubir.innerHTML = '<i class="bi bi-upload me-2"></i>Subir Imagen del Maila';
     }
 }
