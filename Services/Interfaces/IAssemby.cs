@@ -23,5 +23,6 @@ namespace AM_web.Services.Interfaces
         Task<MDImageCar> GetImageCar(string plant, string lineId);
         Task<MDImageMaylarResponse> PostImageMaylar(MDImageMaylarRequest request);
         Task<MDLineImageMaylar> GetLineImageMaylar(string plant, string lineId);
+        Task<MDImageQaInvestigationResponse> PostImageQaInvestigation(MDImageQaInvestigationRequest request);
     }
 }

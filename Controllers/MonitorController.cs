@@ -414,5 +414,37 @@ namespace AM_web.Controllers
                 return StatusCode(500, new { success = false, message = "Error al recuperar imagen del maylar", error = ex.Message });
             }
         }
+        [HttpPost]
+        [Route("api/assemblymonitor/PostImageQaInvestigation")]
+        public async Task<IActionResult> PostImageQaInvestigation([FromBody] MDImageQaInvestigationRequest request)
+        {
+            try
+            {
+                // Validar el modelo
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new { success = false, message = "Datos de solicitud inválidos", errors = ModelState });
+                }
+        
+                // Validar que los campos requeridos no estén vacíos
+                if (string.IsNullOrEmpty(request.Plant) ||
+                    string.IsNullOrEmpty(request.ImageBase64) ||
+                    string.IsNullOrEmpty(request.RegisterUser))
+                {
+                    return BadRequest(new { success = false, message = "Todos los campos son requeridos" });
+                }
+        
+                var response = await _assembly.PostImageQaInvestigation(request);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new MDImageQaInvestigationResponse
+                {
+                    Msj = "Error al subir la imagen de investigación QA",
+                    Result = ex.Message
+                });
+            }
+        }
     }
 }

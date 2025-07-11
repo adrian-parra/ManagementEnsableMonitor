@@ -527,14 +527,12 @@ function handleInvestigacionFileDrop(event) {
 function validateAndShowInvestigacionFile(file) {
     // Validar tipo de archivo
     const allowedTypes = [
-        'application/pdf',
-        'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.ms-excel',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'application/vnd.ms-powerpoint',
-        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-        'text/plain'
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'image/webp',
+        'image/bmp',
+        'image/tiff'
     ];
     
     if (!allowedTypes.includes(file.type)) {
@@ -542,10 +540,10 @@ function validateAndShowInvestigacionFile(file) {
         return;
     }
     
-    // Validar tamaño (10MB máximo)
-    const maxSize = 10 * 1024 * 1024; // 10MB en bytes
+    // Validate file size (2MB maximum)
+    const maxSize = 2 * 1024 * 1024; // 2MB in bytes
     if (file.size > maxSize) {
-        UI.showAlert('El archivo es demasiado grande. El tamaño máximo permitido es 10MB.', 'error');
+        UI.showAlert('El archivo es demasiado grande. El tamaño máximo permitido es 2MB.', 'error');
         return;
     }
     
@@ -606,16 +604,12 @@ function removeInvestigacionFile() {
  */
 async function uploadInvestigacion() {
     try {
-        const titulo = document.getElementById('inputTituloInvestigacion').value.trim();
-        const descripcion = document.getElementById('textareaDescripcionInvestigacion').value.trim();
+      
+      
         const fileInput = document.getElementById('inputArchivoInvestigacion');
         const file = fileInput.files[0];
         
-        // Validaciones
-        if (!titulo) {
-            UI.showAlert('Por favor, ingrese un título para la investigación.', 'warning');
-            return;
-        }
+        
         
         if (!file) {
             UI.showAlert('Por favor, seleccione un archivo para subir.', 'warning');
@@ -633,19 +627,23 @@ async function uploadInvestigacion() {
         btnSubirInvestigacion.disabled = true;
         btnSubirInvestigacion.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Subiendo...';
         
-        // Crear FormData para enviar el archivo
-        const formData = new FormData();
-        formData.append('archivo', file);
-        formData.append('titulo', titulo);
-        formData.append('descripcion', descripcion);
-        formData.append('planta', AppState.selectedPlant);
-        formData.append('linea', AppState.selectedLine);
-        formData.append('usuario', AppState.currentUser.userName);
+        // Convertir archivo a Base64
+        const imageBase64 = await convertFileToBase64(file);
         
-        // Realizar la petición (ajusta la URL según tu endpoint)
-        const response = await fetch('/Monitor/UploadInvestigacion', {
+        // Preparar el cuerpo de la petición JSON
+        const requestBody = {
+            plant: AppState.selectedPlant,
+            imageBase64: imageBase64,
+            registerUser: AppState.currentUser.userName
+        };
+        
+        // Realizar la petición al nuevo endpoint
+        const response = await fetch('/api/assemblymonitor/PostImageQaInvestigation', {
             method: 'POST',
-            body: formData
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
         });
         
         if (!response.ok) {
@@ -654,8 +652,8 @@ async function uploadInvestigacion() {
         
         const result = await response.json();
         
-        if (result.success) {
-            UI.showAlert('Investigación subida exitosamente.', 'success');
+        if (result.result) {
+            UI.showAlert(result.msj || 'Investigación subida exitosamente.', 'success');
             
             // Limpiar el formulario
             document.getElementById('formCargarInvestigacion').reset();
@@ -667,7 +665,7 @@ async function uploadInvestigacion() {
                 modal.hide();
             }
         } else {
-            UI.showAlert(result.message || 'Error al subir la investigación.', 'error');
+            UI.showAlert(result.msj || 'Error al subir la investigación.', 'error');
         }
         
     } catch (error) {
